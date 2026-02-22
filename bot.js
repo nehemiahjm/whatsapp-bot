@@ -1,7 +1,17 @@
 const { Client, LocalAuth } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
 const OpenAI = require("openai");
+const { Pool } = require("pg");
 
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false,
+  },
+});
+pool.connect()
+  .then(() => console.log("✅ Database Connected"))
+  .catch(err => console.error("❌ DB Connection Error:", err));
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
