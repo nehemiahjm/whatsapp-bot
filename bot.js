@@ -53,7 +53,30 @@ client.on("message", async (message) => {
   if (message.fromMe) return;
 
   const userMessage = message.body;
+const userId = message.from;
+const parts = userMessage.trim().toLowerCase().split(" ");
 
+if (parts[0] === "sale" || parts[0] === "expense") {
+    const type = parts[0];
+    const amount = parseFloat(parts[1]);
+    const description = parts.slice(2).join(" ");
+
+    if (isNaN(amount)) {
+        return message.reply("❌ Please enter valid amount. Example: sale 5000 shoes");
+    }
+
+    try {
+        await pool.query(
+            "INSERT INTO transactions (user_id, type, amount, description) VALUES ($1, $2, $3, $4)",
+            [userId, type, amount, description]
+        );
+
+        return message.reply(`✅ ${type} of ${amount} saved successfully!`);
+    } catch (err) {
+        console.error(err);
+        return message.reply("❌ Failed to save transaction.");
+    }
+}
   try {
     const response = await openai.chat.completions.create({
       model: "gpt-4o-mini",
