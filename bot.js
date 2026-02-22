@@ -9,8 +9,14 @@ const client = new Client({
     }
 });
 
-client.on('qr', qr => {
-    qrcode.generate(qr, {small: true});
+const QRCode = require('qrcode');
+
+client.on('qr', async (qr) => {
+    console.log("QR RECEIVED");
+    
+    const url = await QRCode.toDataURL(qr);
+    console.log("Scan this QR code:");
+    console.log(url);
 });
 
 client.on('ready', () => {
