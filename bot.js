@@ -12,6 +12,18 @@ const pool = new Pool({
 pool.connect()
   .then(() => console.log("✅ Database Connected"))
   .catch(err => console.error("❌ DB Connection Error:", err));
+  pool.query(`
+  CREATE TABLE IF NOT EXISTS transactions (
+    id SERIAL PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    type TEXT NOT NULL,
+    amount NUMERIC NOT NULL,
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  );
+`)
+.then(() => console.log("✅ Transactions Table Ready"))
+.catch(err => console.error("❌ Table Error:", err));
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
