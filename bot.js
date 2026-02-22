@@ -1,6 +1,10 @@
 const { Client, LocalAuth } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
+const OpenAI = require("openai");
 
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
 const client = new Client({
     authStrategy: new LocalAuth(),
     puppeteer: {
@@ -23,12 +27,51 @@ client.on('ready', () => {
     console.log('Bot is ready!');
 });
 
-client.on('message', message => {
-    console.log("Message received: " + message.body);
+client.on("message", async (message) => {
+  if (message.fromMe) return;
 
-    if(message.body.toLowerCase() === "hi"){
-        message.reply("Hello 👋 How can I help you today?");
-    }
+  const userMessage = message.body;
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+{
+  role: "system",
+  content: `
+You are Hisabi Cash AI, a smart financial assistant.
+You ONLY answer questions related to:
+- Accounting
+- Business
+- Finance
+- Profit & Loss
+- Revenue
+- Gross Margin
+- EMI calculations
+- Budgeting
+- Investment math
+- Financial analysis
+
+If question is unrelated to finance, politely refuse.
+Always calculate properly and explain clearly.
+`,
+},
+        {
+          role: "user",
+          content: userMessage,
+        },
+      ],
+    });
+
+    const reply = response.choices?.[0]?.message?.content || 
+"Sorry, I couldn't generate a response.";
+
+    message.reply(reply);
+
+  } catch (error) {
+    console.error(error);
+    message.reply("⚠️ Error processing request. Please try again.");
+  }
 });
 
 client.initialize();
