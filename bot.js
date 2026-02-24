@@ -1,3 +1,9 @@
+const fs = require("fs");
+
+if (fs.existsSync("/data/session")) {
+  fs.rmSync("/data/session", { recursive: true, force: true });
+  console.log("Old WhatsApp session deleted.");
+}
 const { Client, LocalAuth } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
 const OpenAI = require("openai");
