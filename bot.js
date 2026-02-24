@@ -176,21 +176,45 @@ Sale 5000 shoes`
       );
   }
 }
-  // LANGUAGE SELECTION
-if (userMessage === "1" || userMessage === "2" || userMessage === "3") {
+ // CHANGE LANGUAGE COMMAND
+if (userMessage.toLowerCase().startsWith("language")) {
 
-    let selectedLang = "en";
+    const parts = userMessage.split(" ");
+    const choice = parts[1];
 
-    if (userMessage === "1") selectedLang = "en";
-    if (userMessage === "2") selectedLang = "roman";
-    if (userMessage === "3") selectedLang = "urdu";
+    if (!choice) {
+        return message.reply(
+`🌍 Choose your language:
 
-    await pool.query(
-        "UPDATE users SET language = $1 WHERE user_id = $2",
-        [selectedLang, userId]
-    );
+language 1 – English  
+language 2 – Roman Urdu  
+language 3 – اردو`
+        );
+    }
 
-    return message.reply("Language updated successfully ✅");
+    if (choice === "1") {
+        await pool.query(
+            "UPDATE users SET language = $1 WHERE user_id = $2",
+            ["en", userId]
+        );
+        return message.reply("Language changed to English ✅");
+    }
+
+    if (choice === "2") {
+        await pool.query(
+            "UPDATE users SET language = $1 WHERE user_id = $2",
+            ["roman", userId]
+        );
+        return message.reply("Zaban Roman Urdu mein tabdeel ho gayi ✅");
+    }
+
+    if (choice === "3") {
+        await pool.query(
+            "UPDATE users SET language = $1 WHERE user_id = $2",
+            ["urdu", userId]
+        );
+        return message.reply("زبان اردو میں تبدیل ہو گئی ✅");
+    }
 }
 const parts = userMessage.trim().toLowerCase().split(" ");
 
