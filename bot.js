@@ -178,12 +178,31 @@ if (userLanguage === "urdu")
     }
 }
   try {
+    // GET USER LANGUAGE FOR AI RESPONSE
+const langCheckAI = await pool.query(
+    "SELECT language FROM users WHERE user_id = $1",
+    [userId]
+);
+
+let aiLanguage = "en";
+
+if (langCheckAI.rows.length > 0) {
+    aiLanguage = langCheckAI.rows[0].language || "en";
+}
     const response = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
 {
   role: "system",
   content: `
+  If aiLanguage is "en", respond in simple English.
+If aiLanguage is "roman", respond in Roman Urdu.
+If aiLanguage is "urdu", respond in proper Urdu script.
+
+Current language: ${aiLanguage}.
+Keep answers short and simple.
+Be precise.
+Only give details if asked.
 You are Hisabi Cash AI, a smart financial assistant.
 You ONLY answer questions related to:
 - Accounting
