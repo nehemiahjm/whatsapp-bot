@@ -29,20 +29,21 @@ const openai = new OpenAI({
 });
 
 const client = new Client({
-   authStrategy: new LocalAuth({
-  dataPath: '/data/session'
-}),
-    puppeteer: {
-        headless: true,
-        args: [
-  "--no-sandbox",
-  "--disable-setuid-sandbox",
-  "--disable-dev-shm-usage",
-  "--disable-gpu",
-  "--single-process",
-  "--no-zygote"
-]
-    }
+  authStrategy: new LocalAuth({
+    dataPath: '/data/session'
+  }),
+  puppeteer: {
+    headless: true,
+    args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-dev-shm-usage',
+      '--disable-gpu',
+      '--no-first-run',
+      '--no-zygote',
+      '--single-process'
+    ]
+  }
 });
 
 const QRCode = require('qrcode');
