@@ -104,20 +104,77 @@ Choose Language:
 
   const userMessage = message.body;
   // FORCE LANGUAGE MENU ON GREETING
+// PREMIUM MENU ON GREETING
 if (
-    userMessage.toLowerCase() === "hi" ||
-    userMessage.toLowerCase() === "hello" ||
-    userMessage.toLowerCase() === "assalamualaikum"
+  userMessage.toLowerCase() === "hi" ||
+  userMessage.toLowerCase() === "hello" ||
+  userMessage.toLowerCase() === "start" ||
+  userMessage.toLowerCase() === "menu" ||
+  userMessage.toLowerCase() === "assalamualaikum"
 ) {
-    return message.reply(
-`Welcome to Hisabi Cash 💼
 
-Choose Language:
+  // GET USER LANGUAGE
+  const langCheck = await pool.query(
+      "SELECT language FROM users WHERE user_id = $1",
+      [userId]
+  );
 
-1 English
-2 Roman Urdu
-3 اردو`
-    );
+  let currentLang = "en";
+
+  if (langCheck.rows.length > 0) {
+      currentLang = langCheck.rows[0].language || "en";
+  }
+
+  if (currentLang === "en") {
+      return message.reply(
+`💰 Welcome to Hisabi Cash
+
+How can I help today?
+
+1️⃣ Add Sale  
+2️⃣ Add Expense  
+3️⃣ Check Profit  
+4️⃣ Today's Report  
+5️⃣ Help  
+
+Or type directly:
+Sale 5000 shoes`
+      );
+  }
+
+  if (currentLang === "roman") {
+      return message.reply(
+`💰 Hisabi Cash mein khush aamdeed
+
+Aaj kya karna hai?
+
+1️⃣ Sale add karein  
+2️⃣ Expense add karein  
+3️⃣ Profit check karein  
+4️⃣ Aaj ki report  
+5️⃣ Madad  
+
+Ya seedha likhein:
+Sale 5000 shoes`
+      );
+  }
+
+  if (currentLang === "urdu") {
+      return message.reply(
+`💰 حسابی کیش میں خوش آمدید
+
+آج کیا کرنا ہے؟
+
+1️⃣ سیل شامل کریں  
+2️⃣ خرچ شامل کریں  
+3️⃣ منافع چیک کریں  
+4️⃣ آج کی رپورٹ  
+5️⃣ مدد  
+
+یا سیدھا لکھیں:
+Sale 5000 shoes`
+      );
+  }
 }
   // LANGUAGE SELECTION
 if (userMessage === "1" || userMessage === "2" || userMessage === "3") {
