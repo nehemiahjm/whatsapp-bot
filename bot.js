@@ -103,6 +103,22 @@ Choose Language:
   }
 
   const userMessage = message.body;
+  // LANGUAGE SELECTION
+if (userMessage === "1" || userMessage === "2" || userMessage === "3") {
+
+    let selectedLang = "en";
+
+    if (userMessage === "1") selectedLang = "en";
+    if (userMessage === "2") selectedLang = "roman";
+    if (userMessage === "3") selectedLang = "urdu";
+
+    await pool.query(
+        "UPDATE users SET language = $1 WHERE user_id = $2",
+        [selectedLang, userId]
+    );
+
+    return message.reply("Language updated successfully ✅");
+}
 const parts = userMessage.trim().toLowerCase().split(" ");
 
 if (parts[0] === "sale" || parts[0] === "expense") {
