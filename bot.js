@@ -27,6 +27,35 @@ pool.connect()
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
+const fs = require('fs');
+const path = '/data/session';
+
+function removeLocks(dir) {
+  if (!fs.existsSync(dir)) return;
+
+  const files = fs.readdirSync(dir);
+
+  files.forEach(file => {
+    const fullPath = `${dir}/${file}`;
+
+    if (fs.lstatSync(fullPath).isDirectory()) {
+      removeLocks(fullPath);
+    } else {
+      if (
+        file.includes('Singleton') ||
+        file.includes('LOCK') ||
+        file.includes('lock')
+      ) {
+        try {
+          fs.unlinkSync(fullPath);
+          console.log(`Removed lock file: ${fullPath}`);
+        } catch (err) {}
+      }
+    }
+  });
+}
+
+removeLocks(path);
 const client = new Client({
    authStrategy: new LocalAuth({
   dataPath: '/data/session'
