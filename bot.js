@@ -77,8 +77,32 @@ client.on('ready', () => {
 client.on("message", async (message) => {
   if (message.fromMe) return;
 
+  const userId = message.from;
+
+  // CHECK OR CREATE USER
+  const userCheck = await pool.query(
+    "SELECT * FROM users WHERE user_id = $1",
+    [userId]
+  );
+
+  if (userCheck.rows.length === 0) {
+    await pool.query(
+      "INSERT INTO users (user_id) VALUES ($1)",
+      [userId]
+    );
+
+    return message.reply(
+`Welcome to Hisabi Cash 💼
+
+Choose Language:
+
+1️⃣ English
+2️⃣ Roman Urdu
+3️⃣ اردو`
+    );
+  }
+
   const userMessage = message.body;
-const userId = message.from;
 const parts = userMessage.trim().toLowerCase().split(" ");
 
 if (parts[0] === "sale" || parts[0] === "expense") {
