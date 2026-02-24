@@ -103,6 +103,22 @@ Choose Language:
   }
 
   const userMessage = message.body;
+  // FORCE LANGUAGE MENU ON GREETING
+if (
+    userMessage.toLowerCase() === "hi" ||
+    userMessage.toLowerCase() === "hello" ||
+    userMessage.toLowerCase() === "assalamualaikum"
+) {
+    return message.reply(
+`Welcome to Hisabi Cash 💼
+
+Choose Language:
+
+1 English
+2 Roman Urdu
+3 اردو`
+    );
+}
   // LANGUAGE SELECTION
 if (userMessage === "1" || userMessage === "2" || userMessage === "3") {
 
@@ -136,7 +152,26 @@ if (parts[0] === "sale" || parts[0] === "expense") {
             [userId, type, amount, description]
         );
 
-        return message.reply(`✅ ${type} of ${amount} saved successfully!`);
+        // GET USER LANGUAGE
+const langCheck = await pool.query(
+    "SELECT language FROM users WHERE user_id = $1",
+    [userId]
+);
+
+let userLanguage = "en";
+
+if (langCheck.rows.length > 0) {
+    userLanguage = langCheck.rows[0].language || "en";
+}
+
+if (userLanguage === "en")
+    return message.reply(`${type} of ${amount} saved ✅`);
+
+if (userLanguage === "roman")
+    return message.reply(`${type} ${amount} save ho gayi ✅`);
+
+if (userLanguage === "urdu")
+    return message.reply(`${type} ${amount} محفوظ ہو گئی ✅`);
     } catch (err) {
         console.error(err);
         return message.reply("❌ Failed to save transaction.");
