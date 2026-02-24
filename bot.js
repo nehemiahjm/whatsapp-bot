@@ -30,6 +30,17 @@ pool.connect()
 `)
 .then(() => console.log("✅ Transactions Table Ready"))
 .catch(err => console.error("❌ Table Error:", err));
+pool.query(`
+CREATE TABLE IF NOT EXISTS users (
+    id SERIAL PRIMARY KEY,
+    user_id TEXT UNIQUE NOT NULL,
+    language TEXT DEFAULT 'en',
+    first_used TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_active TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+`)
+.then(() => console.log("✅ Users Table Ready"))
+.catch(err => console.error("❌ Users Table Error:", err));
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
