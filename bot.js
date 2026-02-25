@@ -110,27 +110,63 @@ const result = await pool.query(
 );
 
 let user = result.rows[0];
-// 🔒 SUBSCRIPTION CHECK
-if (user.subscription_status !== 'active') {
-  return message.reply(
-`⚠️ Your subscription is inactive.
+// STEP CONTROL SYSTEM
+if (user.current_step === "language") {
 
-💰 Monthly Plan: 1999 PKR
-💎 Yearly Plan: 19990 PKR (2 months free)
+    const msg = message.body.trim();
 
-To activate:
+    if (msg === "1") {
+        await pool.query(
+            "UPDATE users SET language = 'en', current_step = 'plan_selection' WHERE user_id = $1",
+            [user.user_id]
+        );
 
-1️⃣ Send payment via:
-EasyPaisa / JazzCash:
-03XXXXXXXXX
+        return message.reply(
+`Welcome to Hisabi Cash 💼
 
-2️⃣ Take screenshot
-3️⃣ Send screenshot here
+Your smart business assistant.
 
-Your account will be activated after verification.
+Choose your plan:
 
-Type "subscribe" for details.`
-  );
+1️⃣ 7 Days Free Trial
+2️⃣ Monthly Plan - 1999 PKR
+3️⃣ Yearly Plan - 19990 PKR (2 months free)`
+        );
+    }
+
+    if (msg === "2") {
+        await pool.query(
+            "UPDATE users SET language = 'roman', current_step = 'plan_selection' WHERE user_id = $1",
+            [user.user_id]
+        );
+
+        return message.reply(
+`Hisabi Cash mein khush aamdeed 💼
+
+Apna plan select karein:
+
+1️⃣ 7 din free trial
+2️⃣ Monthly - 1999 PKR
+3️⃣ Yearly - 19990 PKR (2 months free)`
+        );
+    }
+
+    if (msg === "3") {
+        await pool.query(
+            "UPDATE users SET language = 'urdu', current_step = 'plan_selection' WHERE user_id = $1",
+            [user.user_id]
+        );
+
+        return message.reply(
+`ہسابی کیش میں خوش آمدید 💼
+
+اپنا پلان منتخب کریں:
+
+1️⃣ 7 دن مفت ٹرائل
+2️⃣ ماہانہ - 1999 روپے
+3️⃣ سالانہ - 19990 روپے (2 ماہ مفت)`
+        );
+    }
 }
   // FORCE LANGUAGE MENU ON GREETING
 // PREMIUM MENU ON GREETING
