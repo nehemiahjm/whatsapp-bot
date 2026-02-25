@@ -103,6 +103,35 @@ Choose Language:
   }
 
   const userMessage = message.body;
+  // Get user from database
+const result = await pool.query(
+  "SELECT * FROM users WHERE user_id = $1",
+  [message.from]
+);
+
+let user = result.rows[0];
+// 🔒 SUBSCRIPTION CHECK
+if (user.subscription_status !== 'active') {
+  return message.reply(
+`⚠️ Your subscription is inactive.
+
+💰 Monthly Plan: 1999 PKR
+💎 Yearly Plan: 19990 PKR (2 months free)
+
+To activate:
+
+1️⃣ Send payment via:
+EasyPaisa / JazzCash:
+03XXXXXXXXX
+
+2️⃣ Take screenshot
+3️⃣ Send screenshot here
+
+Your account will be activated after verification.
+
+Type "subscribe" for details.`
+  );
+}
   // FORCE LANGUAGE MENU ON GREETING
 // PREMIUM MENU ON GREETING
 if (
