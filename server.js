@@ -43,10 +43,53 @@ app.get("/", (req, res) => {
 ==================================
 */
 
-app.post("/webhook", (req, res) => {
-  console.log("Incoming Webhook:", JSON.stringify(req.body, null, 2));
-  res.sendStatus(200);
+app.post("/webhook", async (req, res) => {
+  try {
+    const body = req.body;
+
+    if (
+      body.object &&
+      body.entry &&
+      body.entry[0].changes &&
+      body.entry[0].changes[0].value.messages
+    ) {
+      const message = body.entry[0].changes[0].value.messages[0];
+      const from = message.from;
+      const userMessage = message.text?.body;
+
+      console.log("User:", from);
+      console.log("Message:", userMessage);
+
+      // AUTO REPLY
+      await sendMessage(from, "Welcome to Hisabi Cash 💰");
+
+    }
+
+    res.sendStatus(200);
+  } catch (error) {
+    console.error("Error:", error);
+    res.sendStatus(500);
+  }
 });
+const axios = require("axios");
+
+async function sendMessage(to, text) {
+  await axios.post(
+    `https://graph.facebook.com/v18.0/${process.env.PHONE_NUMBER_ID}/messages`,
+    {
+      messaging_product: "whatsapp",
+      to: to,
+      type: "text",
+      text: { body: text },
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${process.env.WHATSAPP_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+    }
+  );
+}
 
 const PORT = process.env.PORT || 3000;
 
