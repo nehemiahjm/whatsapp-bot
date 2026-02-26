@@ -37,6 +37,17 @@ app.get("/", (req, res) => {
   res.send("Hisabi Cloud API Running 🚀");
 });
 
+/*
+==================================
+  RECEIVE MESSAGES
+==================================
+*/
+
+app.post("/webhook", (req, res) => {
+  console.log("Incoming Webhook:", JSON.stringify(req.body, null, 2));
+  res.sendStatus(200);
+});
+
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
