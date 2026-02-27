@@ -102,10 +102,15 @@ app.post("/webhook", async (req, res) => {
       console.log("Message:", userMessage);
 
       // AUTO REPLY
-      await pool.query(
-  "INSERT INTO users (phone) VALUES ($1) ON CONFLICT (phone) DO NOTHING",
-  [from]
-);
+     try {
+  await pool.query(
+    "INSERT INTO users (phone) VALUES ($1) ON CONFLICT (phone) DO NOTHING",
+    [from]
+  );
+} catch (dbError) {
+  console.error("DB Insert Error:", dbError.message);
+}
+// Always reply even if DB fails
       await sendMessage(from, "Welcome to Hisabi Cash 💰");
 
     }
