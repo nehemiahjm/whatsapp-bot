@@ -17,6 +17,22 @@ async function initDB() {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
+
+    await pool.query(`
+      DO $$
+      BEGIN
+        IF NOT EXISTS (
+          SELECT 1
+          FROM pg_constraint
+          WHERE conname = 'users_phone_unique'
+        ) THEN
+          ALTER TABLE users
+          ADD CONSTRAINT users_phone_unique UNIQUE (phone);
+        END IF;
+      END
+      $$;
+    `);
+
     console.log("Users table ready ✅");
   } catch (err) {
     console.error("DB Init Error:", err);
