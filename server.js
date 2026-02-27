@@ -1,4 +1,29 @@
 require("dotenv").config();
+const { Pool } = require("pg");
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false,
+  },
+});
+
+async function initDB() {
+  try {
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS users (
+        id SERIAL PRIMARY KEY,
+        phone VARCHAR(20) UNIQUE NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+    console.log("Users table ready ✅");
+  } catch (err) {
+    console.error("DB Init Error:", err);
+  }
+}
+
+initDB();
 const express = require("express");
 
 const app = express();
@@ -61,6 +86,10 @@ app.post("/webhook", async (req, res) => {
       console.log("Message:", userMessage);
 
       // AUTO REPLY
+      await pool.query(
+  "INSERT INTO users (phone) VALUES ($1) ON CONFLICT (phone) DO NOTHING",
+  [from]
+);
       await sendMessage(from, "Welcome to Hisabi Cash 💰");
 
     }
