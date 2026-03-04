@@ -87,6 +87,8 @@ CREATE TABLE users (
   language VARCHAR(20),
   state VARCHAR(50) DEFAULT 'new_user',
   plan VARCHAR(20),
+  trial_start TIMESTAMP,
+  trial_end TIMESTAMP,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 `);
@@ -186,6 +188,35 @@ app.post("/webhook", async (req, res) => {
   );
 
   return res.sendStatus(200);
+}
+if (user && user.state === "choose_plan") {
+
+  if (userMessage === "1") {
+
+    const trialStart = new Date();
+    const trialEnd = new Date();
+    trialEnd.setDate(trialEnd.getDate() + 7);
+
+    await pool.query(
+      `UPDATE users
+       SET plan = $1,
+           trial_start = $2,
+           trial_end = $3,
+           state = $4
+       WHERE phone = $5`,
+      ["trial", trialStart, trialEnd, "active_user", from]
+    );
+
+    await sendMessage(from,
+`✅ Your 7 Day Free Trial is activated!
+
+You now have full access to Hisabi Cash.
+
+Type *menu* to open your dashboard.`);
+
+    return res.sendStatus(200);
+  }
+
 }
 
       console.log("User:", from);
