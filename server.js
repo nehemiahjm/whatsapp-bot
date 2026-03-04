@@ -137,6 +137,44 @@ Choose your language:
 
   return res.sendStatus(200);
 }
+if (user.state === "choosing_language") {
+
+  let language;
+
+  if (userMessage === "1") language = "english";
+  else if (userMessage === "2") language = "roman_urdu";
+  else if (userMessage === "3") language = "urdu";
+  else {
+    await sendMessage(from, "Please reply with 1, 2, or 3 to choose language.");
+    return res.sendStatus(200);
+  }
+
+  await pool.query(
+    "UPDATE users SET language = $1, state = $2 WHERE phone = $3",
+    [language, "choose_plan", from]
+  );
+
+  await sendMessage(from,
+`Hisabi Cash helps you manage your shop easily.
+
+You can record:
+• Sales
+• Expenses
+• Inventory
+• Udhaar
+• Reports`
+  );
+
+  await sendMessage(from,
+`Choose your plan:
+
+1 7 Days Free Trial
+2 Monthly Plan - Rs 2499
+3 Yearly Plan`
+  );
+
+  return res.sendStatus(200);
+}
 } catch (dbError) {
   console.error("DB Insert Error:", dbError.message);
 }
