@@ -8,6 +8,59 @@ const pool = new Pool({
   },
 });
 
+const messages = {
+  english: {
+    intro: `Hisabi Cash helps you manage your shop easily.
+
+You can record:
+• Sales
+• Expenses
+• Inventory
+• Udhaar
+• Reports`,
+
+    plans: `Choose your plan:
+
+1 7 Days Free Trial
+2 Monthly Plan - Rs 2499 / month
+3 Yearly Plan - Rs 24,990 (Save 2 Months)`
+  },
+
+  roman_urdu: {
+    intro: `Hisabi Cash aapki shop ka hisaab asaani se manage karta hai.
+
+Aap record kar sakte hain:
+• Sale
+• Kharcha
+• Inventory
+• Udhaar
+• Reports`,
+
+    plans: `Apna plan choose karein:
+
+1 7 Din Free Trial
+2 Monthly Plan - Rs 2499 / month
+3 Yearly Plan - Rs 24,990 (2 Mahinay Free)`
+  },
+
+  urdu: {
+    intro: `حسابی کیش آپ کی دکان کا حساب آسانی سے منظم کرتا ہے۔
+
+آپ ریکارڈ کر سکتے ہیں:
+• سیلز
+• اخراجات
+• انوینٹری
+• ادھار
+• رپورٹس`,
+
+    plans: `اپنا پلان منتخب کریں:
+
+1 سات دن کا فری ٹرائل
+2 ماہانہ پلان - 2499 روپے
+3 سالانہ پلان - 24,990 روپے (دو ماہ مفت)`
+  }
+};
+
 async function initDB() {
   try {
     await pool.query(`
@@ -102,6 +155,23 @@ app.post("/webhook", async (req, res) => {
       const message = body.entry[0].changes[0].value.messages[0];
       const from = message.from;
       const userMessage = message.text?.body;
+      if (userMessage.toLowerCase() === "language") {
+
+  await sendMessage(from,
+`Choose your language:
+
+1 English
+2 Roman Urdu
+3 Urdu`
+  );
+
+  await pool.query(
+    "UPDATE users SET state = $1 WHERE phone = $2",
+    ["choosing_language", from]
+  );
+
+  return res.sendStatus(200);
+}
 
       console.log("User:", from);
       console.log("Message:", userMessage);
@@ -137,7 +207,7 @@ Choose your language:
 
   return res.sendStatus(200);
 }
-if (user.state === "choosing_language") {
+if (user && user.state === "choosing_language") {
 
   let language;
 
@@ -154,25 +224,8 @@ if (user.state === "choosing_language") {
     [language, "choose_plan", from]
   );
 
-  await sendMessage(from,
-`Hisabi Cash helps you manage your shop easily.
-
-You can record:
-• Sales
-• Expenses
-• Inventory
-• Udhaar
-• Reports`
-  );
-
-  await sendMessage(from,
-`Choose your plan:
-
-1 7 Days Free Trial
-2 Monthly Plan - Rs 2499
-3 Yearly Plan`
-  );
-
+  await sendMessage(from, messages[language].intro);
+  await sendMessage(from, messages[language].plans);
   return res.sendStatus(200);
 }
 } catch (dbError) {
