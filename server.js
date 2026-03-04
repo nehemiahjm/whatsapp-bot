@@ -112,6 +112,31 @@ app.post("/webhook", async (req, res) => {
     "INSERT INTO users (phone) VALUES ($1) ON CONFLICT (phone) DO NOTHING",
     [from]
   );
+  const userResult = await pool.query(
+    "SELECT * FROM users WHERE phone = $1",
+    [from]
+  );
+
+  let user = userResult.rows[0];
+if (!user || user.state === "new_user") {
+
+  await sendMessage(from,
+`Welcome to Hisabi Cash 💰
+
+Choose your language:
+
+1 English
+2 Roman Urdu
+3 Urdu`
+  );
+
+  await pool.query(
+    "UPDATE users SET state = $1 WHERE phone = $2",
+    ["choosing_language", from]
+  );
+
+  return res.sendStatus(200);
+}
 } catch (dbError) {
   console.error("DB Insert Error:", dbError.message);
 }
