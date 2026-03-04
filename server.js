@@ -19,11 +19,16 @@ You can record:
 • Udhaar
 • Reports`,
 
-    plans: `Choose your plan:
+    plans: `📦 Choose Your Plan
 
-1 7 Days Free Trial
-2 Monthly Plan - Rs 2499 / month
-3 Yearly Plan - Rs 24,990 (Save 2 Months)`
+1️⃣ 7 Days Free Trial
+
+2️⃣ Monthly Plan
+Rs 2499 / month
+
+3️⃣ Yearly Plan
+Rs 24,990
+(Save 2 Months)`
   },
 
   roman_urdu: {
@@ -36,11 +41,16 @@ Aap record kar sakte hain:
 • Udhaar
 • Reports`,
 
-    plans: `Apna plan choose karein:
+    plans: `📦 Apna Plan Choose Karein
 
-1 7 Din Free Trial
-2 Monthly Plan - Rs 2499 / month
-3 Yearly Plan - Rs 24,990 (2 Mahinay Free)`
+1️⃣ 7 Din Free Trial
+
+2️⃣ Monthly Plan
+Rs 2499 / month
+
+3️⃣ Yearly Plan
+Rs 24,990
+(2 Mahinay Free)`
   },
 
   urdu: {
@@ -53,11 +63,16 @@ Aap record kar sakte hain:
 • ادھار
 • رپورٹس`,
 
-    plans: `اپنا پلان منتخب کریں:
+   plans: `📦 اپنا پلان منتخب کریں
 
-1 سات دن کا فری ٹرائل
-2 ماہانہ پلان - 2499 روپے
-3 سالانہ پلان - 24,990 روپے (دو ماہ مفت)`
+1️⃣ سات دن کا فری ٹرائل
+
+2️⃣ ماہانہ پلان
+2499 روپے / مہینہ
+
+3️⃣ سالانہ پلان
+24,990 روپے
+(دو ماہ مفت)`
   }
 };
 
