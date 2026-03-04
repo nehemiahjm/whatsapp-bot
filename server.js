@@ -11,12 +11,14 @@ const pool = new Pool({
 async function initDB() {
   try {
     await pool.query(`
-      CREATE TABLE IF NOT EXISTS users (
-        id SERIAL PRIMARY KEY,
-        phone VARCHAR(20) UNIQUE NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      );
-    `);
+DROP TABLE IF EXISTS users;
+
+CREATE TABLE users (
+ id SERIAL PRIMARY KEY,
+ phone VARCHAR(20) UNIQUE NOT NULL,
+ created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+`);
 
     await pool.query(`
       DO $$
