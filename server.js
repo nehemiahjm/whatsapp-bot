@@ -172,6 +172,17 @@ app.post("/webhook", async (req, res) => {
       const message = body.entry[0].changes[0].value.messages[0];
       const from = message.from;
       const userMessage = message.text?.body;
+      await pool.query(
+"INSERT INTO users (phone) VALUES ($1) ON CONFLICT (phone) DO NOTHING",
+[from]
+);
+
+const userResult = await pool.query(
+"SELECT * FROM users WHERE phone = $1",
+[from]
+);
+
+const user = userResult.rows[0];
       if (userMessage.toLowerCase() === "language") {
 
   await sendMessage(from,
