@@ -229,11 +229,11 @@ Type *menu* to open your dashboard.`);
     [from]
   );
   const userResult = await pool.query(
-    "SELECT * FROM users WHERE phone = $1",
-    [from]
-  );
+"SELECT * FROM users WHERE phone = $1",
+[from]
+);
 
-  let user = userResult.rows[0];
+const user = userResult.rows[0];
 if (!user || user.state === "new_user") {
 
   await sendMessage(from,
