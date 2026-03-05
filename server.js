@@ -232,6 +232,74 @@ Type *menu* to open your dashboard.`);
 
       console.log("User:", from);
       console.log("Message:", userMessage);
+      // MENU COMMAND
+if (userMessage && userMessage.toLowerCase() === "menu") {
+
+  const lang = user.language || "english";
+
+  const menuMessages = {
+    english: `📊 Hisabi Cash Dashboard
+
+1️⃣ sale [amount] [item]
+Example: sale 500 chai
+
+2️⃣ expense [amount] [item]
+Example: expense 200 milk
+
+3️⃣ inventory [item] [quantity]
+Example: inventory sugar 5
+
+4️⃣ udhaar [name] [amount]
+Example: udhaar ali 1000
+
+5️⃣ report
+Example: report today
+
+Type *menu* anytime to see this again.`,
+
+    roman_urdu: `📊 Hisabi Cash Dashboard
+
+1️⃣ sale [amount] [item]
+Misal: sale 500 chai
+
+2️⃣ expense [amount] [item]
+Misal: expense 200 milk
+
+3️⃣ inventory [item] [quantity]
+Misal: inventory sugar 5
+
+4️⃣ udhaar [name] [amount]
+Misal: udhaar ali 1000
+
+5️⃣ report
+Misal: report today
+
+Dobara dekhne ke liye *menu* likhein.`,
+
+    urdu: `📊 ہسابی کیش ڈیش بورڈ
+
+1️⃣ فروخت [رقم] [آئٹم]
+مثال: فروخت 500 چائے
+
+2️⃣ خرچ [رقم] [آئٹم]
+مثال: خرچ 200 دودھ
+
+3️⃣ انوینٹری [آئٹم] [مقدار]
+مثال: انوینٹری چینی 5
+
+4️⃣ ادھار [نام] [رقم]
+مثال: ادھار علی 1000
+
+5️⃣ رپورٹ
+مثال: رپورٹ آج
+
+مینو دوبارہ دیکھنے کے لیے *menu* لکھیں۔`
+  };
+
+  await sendMessage(from, menuMessages[lang]);
+
+  return res.sendStatus(200);
+}
 
       // AUTO REPLY
      try {
