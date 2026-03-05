@@ -36,8 +36,8 @@ app.post("/webhook", async (req, res) => {
     const message =
       req.body.entry?.[0]?.changes?.[0]?.value?.messages?.[0];
 
-    if (!message) {
-      return res.sendStatus(200);
+    if (!message || message.type !== "text") {
+  return res.sendStatus(200);
     }
 
     const from = message.from;
@@ -46,7 +46,24 @@ app.post("/webhook", async (req, res) => {
     console.log("User:", from);
     console.log("Message:", text);
 
-    await sendMessage(from, "Welcome to Hisabi Cash 💰");
+    const userText = text.toLowerCase();
+
+if (
+  userText.includes("hi") ||
+  userText.includes("hello") ||
+  userText.includes("salam") ||
+  userText.includes("assalam") ||
+  userText.includes("start")
+) {
+
+  await sendMessage(from, "Welcome to Hisabi Cash 💰");
+
+  await sendMessage(
+    from,
+    "Choose your language:\n\n1️⃣ English\n2️⃣ Roman Urdu\n3️⃣ اردو"
+  );
+
+}
 
     res.sendStatus(200);
 
