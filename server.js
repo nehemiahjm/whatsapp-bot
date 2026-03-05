@@ -13,6 +13,23 @@ app.get("/", (req, res) => {
   res.send("Hisabi Cash Bot Running ✅");
 });
 
+app.get("/webhook", (req, res) => {
+
+  const verify_token = "hisabi_verify_token";
+
+  const mode = req.query["hub.mode"];
+  const token = req.query["hub.verify_token"];
+  const challenge = req.query["hub.challenge"];
+
+  if (mode && token === verify_token) {
+    console.log("Webhook Verified");
+    res.status(200).send(challenge);
+  } else {
+    res.sendStatus(403);
+  }
+
+});
+
 app.post("/webhook", async (req, res) => {
   try {
 
