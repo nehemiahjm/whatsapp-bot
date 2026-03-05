@@ -103,7 +103,7 @@ if (userText === "3") {
 
   // PLAN SELECTION
 
-if (text === "1") {
+if (userText === "1") {
 
 const startDate = new Date();
 const endDate = new Date();
@@ -122,7 +122,7 @@ from,
 return res.sendStatus(200);
 }
 
-if (text === "2") {
+if (userText === "2") {
 
 await sendMessage(
 from,
@@ -140,10 +140,10 @@ Steps:
 
 Our team will verify within 12-24 hours and activate your account.`
 );
-
+return res.sendStatus(200);
 }
 
-if (text === "3") {
+if (userText === "3") {
 
 await sendMessage(
 from,
@@ -161,7 +161,7 @@ Steps:
 
 Your access will be activated within 12-24 hours after verification.`
 );
-
+return res.sendStatus(200);
 }
 
 // MENU COMMAND
@@ -199,10 +199,10 @@ if (
     from,
     "Choose your language:\n\n1️⃣ English\n2️⃣ Roman Urdu\n3️⃣ اردو"
   );
-
+return res.sendStatus(200);
 }
 
-    res.sendStatus(200);
+
 
   } catch (error) {
     console.error(error);
