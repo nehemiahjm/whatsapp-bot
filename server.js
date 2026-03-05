@@ -52,125 +52,304 @@ return res.sendStatus(200);
     console.log("Message:", text);
 
     const userText = text.toLowerCase();
+    const lang = userLanguage[from] || "english";
 
-   // LANGUAGE SELECTION
+  // LANGUAGE SELECTION
 
 if (userText === "1") {
 
-  await sendMessage(from, "Language set to English ✅");
+userLanguage[from] = "english";
 
-  await sendMessage(
-    from,
-    "Hisabi Cash helps shopkeepers manage their shop accounts easily.\n\nYou can record:\n• Sales\n• Expenses\n• Inventory\n• Udhar\n• Reports"
-  );
+await sendMessage(from, "Language set to English ✅");
 
-  await sendMessage(
-    from,
-    "Choose your plan:\n\n11️⃣ 7 Day Free Trial\n22️⃣ Monthly Plan – Rs 2499 / month\n33️⃣ Yearly Plan – Rs 24,990 (2 months free)"
-  );
+await sendMessage(
+from,
+`Hisabi Cash helps shopkeepers manage their shop accounts easily.
 
-  return res.sendStatus(200);
+You can record:
+• Sales
+• Expenses
+• Inventory
+• Udhar
+• Reports`
+);
+
+await sendMessage(
+from,
+`Choose your plan:
+
+11  Free Trial — 7 Days
+
+22  Monthly Plan
+Rs 2499 / month
+
+33  Yearly Plan
+Rs 24,990
+(2 months free)
+
+Reply with 11, 22 or 33`
+);
+
+return res.sendStatus(200);
 }
+
 
 
 if (userText === "2") {
 
-  await sendMessage(from, "Zubaan Roman Urdu set ho gayi ✅");
+userLanguage[from] = "roman";
 
-  await sendMessage(
-    from,
-    "Hisabi Cash shopkeepers ko apni shop ka hisaab aasani se manage karne mein madad karta hai.\n\nAap record kar sakte hain:\n• Sale\n• Kharcha\n• Inventory\n• Udhar\n• Reports"
-  );
+await sendMessage(from, "Zubaan Roman Urdu set ho gayi ✅");
 
-  await sendMessage(
-    from,
-    "Apna plan choose karein:\n\n11️⃣ 7 Din Free Trial\n22️⃣ Monthly Plan – Rs 2499 / month\n33️⃣ Yearly Plan – Rs 24,990 (2 mahine free)"
-  );
+await sendMessage(
+from,
+`Hisabi Cash shopkeepers ko apni shop ka hisaab asaani se manage karne mein madad karta hai.
 
-  return res.sendStatus(200);
+Aap record kar sakte hain:
+• Sale
+• Kharcha
+• Inventory
+• Udhar
+• Reports`
+);
+
+await sendMessage(
+from,
+`Apna plan choose karein:
+
+11  7 Din Free Trial
+
+22  Monthly Plan
+Rs 2499 / month
+
+33  Yearly Plan
+Rs 24,990
+(2 mahine free)
+
+Reply with 11, 22 ya 33`
+);
+
+return res.sendStatus(200);
 }
+
 
 
 if (userText === "3") {
 
-  await sendMessage(from, "زبان اردو منتخب کر لی گئی ✅");
+userLanguage[from] = "urdu";
 
-  await sendMessage(
-    from,
-    "حسابی کیش دکانداروں کو اپنی دکان کا حساب آسانی سے منظم کرنے میں مدد دیتا ہے۔\n\nآپ یہ ریکارڈ کر سکتے ہیں:\n• سیلز\n• اخراجات\n• انوینٹری\n• ادھار\n• رپورٹس"
-  );
+await sendMessage(from, "زبان اردو منتخب کر لی گئی ✅");
 
-  await sendMessage(
-    from,
-    "اپنا پلان منتخب کریں:\n\n11️⃣ 7 دن فری ٹرائل\n22️⃣ ماہانہ پلان – 2499 روپے / ماہ\n33️⃣ سالانہ پلان – 24,990 روپے (2 ماہ فری)"
-  );
+await sendMessage(
+from,
+`حسابی کیش دکانداروں کو اپنی دکان کا حساب آسانی سے سنبھالنے میں مدد دیتا ہے۔
 
-  return res.sendStatus(200);
+آپ ریکارڈ کر سکتے ہیں:
+• سیل
+• خرچہ
+• انوینٹری
+• ادھار
+• رپورٹس`
+);
+
+await sendMessage(
+from,
+`اپنا پلان منتخب کریں:
+
+11  سات دن فری ٹرائل
+
+22  ماہانہ پلان
+2499 روپے
+
+33  سالانہ پلان
+24,990 روپے
+(2 مہینے فری)
+
+جو پلان چاہیے اس کا نمبر بھیجیں`
+);
+
+return res.sendStatus(200);
 }
 
-  // PLAN SELECTION
+ // PLAN SELECTION
 
 if (userText === "11") {
 
-  const startDate = new Date();
-  const endDate = new Date();
+const startDate = new Date();
+const endDate = new Date();
 
-  endDate.setDate(startDate.getDate() + 7);
+endDate.setDate(startDate.getDate() + 7);
 
-  await sendMessage(
-    from,
-    `🎉 Congratulations!\n\nYour 7 Day Free Trial has started.\n\nStart Date: ${startDate.toDateString()}\nEnd Date: ${endDate.toDateString()}`
-  );
+if (lang === "english") {
 
-  await sendMessage(
-    from,
-    "Type *menu* anytime to open the dashboard."
-  );
+await sendMessage(
+from,
+`Congratulations!
 
-  return res.sendStatus(200);
+Your 7 Day Free Trial has started.
+
+Start Date: ${startDate.toDateString()}
+End Date: ${endDate.toDateString()}`
+);
+
+await sendMessage(from, "Type MENU anytime to open the dashboard.");
+
 }
+
+if (lang === "roman") {
+
+await sendMessage(
+from,
+`Mubarak ho!
+
+Aapka 7 din ka Free Trial shuru ho gaya hai.
+
+Start Date: ${startDate.toDateString()}
+End Date: ${endDate.toDateString()}`
+);
+
+await sendMessage(from, "Dashboard kholne ke liye MENU likhein.");
+}
+
+if (lang === "urdu") {
+
+await sendMessage(
+from,
+`مبارک ہو!
+
+آپ کا 7 دن کا فری ٹرائل شروع ہو گیا ہے۔
+
+شروع ہونے کی تاریخ: ${startDate.toDateString()}
+اختتام کی تاریخ: ${endDate.toDateString()}`
+);
+
+await sendMessage(from, "ڈیش بورڈ کھولنے کے لئے MENU لکھیں۔");
+
+}
+
+return res.sendStatus(200);
+}
+
 
 
 if (userText === "22") {
 
-  await sendMessage(
-    from,
-    "Monthly Plan Selected ✅\n\nPlease send payment via:\n\nJazzCash / Easypaisa\n03163154140\n\nSteps:\n1️⃣ Send Rs 2499\n2️⃣ Take screenshot of transaction\n3️⃣ Send screenshot in this chat\n\nOur team will verify within 12–24 hours."
-  );
+if (lang === "english") {
 
-  return res.sendStatus(200);
+await sendMessage(
+from,
+`Monthly Plan Selected
+
+Send payment via:
+
+JazzCash / Easypaisa
+03163154140
+
+Amount: Rs 2499
+
+Send payment screenshot here.`
+);
+
 }
+
+if (lang === "roman") {
+
+await sendMessage(
+from,
+`Monthly Plan select ho gaya hai.
+
+Payment bhejein:
+
+JazzCash / Easypaisa
+03163154140
+
+Amount: Rs 2499
+
+Screenshot yahan bhejein.`
+);
+
+}
+
+if (lang === "urdu") {
+
+await sendMessage(
+from,
+`ماہانہ پلان منتخب کر لیا گیا ہے۔
+
+ادائیگی بھیجیں:
+
+JazzCash / Easypaisa
+03163154140
+
+رقم: 2499 روپے
+
+اسکرین شاٹ یہاں بھیجیں۔`
+);
+
+}
+
+return res.sendStatus(200);
+}
+
 
 
 if (userText === "33") {
 
-  await sendMessage(
-    from,
-    "Yearly Plan Selected ✅\n\nPlease send payment via:\n\nJazzCash / Easypaisa\n03163154140\n\nSteps:\n1️⃣ Send Rs 24,990\n2️⃣ Take screenshot of transaction\n3️⃣ Send screenshot in this chat\n\nOur team will verify within 12–24 hours."
-  );
+if (lang === "english") {
 
-  return res.sendStatus(200);
+await sendMessage(
+from,
+`Yearly Plan Selected
+
+Amount: Rs 24,990
+
+Send payment to:
+
+JazzCash / Easypaisa
+03163154140
+
+Send screenshot after payment.`
+);
+
 }
 
-// MENU COMMAND
+if (lang === "roman") {
 
-if (userText === "menu") {
+await sendMessage(
+from,
+`Yearly Plan select ho gaya hai.
 
-  await sendMessage(
-    from,
-    `📊 Hisabi Cash Dashboard
+Amount: Rs 24,990
 
-1️⃣ Record Sale
-2️⃣ Record Expense
-3️⃣ Inventory
-4️⃣ Reports
-5️⃣ Subscription
-6️⃣ Change Language
+Payment bhejein:
 
-Type the number of the option you want.`
-  );
+JazzCash / Easypaisa
+03163154140
 
-  return res.sendStatus(200);
+Screenshot bhejein.`
+);
+
+}
+
+if (lang === "urdu") {
+
+await sendMessage(
+from,
+`سالانہ پلان منتخب کر لیا گیا ہے۔
+
+رقم: 24,990 روپے
+
+ادائیگی بھیجیں:
+
+JazzCash / Easypaisa
+03163154140
+
+اسکرین شاٹ بھیجیں۔`
+);
+
+}
+
+return res.sendStatus(200);
 }
 
 // GREETING COMMAND
