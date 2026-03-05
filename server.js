@@ -51,15 +51,51 @@ app.post("/webhook", async (req, res) => {
     // LANGUAGE SELECTION
 
 if (text === "1") {
+
   await sendMessage(from, "Language set to English ✅");
+
+  await sendMessage(
+    from,
+    "Hisabi Cash helps shopkeepers manage their shop accounts easily.\n\nYou can record:\n• Sales\n• Expenses\n• Inventory\n• Udhar\n• Reports"
+  );
+
+  await sendMessage(
+    from,
+    "Choose your plan:\n\n1️⃣ 7 Day Free Trial\n2️⃣ Monthly Plan – Rs 2499 / month\n3️⃣ Yearly Plan – Rs 24,990 (2 months free)"
+  );
+
 }
 
 if (text === "2") {
+
   await sendMessage(from, "Zubaan Roman Urdu set ho gayi ✅");
+
+  await sendMessage(
+    from,
+    "Hisabi Cash shopkeepers ko apni shop ka hisaab asaani se manage karne mein madad karta hai.\n\nAap record kar sakte hain:\n• Sale\n• Kharcha\n• Inventory\n• Udhar\n• Reports"
+  );
+
+  await sendMessage(
+    from,
+    "Apna plan choose karein:\n\n1️⃣ 7 Din Free Trial\n2️⃣ Monthly Plan – Rs 2499 / month\n3️⃣ Yearly Plan – Rs 24,990 (2 mahine free)"
+  );
+
 }
 
 if (text === "3") {
+
   await sendMessage(from, "زبان اردو منتخب کر لی گئی ✅");
+
+  await sendMessage(
+    from,
+    "حصابی کیش دکانداروں کو اپنی دکان کا حساب آسانی سے منظم کرنے میں مدد دیتا ہے۔\n\nآپ ریکارڈ کر سکتے ہیں:\n• سیلز\n• خرچہ\n• انوینٹری\n• ادھار\n• رپورٹس"
+  );
+
+  await sendMessage(
+    from,
+    "اپنا پلان منتخب کریں:\n\n1️⃣ 7 دن فری ٹرائل\n2️⃣ ماہانہ پلان – 2499 روپے\n3️⃣ سالانہ پلان – 24,990 روپے (2 مہینے فری)"
+  );
+
 }
 
 if (
