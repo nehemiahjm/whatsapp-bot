@@ -280,8 +280,13 @@ const user = userResult.rows[0];
 2 Roman Urdu
 3 Urdu`
   );
-// PLAN SELECTION
-if (user && user.state === "choose_plan") {
+
+
+}
+  await pool.query(
+"UPDATE users SET state = $1 WHERE phone = $2",
+["choose_plan", from]
+);
 
 if (userMessage === "1") {
 
@@ -307,52 +312,8 @@ You now have full access to Hisabi Cash.
 Type *menu* to open your dashboard.`);
 
 return res.sendStatus(200);
-}
-
-if (userMessage === "2" || userMessage === "3") {
-
-const lang = user.language || "english";
-
-await sendMessage(from, paymentMessages[lang]);
-
-return res.sendStatus(200);
-}
 
 }
-  await pool.query(
-    "UPDATE users SET state = $1 WHERE phone = $2",
-    ["choosing_language", from]
-  );
-
-  return res.sendStatus(200);
-}
-if (user.state === "choose_plan") {
-
-  if (userMessage === "1") {
-
-    const trialStart = new Date();
-    const trialEnd = new Date();
-    trialEnd.setDate(trialEnd.getDate() + 7);
-
-    await pool.query(
-      `UPDATE users
-       SET plan = $1,
-           trial_start = $2,
-           trial_end = $3,
-           state = $4
-       WHERE phone = $5`,
-      ["trial", trialStart, trialEnd, "active_user", from]
-    );
-
-    await sendMessage(from,
-`✅ Your 7 Day Free Trial is activated!
-
-You now have full access to Hisabi Cash.
-
-Type *menu* to open your dashboard.`);
-
-    return res.sendStatus(200);
-  }
 
 }
 
@@ -492,9 +453,7 @@ const updatedUser = updatedUserResult.rows[0];
       await sendMessage(from, "Welcome to Hisabi Cash 💰");
 
     }
-
-    res.sendStatus(200);
-  } catch (error) {
+ catch (error) {
     console.error("Error:", error);
     res.sendStatus(500);
   }
