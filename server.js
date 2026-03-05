@@ -248,12 +248,13 @@ app.get("/", (req, res) => {
 */
 
 app.post("/webhook", async (req, res) => {
-    const message = req.body.entry?.[0]?.changes?.[0]?.value?.messages?.[0];
+    const entry = req.body.entry?.[0]?.changes?.[0]?.value;
 
-if (!message) {
-return res.sendStatus(200);
+if (!entry || !entry.messages) {
+    return res.sendStatus(200);
 }
 
+const message = entry.messages[0];
 const from = message.from;
 const userMessage = message.text?.body?.trim();
   try {
@@ -458,7 +459,7 @@ const updatedUser = updatedUserResult.rows[0];
   console.error("DB Insert Error:", dbError.message);
 }
 // Always reply even if DB fails
-      await sendMessage(from, "Welcome to Hisabi Cash 💰");
+
 
     }
  catch (error) {
