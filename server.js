@@ -288,7 +288,7 @@ const user = userResult.rows[0];
 
   return res.sendStatus(200);
 }
-if (user && user.state === "choose_plan") {
+if (user.state === "choose_plan") {
 
   if (userMessage === "1") {
 
@@ -436,6 +436,12 @@ if (user && user.state === "choosing_language") {
     "UPDATE users SET language = $1, state = $2 WHERE phone = $3",
     [language, "choose_plan", from]
   );
+  const updatedUserResult = await pool.query(
+"SELECT * FROM users WHERE phone = $1",
+[from]
+);
+
+const updatedUser = updatedUserResult.rows[0];
 
   await sendMessage(from, messages[language].intro);
   await sendMessage(from, messages[language].plans);
