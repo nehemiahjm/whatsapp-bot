@@ -7,7 +7,95 @@ const pool = new Pool({
     rejectUnauthorized: false,
   },
 });
+const paymentMessages = {
 
+english: `💳 Subscription Payment
+
+To activate your subscription please send payment to this number using:
+
+• JazzCash
+• EasyPaisa
+
+📱 Payment Number:
+03163154140
+
+Plans:
+
+Monthly Plan
+Rs 2499 / month
+
+Yearly Plan
+Rs 24,990 / year
+(Save 2 Months)
+
+After making the payment:
+
+1️⃣ Take a screenshot of the payment receipt  
+2️⃣ Send the screenshot in this chat
+
+Our team will verify your payment within 24 hours.
+
+Once verified, your access will be activated.
+
+⚠️ Disclaimer:
+Please send payment only to the number mentioned above.`,
+
+roman_urdu: `💳 Subscription Payment
+
+Apni subscription activate karne ke liye payment is number par bhejein:
+
+• JazzCash
+• EasyPaisa
+
+📱 Payment Number:
+03163154140
+
+Plans:
+
+Monthly Plan
+Rs 2499 / month
+
+Yearly Plan
+Rs 24,990 / saal
+(2 mahine free)
+
+Payment karne ke baad:
+
+1️⃣ Payment ka screenshot lein  
+2️⃣ Isi chat mein screenshot bhej dein
+
+Hamari team 24 ghanton ke andar payment verify karegi.
+
+Verification ke baad aapka access activate kar diya jayega.`,
+
+urdu: `💳 سبسکرپشن ادائیگی
+
+اپنی سبسکرپشن فعال کرنے کے لیے اس نمبر پر ادائیگی کریں:
+
+• جاز کیش
+• ایزی پیسہ
+
+📱 ادائیگی نمبر:
+03163154140
+
+پلانز:
+
+ماہانہ پلان
+2499 روپے فی مہینہ
+
+سالانہ پلان
+24,990 روپے فی سال
+(2 ماہ مفت)
+
+ادائیگی کرنے کے بعد:
+
+1️⃣ رسید کا اسکرین شاٹ لیں  
+2️⃣ اسی چیٹ میں اسکرین شاٹ بھیج دیں
+
+ہماری ٹیم 24 گھنٹوں میں ادائیگی کی تصدیق کرے گی۔
+
+تصدیق کے بعد آپ کی رسائی فعال کر دی جائے گی۔`
+};
 const messages = {
   english: {
     intro: `Hisabi Cash helps you manage your shop easily.
