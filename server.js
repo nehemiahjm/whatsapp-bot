@@ -33,12 +33,17 @@ app.get("/webhook", (req, res) => {
 app.post("/webhook", async (req, res) => {
   try {
 
-    const message =
-      req.body.entry?.[0]?.changes?.[0]?.value?.messages?.[0];
+    const value = req.body.entry?.[0]?.changes?.[0]?.value;
 
-    if (!message || message.type !== "text") {
+if (!value.messages) {
   return res.sendStatus(200);
-    }
+}
+
+const message = value.messages[0];
+
+if (message.from === value.metadata.phone_number_id) {
+  return res.sendStatus(200);
+}
 
     const from = message.from;
     const text = message.text.body;
@@ -50,7 +55,7 @@ app.post("/webhook", async (req, res) => {
 
     // LANGUAGE SELECTION
 
-if (text === "1") {
+if (userText === "1") {
 
   await sendMessage(from, "Language set to English ✅");
 
@@ -66,7 +71,7 @@ if (text === "1") {
 
 }
 
-if (text === "2") {
+if (userText === "2") {
 
   await sendMessage(from, "Zubaan Roman Urdu set ho gayi ✅");
 
@@ -82,7 +87,7 @@ if (text === "2") {
 
 }
 
-if (text === "3") {
+if (userText === "3") {
 
   await sendMessage(from, "زبان اردو منتخب کر لی گئی ✅");
 
@@ -96,6 +101,88 @@ if (text === "3") {
     "اپنا پلان منتخب کریں:\n\n1️⃣ 7 دن فری ٹرائل\n2️⃣ ماہانہ پلان – 2499 روپے\n3️⃣ سالانہ پلان – 24,990 روپے (2 مہینے فری)"
   );
 
+  // PLAN SELECTION
+
+if (text === "1") {
+
+const startDate = new Date();
+const endDate = new Date();
+
+endDate.setDate(startDate.getDate() + 7);
+
+await sendMessage(
+from,
+`🎉 Congratulations!\n\nYour 7 Day Free Trial has started.\n\nStart Date: ${startDate.toDateString()}\nEnd Date: ${endDate.toDateString()}`
+);
+await sendMessage(
+from,
+`Type *menu* anytime to open the dashboard.`
+);
+
+return res.sendStatus(200);
+}
+
+if (text === "2") {
+
+await sendMessage(
+from,
+`Monthly Plan Selected ✅
+
+Please send payment via:
+
+JazzCash / Easypaisa
+03163154140
+
+Steps:
+1️⃣ Send Rs 2499
+2️⃣ Take screenshot of transaction
+3️⃣ Send screenshot in this chat
+
+Our team will verify within 12-24 hours and activate your account.`
+);
+
+}
+
+if (text === "3") {
+
+await sendMessage(
+from,
+`Yearly Plan Selected ✅
+
+Please send payment via:
+
+JazzCash / Easypaisa
+03163154140
+
+Steps:
+1️⃣ Send Rs 24,990
+2️⃣ Take screenshot of transaction
+3️⃣ Send screenshot here
+
+Your access will be activated within 12-24 hours after verification.`
+);
+
+}
+
+// MENU COMMAND
+
+if (userText === "menu") {
+
+await sendMessage(
+from,
+`📊 Hisabi Cash Dashboard
+
+1️⃣ Record Sale
+2️⃣ Record Expense
+3️⃣ Inventory
+4️⃣ Reports
+5️⃣ Subscription
+6️⃣ Change Language`
+);
+
+return res.sendStatus(200);
+
+}
 }
 
 if (
