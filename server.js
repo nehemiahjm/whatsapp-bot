@@ -248,6 +248,14 @@ app.get("/", (req, res) => {
 */
 
 app.post("/webhook", async (req, res) => {
+    const message = req.body.entry?.[0]?.changes?.[0]?.value?.messages?.[0];
+
+if (!message) {
+return res.sendStatus(200);
+}
+
+const from = message.from;
+const userMessage = message.text?.body?.trim();
   try {
     const body = req.body;
 
