@@ -48,6 +48,20 @@ app.post("/webhook", async (req, res) => {
 
     const userText = text.toLowerCase();
 
+    // LANGUAGE SELECTION
+
+if (text === "1") {
+  await sendMessage(from, "Language set to English ✅");
+}
+
+if (text === "2") {
+  await sendMessage(from, "Zubaan Roman Urdu set ho gayi ✅");
+}
+
+if (text === "3") {
+  await sendMessage(from, "زبان اردو منتخب کر لی گئی ✅");
+}
+
 if (
   userText.includes("hi") ||
   userText.includes("hello") ||
