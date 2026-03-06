@@ -1,31 +1,34 @@
-const axios = require("axios");
+const axios = require("axios")
 
 async function sendMessage(to, text) {
 
-    try {
+try {
 
-        await axios.post(
-            `https://graph.facebook.com/v18.0/${process.env.PHONE_NUMBER_ID}/messages`,
-            {
-                messaging_product: "whatsapp",
-                to: to,
-                type: "text",
-                text: {
-                    body: text
-                }
-            },
-            {
-                headers: {
-                    Authorization: `Bearer ${process.env.WHATSAPP_TOKEN}`,
-                    "Content-Type": "application/json"
-                }
-            }
-        );
+await axios.post(
+`https://graph.facebook.com/v18.0/${process.env.PHONE_NUMBER_ID}/messages`,
+{
+messaging_product: "whatsapp",
+to: to,
+type: "text",
+text: {
+body: text
+}
+},
+{
+headers: {
+Authorization: `Bearer ${process.env.WHATSAPP_TOKEN}`,
+"Content-Type": "application/json"
+}
+}
+)
 
-    } catch (error) {
-        console.error("WhatsApp send error:", error.response?.data || error.message);
-    }
+} catch (error) {
+
+console.error("WhatsApp send error:",
+error.response?.data || error.message)
 
 }
 
-module.exports = { sendMessage };
+}
+
+module.exports = { sendMessage }
