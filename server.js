@@ -6,16 +6,20 @@ const { sendMessage } = require("./whatsapp");
 const app = express();
 app.use(express.json());
 
-const TOKEN = process.env.WHATSAPP_TOKEN;
+/* MEMORY STORAGE */
 
 // memory stores
 const userLanguage = {};
 const userState = {};
 const userData = {};
 
+/* ROOT */
+
 app.get("/", (req, res) => {
   res.send("Hisabi Cash Bot Running ✅");
 });
+
+/* WEBHOOK VERIFICATION */
 
 app.get("/webhook", (req, res) => {
 
@@ -34,20 +38,20 @@ app.get("/webhook", (req, res) => {
 
 });
 
+/* MAIN BOT */
+
 app.post("/webhook", async (req, res) => {
 
 try {
 
 const value = req.body.entry?.[0]?.changes?.[0]?.value;
 
-if (!value.messages) {
-  return res.sendStatus(200);
-}
+if (!value.messages) return res.sendStatus(200);
 
 const message = value.messages[0];
 
 if (message.from === value.metadata.display_phone_number) {
-  return res.sendStatus(200);
+return res.sendStatus(200);
 }
 
 const from = message.from;
@@ -71,8 +75,7 @@ userText.includes("assalam") ||
 userText.includes("start")
 ) {
 
-await sendMessage(from,
-`👋 *Welcome to Hisabi Cash*
+await sendMessage(from, `👋 *Welcome to Hisabi Cash*
 
 ━━━━━━━━━━━━━━━
 
@@ -88,102 +91,103 @@ return res.sendStatus(200)
 
 }
 
+/* LANGUAGE COMMAND */
 
+if(userText === "language"){
+
+await sendMessage(from, `🌐 *Language Settings*
+
+Choose your language:
+
+1️⃣ English  
+2️⃣ Roman Urdu  
+3️⃣ اردو`)
+
+return res.sendStatus(200)
+
+}
 
 /* LANGUAGE SELECTION */
 
-if(userText==="1"){
+if(userText === "1"){
 
-userLanguage[from]="english"
-userState[from]="purpose"
+userLanguage[from] = "english"
+userState[from] = "purpose"
 
-await sendMessage(from,"✅ Language Selected: English")
+await sendMessage(from,"✅ Language set to English.")
 
-await sendMessage(from,
-`💼 *About Hisabi Cash*
+await sendMessage(from,`💼 *About Hisabi Cash*
 
-Hisabi Cash is your smart financial assistant inside WhatsApp.
+Hisabi Cash helps you manage your money easily.
 
 You can:
 
-• Track sales & expenses  
-• Manage customer credit (Khata)  
-• Monitor personal spending  
-• Save bills & receipts  
-• Generate financial reports`)
+• Track sales  
+• Record expenses  
+• Manage udhar / khata  
+• Monitor spending  
+• Generate reports`)
 
-await sendMessage(from,
-`🚀 *Getting Started*
+await sendMessage(from,`🚀 *Getting Started*
 
 How will you use Hisabi Cash?
 
 Type:
 
-PERSONAL
+PERSONAL  
 BUSINESS`)
 
 return res.sendStatus(200)
+
 }
 
+if(userText === "2"){
 
+userLanguage[from] = "roman"
+userState[from] = "purpose"
 
-if(userText==="2"){
+await sendMessage(from,"✅ Zubaan Roman Urdu set ho gayi.")
 
-userLanguage[from]="roman"
-userState[from]="purpose"
+await sendMessage(from,`💼 Hisabi Cash aapka WhatsApp financial assistant hai.`)
 
-await sendMessage(from,"✅ Zubaan Roman Urdu select ho gayi")
+await sendMessage(from,`🚀 Setup shuru karein
 
-await sendMessage(from,
-`💼 Hisabi Cash kya hai?
-
-Hisabi Cash aapka financial assistant hai jo WhatsApp par kaam karta hai.`)
-
-await sendMessage(from,
-`Shuru karne ke liye command bhejein:
-
-PERSONAL
+PERSONAL  
 BUSINESS`)
 
 return res.sendStatus(200)
+
 }
 
+if(userText === "3"){
 
+userLanguage[from] = "urdu"
+userState[from] = "purpose"
 
-if(userText==="3"){
+await sendMessage(from,"✅ زبان اردو منتخب ہو گئی۔")
 
-userLanguage[from]="urdu"
-userState[from]="purpose"
+await sendMessage(from,`💼 حسابی کیش آپ کا مالی معاون ہے جو واٹس ایپ پر کام کرتا ہے۔`)
 
-await sendMessage(from,"✅ زبان اردو منتخب ہو گئی")
+await sendMessage(from,`🚀 سیٹ اپ شروع کریں
 
-await sendMessage(from,
-`💼 حسابی کیش کیا ہے؟
-
-حسابی کیش آپ کا مالی معاون ہے جو واٹس ایپ پر کام کرتا ہے۔`)
-
-await sendMessage(from,
-`شروع کرنے کے لیے لکھیں:
-
-PERSONAL
+PERSONAL  
 BUSINESS`)
 
 return res.sendStatus(200)
+
 }
 
 
 
 /* PURPOSE */
 
-if(userState[from]==="purpose"){
+if(userState[from] === "purpose"){
 
-userData[from]={type:userText}
+userData[from] = { type: userText }
 
-userState[from]="name"
+userState[from] = "name"
 
-if(lang==="english") await sendMessage(from,"👤 What is your name?")
-if(lang==="roman") await sendMessage(from,"👤 Aapka naam kya hai?")
-if(lang==="urdu") await sendMessage(from,"👤 آپ کا نام کیا ہے؟")
+await sendMessage(from,"👤 What is your name?")
 
 return res.sendStatus(200)
 
@@ -193,14 +197,12 @@ return res.sendStatus(200)
 
 /* NAME */
 
-if(userState[from]==="name"){
+if(userState[from] === "name"){
 
-userData[from].name=text
-userState[from]="occupation"
+userData[from].name = text
+userState[from] = "occupation"
 
-if(lang==="english") await sendMessage(from,"💼 What is your occupation?")
-if(lang==="roman") await sendMessage(from,"💼 Aap kya karte hain?")
-if(lang==="urdu") await sendMessage(from,"💼 آپ کیا کرتے ہیں؟")
+await sendMessage(from,"💼 What is your occupation?")
 
 return res.sendStatus(200)
 
@@ -210,14 +212,12 @@ return res.sendStatus(200)
 
 /* OCCUPATION */
 
-if(userState[from]==="occupation"){
+if(userState[from] === "occupation"){
 
-userData[from].occupation=text
-userState[from]="email"
+userData[from].occupation = text
+userState[from] = "email"
 
-if(lang==="english") await sendMessage(from,"📧 Please share your email address.")
-if(lang==="roman") await sendMessage(from,"📧 Apna email address bhejein.")
-if(lang==="urdu") await sendMessage(from,"📧 براہ کرم اپنا ای میل ایڈریس بھیجیں۔")
+await sendMessage(from,"📧 Please share your email address.")
 
 return res.sendStatus(200)
 
@@ -227,29 +227,27 @@ return res.sendStatus(200)
 
 /* EMAIL */
 
-if(userState[from]==="email"){
+if(userState[from] === "email"){
 
-userData[from].email=text
+userData[from].email = text
 
-const startDate=new Date()
-const endDate=new Date()
+const startDate = new Date()
+const endDate = new Date()
 
-endDate.setDate(startDate.getDate()+7)
+endDate.setDate(startDate.getDate() + 7)
 
-userState[from]="active"
+userState[from] = "active"
 
-await sendMessage(from,
-`🎉 Congratulations ${userData[from].name}
+await sendMessage(from,`🎉 *Congratulations ${userData[from].name}!*
 
-Your account is ready.
+Your Hisabi Cash account is ready.
 
 🆓 *7 Day Free Trial Started*
 
 Start: ${startDate.toDateString()}
 End: ${endDate.toDateString()}
 
-Type *MENU* to open dashboard.
-Type *PLANS* to view subscription plans.`)
+Type *MENU* to open dashboard.`)
 
 return res.sendStatus(200)
 
@@ -259,37 +257,37 @@ return res.sendStatus(200)
 
 /* DASHBOARD */
 
-if(userText==="menu"){
+if(userText === "menu"){
 
-await sendMessage(from,
-`📊 *Hisabi Cash Dashboard*
+await sendMessage(from,`📊 *Hisabi Cash Dashboard*
 
-${userData[from]?.name || ""} 👋
+Welcome *${userData[from]?.name || ""}* 👋
 
 ━━━━━━━━━━━━━━━
 
-🧾 Transactions
+💰 Finance
 
-sale
-expense
+SALE  
+EXPENSE  
+UDHAR  
 
 ━━━━━━━━━━━━━━━
 
 📈 Reports
 
-report
-insight
+REPORT  
+INSIGHT  
 
 ━━━━━━━━━━━━━━━
 
-💼 Account
+⚙️ Account
 
-plans
-language
+PLANS  
+LANGUAGE  
 
 ━━━━━━━━━━━━━━━
 
-Type any command to continue.`)
+Type any command above.`)
 
 return res.sendStatus(200)
 
@@ -299,26 +297,17 @@ return res.sendStatus(200)
 
 /* PLANS */
 
-if(userText==="plans"){
+if(userText === "plans"){
 
-await sendMessage(from,
-`💼 *Hisabi Cash Plans*
-
-━━━━━━━━━━━━
+await sendMessage(from,`💼 *Hisabi Cash Plans*
 
 👤 Personal Plan  
-Rs 399 / month
-
-Command:
-PERSONAL PLAN
-
-━━━━━━━━━━━━
+Rs 399 / month  
+Type: PERSONAL PLAN
 
 🏪 Business Plan  
-Rs 999 / month
-
-Command:
-BUSINESS PLAN`)
+Rs 999 / month  
+Type: BUSINESS PLAN`)
 
 return res.sendStatus(200)
 
@@ -328,37 +317,22 @@ return res.sendStatus(200)
 
 /* PERSONAL PLAN */
 
-if(userText==="personal plan"){
+if(userText === "personal plan"){
 
-await sendMessage(from,
-`✅ Personal Plan Selected
+await sendMessage(from,`✅ *Personal Plan Selected*
 
 Price: Rs 399 / month`)
 
-await sendMessage(from,
-`💳 *Complete Your Subscription*
-
-Payment Methods:
-
-JazzCash  
-Easypaisa
+await sendMessage(from,`💳 *Complete Your Subscription*
 
 Send payment to:
 
-📱 0316-3154140
+JazzCash / Easypaisa  
+0316-3154140
 
-━━━━━━━━━━━━
+Send screenshot after payment.
 
-After sending payment:
-
-1️⃣ Take screenshot  
-2️⃣ Send screenshot in this chat
-
-🔒 Secure Payment
-
-Your payment will be verified manually by the Hisabi Cash team.
-
-Verification time: 12–24 hours.`)
+Verification time: 12-24 hours.`)
 
 return res.sendStatus(200)
 
@@ -368,37 +342,22 @@ return res.sendStatus(200)
 
 /* BUSINESS PLAN */
 
-if(userText==="business plan"){
+if(userText === "business plan"){
 
-await sendMessage(from,
-`✅ Business Plan Selected
+await sendMessage(from,`🏪 *Business Plan Selected*
 
 Price: Rs 999 / month`)
 
-await sendMessage(from,
-`💳 *Complete Your Subscription*
-
-Payment Methods:
-
-JazzCash  
-Easypaisa
+await sendMessage(from,`💳 *Complete Your Subscription*
 
 Send payment to:
 
-📱 0316-3154140
+JazzCash / Easypaisa  
+0316-3154140
 
-━━━━━━━━━━━━
+Send screenshot after payment.
 
-After sending payment:
-
-1️⃣ Take screenshot  
-2️⃣ Send screenshot in this chat
-
-🔒 Secure Payment
-
-Your payment will be verified manually by the Hisabi Cash team.
-
-Verification time: 12–24 hours.`)
+Verification time: 12-24 hours.`)
 
 return res.sendStatus(200)
 
@@ -408,7 +367,7 @@ return res.sendStatus(200)
 
 return res.sendStatus(200)
 
-} catch(error){
+}catch(error){
 
 console.error(error)
 res.sendStatus(500)
@@ -417,7 +376,7 @@ res.sendStatus(500)
 
 })
 
-
+/* SERVER */
 
 const PORT = process.env.PORT || 3000
 
