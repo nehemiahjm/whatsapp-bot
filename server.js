@@ -1,273 +1,217 @@
-require("dotenv").config();
+require("dotenv").config()
 
-const express = require("express");
-const fs = require("fs");
-const { sendMessage } = require("./whatsapp");
-const messages = require("./messages");
+const express = require("express")
+const { sendMessage } = require("./whatsapp")
 
-const app = express();
-app.use(express.json());
+const pool = require("./database/postgres")
 
-const USERS_FILE = "./users.json";
+const {
+findUser,
+createUser,
+updateLanguage,
+updateState
+} = require("./services/userService")
 
-function loadUsers(){
-if(!fs.existsSync(USERS_FILE)) return {};
-return JSON.parse(fs.readFileSync(USERS_FILE));
+const english = require("./messages/english")
+const roman = require("./messages/roman")
+const urdu = require("./messages/urdu")
+
+const app = express()
+app.use(express.json())
+
+/* ROOT */
+
+app.get("/", (req,res)=>{
+res.send("Hisabi Cash Bot Running")
+})
+
+/* WEBHOOK VERIFY */
+
+app.get("/webhook",(req,res)=>{
+
+const verify_token = "hisabi_verify_token"
+
+const mode = req.query["hub.mode"]
+const token = req.query["hub.verify_token"]
+const challenge = req.query["hub.challenge"]
+
+if(mode && token === verify_token){
+
+return res.status(200).send(challenge)
+
+}else{
+
+return res.sendStatus(403)
+
 }
 
-function saveUsers(data){
-fs.writeFileSync(USERS_FILE,JSON.stringify(data,null,2));
-}
+})
 
-let users = loadUsers();
+/* MAIN BOT */
 
-/* ACCESS CHECK */
-
-function checkAccess(user){
-
-const now = new Date();
-
-if(user.plan==="trial"){
-return now <= new Date(user.trialEnd);
-}
-
-if(user.plan==="personal" || user.plan==="business"){
-return now <= new Date(user.subscriptionEnd);
-}
-
-return false;
-
-}
-
-app.get("/",(req,res)=>{
-res.send("Hisabi Cash Bot Running");
-});
-
-app.post("/webhook", async(req,res)=>{
+app.post("/webhook", async (req,res)=>{
 
 try{
 
-const value=req.body.entry?.[0]?.changes?.[0]?.value;
+const entry = req.body.entry?.[0]?.changes?.[0]?.value?.messages?.[0]
 
-if(!value.messages) return res.sendStatus(200);
+if(!entry) return res.sendStatus(200)
 
-const message=value.messages[0];
-const from=message.from;
-const text=message.text?.body || "";
-const userText=text.toLowerCase();
+const from = entry.from
+const text = entry.text?.body?.trim()
 
-/* NEW USER */
+if(!text) return res.sendStatus(200)
 
-if(!users[from]){
+/* LOAD USER */
 
-users[from]={
-state:"language",
-language:"english",
-plan:"trial"
-};
+let user = await findUser(from)
 
-saveUsers(users);
+if(!user){
 
-await sendMessage(from,messages.english.greeting);
+user = await createUser(from)
 
-return res.sendStatus(200);
+await sendMessage(from, english.welcome)
+
+return res.sendStatus(200)
+
 }
 
-const user=users[from];
-const m=messages[user.language];
+/* LOAD LANGUAGE */
 
-/* GREETING */
+let lang = user.language || "english"
 
-if(
-userText.includes("hi")||
-userText.includes("hello")||
-userText.includes("salam")||
-userText.includes("assalam")||
-userText.includes("start")
-){
-await sendMessage(from,m.greeting);
-return res.sendStatus(200);
-}
+let msg
+
+if(lang === "english") msg = english
+if(lang === "roman") msg = roman
+if(lang === "urdu") msg = urdu
+
+const message = text.toLowerCase()
 
 /* LANGUAGE COMMAND */
 
-if(userText==="language"){
+if(message === "language"){
 
-user.state="language";
-saveUsers(users);
+await sendMessage(from, english.welcome)
 
-await sendMessage(from,m.languageMenu);
-return res.sendStatus(200);
+return res.sendStatus(200)
+
 }
 
-/* LANGUAGE SELECT */
+/* LANGUAGE SELECTION */
 
-if(user.state==="language"){
+if(message === "1"){
 
-if(userText==="1") user.language="english";
-else if(userText==="2") user.language="roman";
-else if(userText==="3") user.language="urdu";
-else{
-await sendMessage(from,m.languageMenu);
-return res.sendStatus(200);
+await updateLanguage(from,"english")
+
+await sendMessage(from,"✅ Language Updated: English")
+
+return res.sendStatus(200)
+
 }
 
-user.state="purpose";
-saveUsers(users);
+if(message === "2"){
 
-await sendMessage(from,m.languageConfirm);
-await sendMessage(from,m.intro);
-await sendMessage(from,m.purpose);
+await updateLanguage(from,"roman")
 
-return res.sendStatus(200);
+await sendMessage(from,"✅ Zabaan Roman Urdu set ho gayi")
+
+return res.sendStatus(200)
+
 }
 
-/* PURPOSE */
+if(message === "3"){
 
-if(user.state==="purpose"){
+await updateLanguage(from,"urdu")
 
-if(userText!=="personal" && userText!=="business"){
-await sendMessage(from,m.invalidPurpose);
-return res.sendStatus(200);
-}
+await sendMessage(from,"✅ زبان اردو سیٹ ہو گئی")
 
-user.type=userText;
-user.state="name";
-saveUsers(users);
+return res.sendStatus(200)
 
-await sendMessage(from,m.askName);
-return res.sendStatus(200);
-}
-
-/* NAME */
-
-if(user.state==="name"){
-
-user.name=text;
-user.state="occupation";
-saveUsers(users);
-
-await sendMessage(from,m.askOccupation);
-return res.sendStatus(200);
-}
-
-/* OCCUPATION */
-
-if(user.state==="occupation"){
-
-user.occupation=text;
-user.state="email";
-saveUsers(users);
-
-await sendMessage(from,m.askEmail);
-return res.sendStatus(200);
-}
-
-/* EMAIL */
-
-if(user.state==="email"){
-
-user.email=text;
-
-const start=new Date();
-const end=new Date();
-end.setDate(start.getDate()+7);
-
-user.plan="trial";
-user.trialStart=start;
-user.trialEnd=end;
-user.state="active";
-
-saveUsers(users);
-
-await sendMessage(from,m.trialSuccess(user.name,start,end));
-
-return res.sendStatus(200);
-}
-
-/* TRIAL BARRIER */
-
-if(!checkAccess(user)){
-await sendMessage(from,m.expired);
-return res.sendStatus(200);
 }
 
 /* DASHBOARD */
 
-if(userText==="menu"){
-await sendMessage(from,m.dashboard(user.name));
-return res.sendStatus(200);
-}
+if(message === "menu"){
 
-/* SALE */
+await sendMessage(from, msg.dashboard(user.name || "User"))
 
-if(userText==="sale"){
-await sendMessage(from,m.saleGuide);
-return res.sendStatus(200);
-}
+return res.sendStatus(200)
 
-/* EXPENSE */
-
-if(userText==="expense"){
-await sendMessage(from,m.expenseGuide);
-return res.sendStatus(200);
-}
-
-/* UDHAR */
-
-if(userText==="udhar"){
-await sendMessage(from,m.udharGuide);
-return res.sendStatus(200);
-}
-
-/* REPORT */
-
-if(userText==="report"){
-await sendMessage(from,m.report);
-return res.sendStatus(200);
-}
-
-/* INSIGHT */
-
-if(userText==="insight"){
-await sendMessage(from,m.insight);
-return res.sendStatus(200);
 }
 
 /* PLANS */
 
-if(userText==="plans"){
-await sendMessage(from,m.plans);
-return res.sendStatus(200);
+if(message === "plans"){
+
+await sendMessage(from, msg.plans)
+
+return res.sendStatus(200)
+
 }
 
-/* PERSONAL PLAN */
+/* REPORT */
 
-if(userText==="personal plan"){
-await sendMessage(from,m.payment("Personal Plan","Rs 399 / month"));
-return res.sendStatus(200);
+if(message.includes("report")){
+
+await sendMessage(from,msg.report)
+
+return res.sendStatus(200)
+
 }
 
-/* BUSINESS PLAN */
+/* SALE NATURAL */
 
-if(userText==="business plan"){
-await sendMessage(from,m.payment("Business Plan","Rs 999 / month"));
-return res.sendStatus(200);
+if(message.includes("sold") || message.startsWith("sale")){
+
+await sendMessage(from,msg.saleRecorded)
+
+return res.sendStatus(200)
+
 }
 
-return res.sendStatus(200);
+/* EXPENSE */
+
+if(message.includes("expense") || message.includes("bought")){
+
+await sendMessage(from,msg.expenseRecorded)
+
+return res.sendStatus(200)
+
+}
+
+/* UDHAR */
+
+if(message.includes("udhar")){
+
+await sendMessage(from,msg.udharRecorded)
+
+return res.sendStatus(200)
+
+}
+
+/* UNKNOWN MESSAGE */
+
+await sendMessage(from,msg.help)
+
+return res.sendStatus(200)
 
 }catch(error){
 
-console.error(error);
-res.sendStatus(500);
+console.error(error)
+
+res.sendStatus(500)
 
 }
 
-});
+})
 
-const PORT=process.env.PORT||3000;
+/* SERVER */
+
+const PORT = process.env.PORT || 3000
 
 app.listen(PORT,()=>{
-console.log("Server running on port",PORT);
-});
+
+console.log("Hisabi Cash Server running on",PORT)
+
+})
