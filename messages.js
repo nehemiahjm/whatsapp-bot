@@ -1,250 +1,414 @@
-module.exports={
+module.exports = {
 
-english:{
-greeting:`👋 Welcome to Hisabi Cash
+/* =========================
+   ENGLISH
+========================= */
 
-Please select your language
+english: {
 
-1 English
-2 Roman Urdu
-3 اردو`,
-languageMenu:`🌐 Language Settings
+greeting:
+`👋 *Welcome to Hisabi Cash*
 
-1 English
-2 Roman Urdu
-3 اردو`,
-languageConfirm:`✅ Language updated.`,
-intro:`💼 Hisabi Cash helps you manage your finances easily.`,
-purpose:`How will you use Hisabi Cash?
+━━━━━━━━━━━━━━━━━━
 
-PERSONAL
+🌐 *Select Your Preferred Language*
+
+1️⃣ English  
+2️⃣ Roman Urdu  
+3️⃣ اردو (Urdu)
+
+Reply with *1, 2, or 3* to continue.`,
+
+languageMenu:
+`🌐 *Language Settings*
+
+Choose the language you want Hisabi Cash to communicate in.
+
+1️⃣ English  
+2️⃣ Roman Urdu  
+3️⃣ اردو (Urdu)`,
+
+languageConfirm:
+`✅ *Language Updated Successfully*
+
+Hisabi Cash will now communicate in the selected language.`,
+
+intro:
+`💼 *About Hisabi Cash*
+
+Hisabi Cash helps shopkeepers, freelancers, and small businesses keep their finances organized directly through WhatsApp.
+
+You can easily:
+
+• Track daily sales  
+• Record business expenses  
+• Manage udhar / khata  
+• Monitor financial activity  
+• Generate reports`,
+
+purpose:
+`🚀 *Getting Started*
+
+Before we begin, please tell us how you plan to use Hisabi Cash.
+
+Type one of the following:
+
+PERSONAL  
 BUSINESS`,
-invalidPurpose:`Please reply with PERSONAL or BUSINESS.`,
-askName:`👤 What is your name?`,
-askOccupation:`💼 What is your occupation?`,
-askEmail:`📧 Please send your email.`,
-trialSuccess:(name,start,end)=>`🎉 Welcome ${name}
 
-Your 7-day free trial started
+invalidPurpose:
+`⚠ *Input Not Recognized*
 
-Start: ${start.toDateString()}
-End: ${end.toDateString()}
+Please type either:
 
-Type MENU`,
-expired:`⚠ Your trial has expired.
+PERSONAL  
+BUSINESS`,
 
-Type PLANS`,
-dashboard:(name)=>`📊 Dashboard
+askName:`👤 Please tell us your name.`,
 
-${name}
+askOccupation:`💼 What type of work or business do you do?`,
 
-SALE
-EXPENSE
-UDHAR
+askEmail:`📧 Please share your email address.`,
 
-REPORT
-INSIGHT
+trialSuccess:(name,start,end)=>
+`🎉 *Welcome ${name}!*
+
+Your Hisabi Cash account has been successfully created.
+
+🆓 *7 Day Free Trial Activated*
+
+Start Date: ${start.toDateString()}  
+End Date: ${end.toDateString()}
+
+To open your dashboard type:
+
+MENU`,
+
+expired:
+`⚠ *Subscription Required*
+
+Your trial or subscription has expired.
+
+Type:
 
 PLANS
-LANGUAGE`,
-saleGuide:`💰 Record Sale
+
+to view available plans.`,
+
+dashboard:(name)=>
+`📊 *Hisabi Cash Dashboard*
+
+Welcome back *${name}* 👋
+
+💰 Finance Tools
+SALE — Record daily sales  
+EXPENSE — Track business expenses  
+UDHAR — Manage customer credit  
+
+📈 Reports & Analysis
+REPORT — Generate financial reports  
+INSIGHT — View financial insights  
+
+⚙ Account
+PLANS — View subscription plans  
+LANGUAGE — Change assistant language`,
+
+saleGuide:
+`💰 *Record a Sale*
 
 SALE amount item
 
 Example:
 SALE 500 chai`,
-expenseGuide:`📉 Record Expense
+
+expenseGuide:
+`📉 *Record an Expense*
 
 EXPENSE amount item
 
 Example:
 EXPENSE 200 milk`,
-udharGuide:`📒 Record Udhar
+
+udharGuide:
+`📒 *Customer Udhar*
 
 UDHAR name amount
 
 Example:
 UDHAR Ali 1000`,
-report:`📊 Reports
 
-DAILY REPORT
-WEEKLY REPORT
+report:
+`📊 *Financial Reports*
+
+DAILY REPORT  
+WEEKLY REPORT  
 MONTHLY REPORT`,
-insight:`📈 Insight
 
-Keep expenses below 40% of sales.`,
-plans:`💼 Plans
+insight:
+`📈 *Financial Insight*
 
-Personal Plan 399
+Hisabi Cash analyzes your financial activity to help improve your business.`,
 
-Business Plan 999
+plans:
+`💼 *Hisabi Cash Subscription Plans*
 
-Type PERSONAL PLAN
-Type BUSINESS PLAN`,
-payment:(plan,price)=>`💳 ${plan}
+👤 Personal Plan  
+Rs 399 / month  
 
-Price: ${price}
+Type:
+PERSONAL PLAN
 
-JazzCash / Easypaisa
-03163154140
+🏪 Business Plan  
+Rs 999 / month  
 
-Send screenshot
+Type:
+BUSINESS PLAN`,
 
-Verification 12-24 hours`
+payment:(plan,price)=>
+`💳 *${plan} Subscription Selected*
+
+Plan Price: ${price}
+
+📲 Payment Methods
+
+JazzCash  
+Easypaisa  
+
+Send payment to:
+
+0316-3154140
+
+📌 Payment Instructions
+
+1️⃣ Send payment using JazzCash or Easypaisa  
+2️⃣ Take a screenshot of the transaction  
+3️⃣ Send the screenshot in this chat
+
+🔐 Verification Process
+
+Your payment will be verified by the Hisabi Cash team.
+
+⏱ Verification Time: 12–24 hours
+
+Once your payment is confirmed:
+
+• Your subscription will be activated  
+• Full access will be granted  
+• You will receive a confirmation message.`
+
 },
 
-roman:{
-greeting:`👋 Hisabi Cash mein khush aamdeed
+/* =========================
+   ROMAN URDU
+========================= */
 
-1 English
-2 Roman Urdu
-3 Urdu`,
-languageMenu:`Zabaan change karein
+roman: {
 
-1 English
-2 Roman Urdu
-3 Urdu`,
-languageConfirm:`Zabaan update ho gayi.`,
-intro:`Hisabi Cash aapko paison ka hisaab rakhne mein madad deta hai.`,
-purpose:`Aap kis liye use karenge?
+greeting:
+`👋 *Hisabi Cash mein Khush Aamdeed*
 
-PERSONAL
+🌐 Apni Zabaan Select Karein
+
+1️⃣ English  
+2️⃣ Roman Urdu  
+3️⃣ Urdu`,
+
+languageMenu:
+`Zabaan change karein
+
+1️⃣ English  
+2️⃣ Roman Urdu  
+3️⃣ Urdu`,
+
+languageConfirm:`Zabaan successfully update ho gayi.`,
+
+intro:`Hisabi Cash aapko apne business aur paison ka hisaab rakhne mein madad karta hai.`,
+
+purpose:`Aap Hisabi Cash kis liye use karenge?
+
+PERSONAL  
 BUSINESS`,
+
 invalidPurpose:`Sirf PERSONAL ya BUSINESS likhein.`,
-askName:`Aapka naam?`,
+
+askName:`Aapka naam kya hai?`,
+
 askOccupation:`Aap kya kaam karte hain?`,
+
 askEmail:`Apna email bhejein.`,
-trialSuccess:(name,start,end)=>`Mubarak ho ${name}
 
-7 din ka trial shuru
+trialSuccess:(name,start,end)=>
+`Mubarak ho ${name}
 
-Start ${start.toDateString()}
-End ${end.toDateString()}
+Aapka 7 din ka free trial shuru ho gaya hai.
 
-MENU likhein`,
-expired:`Trial khatam ho gaya
+Start: ${start.toDateString()}
+End: ${end.toDateString()}
 
-PLANS likhein`,
-dashboard:(name)=>`Dashboard
+Dashboard kholne ke liye likhein:
+
+MENU`,
+
+expired:`Aapka trial ya subscription khatam ho gaya hai.
+
+Continue karne ke liye plan lena zaroori hai.
+
+PLANS likhein.`,
+
+dashboard:(name)=>
+`Dashboard
 
 ${name}
 
-SALE
-EXPENSE
-UDHAR
+SALE — sale record karein  
+EXPENSE — kharcha record karein  
+UDHAR — udhar manage karein  
 
-REPORT
-INSIGHT
+REPORT — financial report dekhein  
+INSIGHT — business insights dekhein  
 
-PLANS
-LANGUAGE`,
-saleGuide:`Sale record karein
+PLANS — subscription plans  
+LANGUAGE — zabaan change karein`,
 
-SALE amount item`,
-expenseGuide:`Kharcha record karein
+saleGuide:`SALE amount item likhein  
+Example: SALE 500 chai`,
 
-EXPENSE amount item`,
-udharGuide:`Udhar record karein
+expenseGuide:`EXPENSE amount item likhein`,
 
-UDHAR naam amount`,
-report:`Reports
+udharGuide:`UDHAR naam amount likhein`,
 
-DAILY
-WEEKLY
-MONTHLY`,
-insight:`Tip
+report:`DAILY REPORT  
+WEEKLY REPORT  
+MONTHLY REPORT`,
 
-Kharcha kam rakhein.`,
-plans:`Plans
+insight:`Hisabi Cash aapko financial insights deta hai.`,
 
-Personal 399
+plans:`Personal Plan 399/month
 
-Business 999`,
-payment:(plan,price)=>`${plan}
+Business Plan 999/month`,
 
-Price ${price}
+payment:(plan,price)=>
+`💳 *${plan} Subscription Select Ho Gaya Hai*
 
-JazzCash / Easypaisa
-03163154140
+Plan Price: ${price}
 
-Screenshot bhejein`
+📲 Payment Methods
+
+JazzCash  
+Easypaisa  
+
+Payment bhejein is number par:
+
+0316-3154140
+
+📌 Payment Karne Ka Tarika
+
+1️⃣ JazzCash ya Easypaisa se payment bhejein  
+2️⃣ Transaction ka screenshot lein  
+3️⃣ Screenshot isi chat mein bhejein
+
+🔐 Verification Process
+
+Aapki payment Hisabi Cash team verify karegi.
+
+⏱ Verification Time: 12–24 hours
+
+Jaise hi payment verify ho jaye:
+
+• Aapki subscription activate kar di jayegi  
+• Aapko full access mil jayega  
+• Aapko confirmation message mil jayega.`
+
 },
 
-urdu:{
+/* =========================
+   URDU
+========================= */
+
+urdu: {
+
 greeting:`👋 حسابی کیش میں خوش آمدید
 
-1 English
-2 Roman Urdu
-3 اردو`,
-languageMenu:`زبان تبدیل کریں
+1️⃣ English  
+2️⃣ Roman Urdu  
+3️⃣ اردو`,
 
-1 English
-2 Roman Urdu
-3 اردو`,
-languageConfirm:`زبان تبدیل ہو گئی`,
-intro:`حسابی کیش آپ کو مالی حساب رکھنے میں مدد دیتا ہے`,
-purpose:`آپ کس مقصد کیلئے استعمال کریں گے؟
+languageMenu:`زبان تبدیل کریں`,
+
+languageConfirm:`زبان تبدیل ہو گئی۔`,
+
+intro:`حسابی کیش آپ کے کاروبار کا حساب رکھنے میں مدد دیتا ہے۔`,
+
+purpose:`آپ کس مقصد کے لئے استعمال کریں گے؟
 
 PERSONAL
 BUSINESS`,
-invalidPurpose:`PERSONAL یا BUSINESS لکھیں`,
-askName:`آپ کا نام؟`,
+
+invalidPurpose:`PERSONAL یا BUSINESS لکھیں۔`,
+
+askName:`آپ کا نام کیا ہے؟`,
+
 askOccupation:`آپ کیا کام کرتے ہیں؟`,
-askEmail:`اپنا ای میل بھیجیں`,
+
+askEmail:`اپنا ای میل بھیجیں۔`,
+
 trialSuccess:(name,start,end)=>`مبارک ہو ${name}
 
-7 دن کا ٹرائل شروع
+آپ کا 7 دن کا فری ٹرائل شروع ہو گیا ہے۔`,
 
-Start ${start.toDateString()}
-End ${end.toDateString()}
+expired:`آپ کی سبسکرپشن ختم ہو گئی ہے۔
 
-MENU لکھیں`,
-expired:`ٹرائل ختم ہو گیا
+PLANS لکھیں۔`,
 
-PLANS لکھیں`,
-dashboard:(name)=>`ڈیش بورڈ
+dashboard:(name)=>`ڈیش بورڈ ${name}`,
 
-${name}
+saleGuide:`SALE amount item لکھیں`,
 
-SALE
-EXPENSE
-UDHAR
+expenseGuide:`EXPENSE amount item لکھیں`,
 
-REPORT
-INSIGHT
+udharGuide:`UDHAR name amount لکھیں`,
 
-PLANS
-LANGUAGE`,
-saleGuide:`سیل درج کریں
+report:`DAILY REPORT  
+WEEKLY REPORT  
+MONTHLY REPORT`,
 
-SALE amount item`,
-expenseGuide:`خرچ درج کریں
+insight:`مالی مشورے`,
 
-EXPENSE amount item`,
-udharGuide:`ادھار درج کریں
+plans:`Personal Plan 399  
+Business Plan 999`,
 
-UDHAR name amount`,
-report:`رپورٹس
+payment:(plan,price)=>
+`💳 *${plan} سبسکرپشن منتخب ہو گئی ہے*
 
-DAILY
-WEEKLY
-MONTHLY`,
-insight:`مشورہ
+پلان کی قیمت: ${price}
 
-اخراجات کم رکھیں`,
-plans:`پلانز
+📲 ادائیگی کے طریقے
 
-Personal 399
+JazzCash  
+Easypaisa  
 
-Business 999`,
-payment:(plan,price)=>`${plan}
+ادائیگی اس نمبر پر بھیجیں:
 
-قیمت ${price}
+0316-3154140
 
-JazzCash / Easypaisa
-03163154140
+📌 ادائیگی کرنے کا طریقہ
 
-اسکرین شاٹ بھیجیں`
+1️⃣ JazzCash یا Easypaisa کے ذریعے ادائیگی کریں  
+2️⃣ ٹرانزیکشن کا اسکرین شاٹ لیں  
+3️⃣ اسکرین شاٹ اسی چیٹ میں بھیج دیں
+
+🔐 تصدیقی عمل
+
+آپ کی ادائیگی Hisabi Cash ٹیم کی طرف سے ویریفائی کی جائے گی۔
+
+⏱ تصدیق کا وقت: 12 سے 24 گھنٹے
+
+ادائیگی کی تصدیق ہونے کے بعد:
+
+• آپ کی سبسکرپشن فعال کر دی جائے گی  
+• آپ کو تمام فیچرز تک مکمل رسائی مل جائے گی  
+• آپ کو تصدیقی پیغام موصول ہوگا۔`
+
 }
 
 };
