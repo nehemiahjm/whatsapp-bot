@@ -1,385 +1,273 @@
 require("dotenv").config();
 
 const express = require("express");
+const fs = require("fs");
 const { sendMessage } = require("./whatsapp");
+const messages = require("./messages");
 
 const app = express();
 app.use(express.json());
 
-/* MEMORY STORAGE */
+const USERS_FILE = "./users.json";
 
-// memory stores
-const userLanguage = {};
-const userState = {};
-const userData = {};
+function loadUsers(){
+if(!fs.existsSync(USERS_FILE)) return {};
+return JSON.parse(fs.readFileSync(USERS_FILE));
+}
 
-/* ROOT */
+function saveUsers(data){
+fs.writeFileSync(USERS_FILE,JSON.stringify(data,null,2));
+}
 
-app.get("/", (req, res) => {
-  res.send("Hisabi Cash Bot Running ✅");
+let users = loadUsers();
+
+/* ACCESS CHECK */
+
+function checkAccess(user){
+
+const now = new Date();
+
+if(user.plan==="trial"){
+return now <= new Date(user.trialEnd);
+}
+
+if(user.plan==="personal" || user.plan==="business"){
+return now <= new Date(user.subscriptionEnd);
+}
+
+return false;
+
+}
+
+app.get("/",(req,res)=>{
+res.send("Hisabi Cash Bot Running");
 });
 
-/* WEBHOOK VERIFICATION */
+app.post("/webhook", async(req,res)=>{
 
-app.get("/webhook", (req, res) => {
+try{
 
-  const verify_token = "hisabi_verify_token";
+const value=req.body.entry?.[0]?.changes?.[0]?.value;
 
-  const mode = req.query["hub.mode"];
-  const token = req.query["hub.verify_token"];
-  const challenge = req.query["hub.challenge"];
+if(!value.messages) return res.sendStatus(200);
 
-  if (mode && token === verify_token) {
-    console.log("Webhook Verified");
-    res.status(200).send(challenge);
-  } else {
-    res.sendStatus(403);
-  }
+const message=value.messages[0];
+const from=message.from;
+const text=message.text?.body || "";
+const userText=text.toLowerCase();
 
-});
+/* NEW USER */
 
-/* MAIN BOT */
+if(!users[from]){
 
-app.post("/webhook", async (req, res) => {
+users[from]={
+state:"language",
+language:"english",
+plan:"trial"
+};
 
-try {
+saveUsers(users);
 
-const value = req.body.entry?.[0]?.changes?.[0]?.value;
+await sendMessage(from,messages.english.greeting);
 
-if (!value.messages) return res.sendStatus(200);
-
-const message = value.messages[0];
-
-if (message.from === value.metadata.display_phone_number) {
 return res.sendStatus(200);
 }
 
-const from = message.from;
-const text = message.text?.body || "";
-const userText = text.toLowerCase();
-
-const lang = userLanguage[from] || "english";
-
-console.log("User:", from);
-console.log("Message:", text);
-
-
+const user=users[from];
+const m=messages[user.language];
 
 /* GREETING */
 
-if (
-userText.includes("hi") ||
-userText.includes("hello") ||
-userText.includes("salam") ||
-userText.includes("assalam") ||
+if(
+userText.includes("hi")||
+userText.includes("hello")||
+userText.includes("salam")||
+userText.includes("assalam")||
 userText.includes("start")
-) {
-
-await sendMessage(from, `👋 *Welcome to Hisabi Cash*
-
-━━━━━━━━━━━━━━━
-
-🌐 *Please select your preferred language*
-
-1️⃣ English  
-2️⃣ Roman Urdu  
-3️⃣ اردو
-
-Reply with *1, 2, or 3* to continue.`)
-
-return res.sendStatus(200)
-
+){
+await sendMessage(from,m.greeting);
+return res.sendStatus(200);
 }
 
 /* LANGUAGE COMMAND */
 
-if(userText === "language"){
+if(userText==="language"){
 
-await sendMessage(from, `🌐 *Language Settings*
+user.state="language";
+saveUsers(users);
 
-Choose your language:
-
-1️⃣ English  
-2️⃣ Roman Urdu  
-3️⃣ اردو`)
-
-return res.sendStatus(200)
-
+await sendMessage(from,m.languageMenu);
+return res.sendStatus(200);
 }
 
-/* LANGUAGE SELECTION */
+/* LANGUAGE SELECT */
 
-if(userText === "1"){
+if(user.state==="language"){
 
-userLanguage[from] = "english"
-userState[from] = "purpose"
-
-await sendMessage(from,"✅ Language set to English.")
-
-await sendMessage(from,`💼 *About Hisabi Cash*
-
-Hisabi Cash helps you manage your money easily.
-
-You can:
-
-• Track sales  
-• Record expenses  
-• Manage udhar / khata  
-• Monitor spending  
-• Generate reports`)
-
-await sendMessage(from,`🚀 *Getting Started*
-
-How will you use Hisabi Cash?
-
-Type:
-
-PERSONAL  
-BUSINESS`)
-
-return res.sendStatus(200)
-
+if(userText==="1") user.language="english";
+else if(userText==="2") user.language="roman";
+else if(userText==="3") user.language="urdu";
+else{
+await sendMessage(from,m.languageMenu);
+return res.sendStatus(200);
 }
 
-if(userText === "2"){
+user.state="purpose";
+saveUsers(users);
 
-userLanguage[from] = "roman"
-userState[from] = "purpose"
+await sendMessage(from,m.languageConfirm);
+await sendMessage(from,m.intro);
+await sendMessage(from,m.purpose);
 
-await sendMessage(from,"✅ Zubaan Roman Urdu set ho gayi.")
-
-await sendMessage(from,`💼 Hisabi Cash aapka WhatsApp financial assistant hai.`)
-
-await sendMessage(from,`🚀 Setup shuru karein
-
-PERSONAL  
-BUSINESS`)
-
-return res.sendStatus(200)
-
+return res.sendStatus(200);
 }
-
-if(userText === "3"){
-
-userLanguage[from] = "urdu"
-userState[from] = "purpose"
-
-await sendMessage(from,"✅ زبان اردو منتخب ہو گئی۔")
-
-await sendMessage(from,`💼 حسابی کیش آپ کا مالی معاون ہے جو واٹس ایپ پر کام کرتا ہے۔`)
-
-await sendMessage(from,`🚀 سیٹ اپ شروع کریں
-
-PERSONAL  
-BUSINESS`)
-
-return res.sendStatus(200)
-
-}
-
-
 
 /* PURPOSE */
 
-if(userState[from] === "purpose"){
+if(user.state==="purpose"){
 
-userData[from] = { type: userText }
-
-userState[from] = "name"
-
-await sendMessage(from,"👤 What is your name?")
-
-return res.sendStatus(200)
-
+if(userText!=="personal" && userText!=="business"){
+await sendMessage(from,m.invalidPurpose);
+return res.sendStatus(200);
 }
 
+user.type=userText;
+user.state="name";
+saveUsers(users);
 
+await sendMessage(from,m.askName);
+return res.sendStatus(200);
+}
 
 /* NAME */
 
-if(userState[from] === "name"){
+if(user.state==="name"){
 
-userData[from].name = text
-userState[from] = "occupation"
+user.name=text;
+user.state="occupation";
+saveUsers(users);
 
-await sendMessage(from,"💼 What is your occupation?")
-
-return res.sendStatus(200)
-
+await sendMessage(from,m.askOccupation);
+return res.sendStatus(200);
 }
-
-
 
 /* OCCUPATION */
 
-if(userState[from] === "occupation"){
+if(user.state==="occupation"){
 
-userData[from].occupation = text
-userState[from] = "email"
+user.occupation=text;
+user.state="email";
+saveUsers(users);
 
-await sendMessage(from,"📧 Please share your email address.")
-
-return res.sendStatus(200)
-
+await sendMessage(from,m.askEmail);
+return res.sendStatus(200);
 }
-
-
 
 /* EMAIL */
 
-if(userState[from] === "email"){
+if(user.state==="email"){
 
-userData[from].email = text
+user.email=text;
 
-const startDate = new Date()
-const endDate = new Date()
+const start=new Date();
+const end=new Date();
+end.setDate(start.getDate()+7);
 
-endDate.setDate(startDate.getDate() + 7)
+user.plan="trial";
+user.trialStart=start;
+user.trialEnd=end;
+user.state="active";
 
-userState[from] = "active"
+saveUsers(users);
 
-await sendMessage(from,`🎉 *Congratulations ${userData[from].name}!*
+await sendMessage(from,m.trialSuccess(user.name,start,end));
 
-Your Hisabi Cash account is ready.
-
-🆓 *7 Day Free Trial Started*
-
-Start: ${startDate.toDateString()}
-End: ${endDate.toDateString()}
-
-Type *MENU* to open dashboard.`)
-
-return res.sendStatus(200)
-
+return res.sendStatus(200);
 }
 
+/* TRIAL BARRIER */
 
+if(!checkAccess(user)){
+await sendMessage(from,m.expired);
+return res.sendStatus(200);
+}
 
 /* DASHBOARD */
 
-if(userText === "menu"){
-
-await sendMessage(from,`📊 *Hisabi Cash Dashboard*
-
-Welcome *${userData[from]?.name || ""}* 👋
-
-━━━━━━━━━━━━━━━
-
-💰 Finance
-
-SALE  
-EXPENSE  
-UDHAR  
-
-━━━━━━━━━━━━━━━
-
-📈 Reports
-
-REPORT  
-INSIGHT  
-
-━━━━━━━━━━━━━━━
-
-⚙️ Account
-
-PLANS  
-LANGUAGE  
-
-━━━━━━━━━━━━━━━
-
-Type any command above.`)
-
-return res.sendStatus(200)
-
+if(userText==="menu"){
+await sendMessage(from,m.dashboard(user.name));
+return res.sendStatus(200);
 }
 
+/* SALE */
 
+if(userText==="sale"){
+await sendMessage(from,m.saleGuide);
+return res.sendStatus(200);
+}
+
+/* EXPENSE */
+
+if(userText==="expense"){
+await sendMessage(from,m.expenseGuide);
+return res.sendStatus(200);
+}
+
+/* UDHAR */
+
+if(userText==="udhar"){
+await sendMessage(from,m.udharGuide);
+return res.sendStatus(200);
+}
+
+/* REPORT */
+
+if(userText==="report"){
+await sendMessage(from,m.report);
+return res.sendStatus(200);
+}
+
+/* INSIGHT */
+
+if(userText==="insight"){
+await sendMessage(from,m.insight);
+return res.sendStatus(200);
+}
 
 /* PLANS */
 
-if(userText === "plans"){
-
-await sendMessage(from,`💼 *Hisabi Cash Plans*
-
-👤 Personal Plan  
-Rs 399 / month  
-Type: PERSONAL PLAN
-
-🏪 Business Plan  
-Rs 999 / month  
-Type: BUSINESS PLAN`)
-
-return res.sendStatus(200)
-
+if(userText==="plans"){
+await sendMessage(from,m.plans);
+return res.sendStatus(200);
 }
-
-
 
 /* PERSONAL PLAN */
 
-if(userText === "personal plan"){
-
-await sendMessage(from,`✅ *Personal Plan Selected*
-
-Price: Rs 399 / month`)
-
-await sendMessage(from,`💳 *Complete Your Subscription*
-
-Send payment to:
-
-JazzCash / Easypaisa  
-0316-3154140
-
-Send screenshot after payment.
-
-Verification time: 12-24 hours.`)
-
-return res.sendStatus(200)
-
+if(userText==="personal plan"){
+await sendMessage(from,m.payment("Personal Plan","Rs 399 / month"));
+return res.sendStatus(200);
 }
-
-
 
 /* BUSINESS PLAN */
 
-if(userText === "business plan"){
-
-await sendMessage(from,`🏪 *Business Plan Selected*
-
-Price: Rs 999 / month`)
-
-await sendMessage(from,`💳 *Complete Your Subscription*
-
-Send payment to:
-
-JazzCash / Easypaisa  
-0316-3154140
-
-Send screenshot after payment.
-
-Verification time: 12-24 hours.`)
-
-return res.sendStatus(200)
-
+if(userText==="business plan"){
+await sendMessage(from,m.payment("Business Plan","Rs 999 / month"));
+return res.sendStatus(200);
 }
 
-
-
-return res.sendStatus(200)
+return res.sendStatus(200);
 
 }catch(error){
 
-console.error(error)
-res.sendStatus(500)
+console.error(error);
+res.sendStatus(500);
 
 }
 
-})
+});
 
-/* SERVER */
+const PORT=process.env.PORT||3000;
 
-const PORT = process.env.PORT || 3000
-
-app.listen(PORT, () => {
-console.log("Server running on port", PORT)
-})
+app.listen(PORT,()=>{
+console.log("Server running on port",PORT);
+});
