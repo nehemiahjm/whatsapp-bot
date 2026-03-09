@@ -22,6 +22,8 @@ const english = require("./messages/english")
 const roman = require("./messages/roman")
 const urdu = require("./messages/urdu")
 
+const { detectTransaction } = require("./ai/openai")
+
 const app = express()
 app.use(express.json())
 
@@ -222,6 +224,58 @@ const reportText =
 💵 Net Cash Flow: Rs ${cash}`
 
 await sendMessage(from,reportText)
+
+return res.sendStatus(200)
+
+}
+
+/* AI TRANSACTION DETECTION */
+
+const ai = await detectTransaction(message)
+
+if(ai.type === "sale"){
+
+await recordSale(from, ai.amount, ai.description)
+
+await sendMessage(
+from,
+`✅ Sale Recorded
+
+Item: ${ai.description}
+Amount: Rs ${ai.amount}`
+)
+
+return res.sendStatus(200)
+
+}
+
+if(ai.type === "expense"){
+
+await recordExpense(from, ai.amount, ai.description)
+
+await sendMessage(
+from,
+`📉 Expense Recorded
+
+Item: ${ai.description}
+Amount: Rs ${ai.amount}`
+)
+
+return res.sendStatus(200)
+
+}
+
+if(ai.type === "udhar"){
+
+await recordUdhar(from, ai.amount, ai.description)
+
+await sendMessage(
+from,
+`📒 Udhar Recorded
+
+Person: ${ai.description}
+Amount: Rs ${ai.amount}`
+)
 
 return res.sendStatus(200)
 

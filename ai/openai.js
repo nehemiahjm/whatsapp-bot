@@ -1,26 +1,42 @@
 const OpenAI = require("openai")
 
 const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
+apiKey: process.env.OPENAI_API_KEY
 })
 
-async function detectIntent(message) {
+async function detectTransaction(message){
 
-  const response = await client.chat.completions.create({
-    model: "gpt-4.1-mini",
-    messages: [
-      {
-        role: "system",
-        content: "Extract financial intent: sale, expense, udhar"
-      },
-      {
-        role: "user",
-        content: message
-      }
-    ]
-  })
+const prompt = `
+You are a financial parser.
 
-  return response.choices[0].message.content
+Extract transaction details from the message.
+
+Return JSON ONLY in this format:
+
+{
+"type": "sale | expense | udhar | none",
+"amount": number,
+"description": "short text"
 }
 
-module.exports = { detectIntent }
+User message: "${message}"
+`
+
+const response = await client.chat.completions.create({
+model: "gpt-4o-mini",
+messages: [
+{ role: "system", content: "Extract financial transaction info." },
+{ role: "user", content: prompt }
+],
+temperature: 0
+})
+
+try{
+return JSON.parse(response.choices[0].message.content)
+}catch{
+return { type:"none" }
+}
+
+}
+
+module.exports = { detectTransaction }
