@@ -8,15 +8,14 @@ const pool = require("./database/postgres")
 const {
 findUser,
 createUser,
-updateLanguage,
-updateState
+updateLanguage
 } = require("./services/userService")
 
 const {
 recordSale,
 recordExpense,
 recordUdhar,
-getTodayReport
+getReport
 } = require("./services/financeService")
 
 const english = require("./messages/english")
@@ -72,7 +71,7 @@ const text = entry.text?.body?.trim()
 
 if(!text) return res.sendStatus(200)
 
-/* LOAD USER */
+/* USER */
 
 let user = await findUser(from)
 
@@ -86,7 +85,7 @@ return res.sendStatus(200)
 
 }
 
-/* LOAD LANGUAGE */
+/* LANGUAGE */
 
 let lang = user.language || "english"
 
@@ -98,53 +97,11 @@ if(lang === "urdu") msg = urdu
 
 const message = text.toLowerCase()
 
-/* LANGUAGE COMMAND */
-
-if(message === "language"){
-
-await sendMessage(from, english.welcome)
-
-return res.sendStatus(200)
-
-}
-
-/* LANGUAGE SELECTION */
-
-if(message === "1"){
-
-await updateLanguage(from,"english")
-
-await sendMessage(from,"✅ Language Updated: English")
-
-return res.sendStatus(200)
-
-}
-
-if(message === "2"){
-
-await updateLanguage(from,"roman")
-
-await sendMessage(from,"✅ Zabaan Roman Urdu set ho gayi")
-
-return res.sendStatus(200)
-
-}
-
-if(message === "3"){
-
-await updateLanguage(from,"urdu")
-
-await sendMessage(from,"✅ زبان اردو سیٹ ہو گئی")
-
-return res.sendStatus(200)
-
-}
-
-/* DASHBOARD */
+/* MENU */
 
 if(message === "menu"){
 
-await sendMessage(from, msg.dashboard(user.name || "User"))
+await sendMessage(from,msg.dashboard("User"))
 
 return res.sendStatus(200)
 
@@ -154,7 +111,7 @@ return res.sendStatus(200)
 
 if(message === "plans"){
 
-await sendMessage(from, msg.plans)
+await sendMessage(from,msg.plans)
 
 return res.sendStatus(200)
 
@@ -162,12 +119,12 @@ return res.sendStatus(200)
 
 /* SALE */
 
-if(message.startsWith("sale") || message.includes("sold")){
+if(message.startsWith("sale")){
 
 const parts = message.split(" ")
 
-let amount = parseInt(parts[1])
-let item = parts.slice(2).join(" ")
+const amount = parseInt(parts[1])
+const item = parts.slice(2).join(" ")
 
 if(!amount){
 
@@ -187,12 +144,12 @@ return res.sendStatus(200)
 
 /* EXPENSE */
 
-if(message.startsWith("expense") || message.includes("bought")){
+if(message.startsWith("expense")){
 
 const parts = message.split(" ")
 
-let amount = parseInt(parts[1])
-let item = parts.slice(2).join(" ")
+const amount = parseInt(parts[1])
+const item = parts.slice(2).join(" ")
 
 if(!amount){
 
@@ -216,8 +173,8 @@ if(message.startsWith("udhar")){
 
 const parts = message.split(" ")
 
-let amount = parseInt(parts[1])
-let person = parts.slice(2).join(" ")
+const amount = parseInt(parts[1])
+const person = parts.slice(2).join(" ")
 
 if(!amount){
 
@@ -237,28 +194,40 @@ return res.sendStatus(200)
 
 /* REPORT */
 
-if(message.includes("report")){
+if(message.startsWith("report")){
 
-const report = await getTodayReport(from)
+let type = "today"
+
+if(message.includes("week")) type = "week"
+if(message.includes("month")) type = "month"
+
+const report = await getReport(from,type)
 
 const sales = report.sales
 const expenses = report.expenses
+const udhar = report.udhar
+
 const profit = sales - expenses
+const cash = sales - expenses - udhar
 
-await sendMessage(
-from,
-`📊 Today's Financial Summary
+const reportText =
+`📊 Hisabi Cash Report
 
-Sales: Rs ${sales}
-Expenses: Rs ${expenses}
-Profit: Rs ${profit}`
-)
+💰 Sales: Rs ${sales}
+📉 Expenses: Rs ${expenses}
+📈 Profit: Rs ${profit}
+
+📒 Udhar Given: Rs ${udhar}
+
+💵 Net Cash Flow: Rs ${cash}`
+
+await sendMessage(from,reportText)
 
 return res.sendStatus(200)
 
 }
 
-/* UNKNOWN MESSAGE */
+/* UNKNOWN */
 
 await sendMessage(from,msg.help)
 
