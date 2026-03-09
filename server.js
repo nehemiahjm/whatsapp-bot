@@ -57,7 +57,7 @@ const entry = req.body.entry?.[0]?.changes?.[0]?.value?.messages?.[0]
 
 if(!entry) return res.sendStatus(200)
 
-const from = entry.from
+const from = entry.from.replace("@c.us","")
 const text = entry.text?.body?.trim()
 
 if(!text) return res.sendStatus(200)
