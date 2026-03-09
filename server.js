@@ -12,6 +12,13 @@ updateLanguage,
 updateState
 } = require("./services/userService")
 
+const {
+recordSale,
+recordExpense,
+recordUdhar,
+getTodayReport
+} = require("./services/financeService")
+
 const english = require("./messages/english")
 const roman = require("./messages/roman")
 const urdu = require("./messages/urdu")
@@ -57,7 +64,10 @@ const entry = req.body.entry?.[0]?.changes?.[0]?.value?.messages?.[0]
 
 if(!entry) return res.sendStatus(200)
 
+/* CLEAN PHONE NUMBER */
+
 const from = entry.from.replace("@c.us","")
+
 const text = entry.text?.body?.trim()
 
 if(!text) return res.sendStatus(200)
@@ -150,21 +160,26 @@ return res.sendStatus(200)
 
 }
 
-/* REPORT */
+/* SALE */
 
-if(message.includes("report")){
+if(message.startsWith("sale") || message.includes("sold")){
 
-await sendMessage(from,msg.report)
+const parts = message.split(" ")
+
+let amount = parseInt(parts[1])
+let item = parts.slice(2).join(" ")
+
+if(!amount){
+
+await sendMessage(from,"Example: SALE 500 tea")
 
 return res.sendStatus(200)
 
 }
 
-/* SALE NATURAL */
+await recordSale(from,amount,item)
 
-if(message.includes("sold") || message.startsWith("sale")){
-
-await sendMessage(from,msg.saleRecorded)
+await sendMessage(from,msg.saleRecorded + "\nAmount: Rs " + amount)
 
 return res.sendStatus(200)
 
@@ -172,9 +187,24 @@ return res.sendStatus(200)
 
 /* EXPENSE */
 
-if(message.includes("expense") || message.includes("bought")){
+if(message.startsWith("expense") || message.includes("bought")){
 
-await sendMessage(from,msg.expenseRecorded)
+const parts = message.split(" ")
+
+let amount = parseInt(parts[1])
+let item = parts.slice(2).join(" ")
+
+if(!amount){
+
+await sendMessage(from,"Example: EXPENSE 200 milk")
+
+return res.sendStatus(200)
+
+}
+
+await recordExpense(from,amount,item)
+
+await sendMessage(from,msg.expenseRecorded + "\nAmount: Rs " + amount)
 
 return res.sendStatus(200)
 
@@ -182,9 +212,47 @@ return res.sendStatus(200)
 
 /* UDHAR */
 
-if(message.includes("udhar")){
+if(message.startsWith("udhar")){
 
-await sendMessage(from,msg.udharRecorded)
+const parts = message.split(" ")
+
+let amount = parseInt(parts[1])
+let person = parts.slice(2).join(" ")
+
+if(!amount){
+
+await sendMessage(from,"Example: UDHAR 1000 Ahmed")
+
+return res.sendStatus(200)
+
+}
+
+await recordUdhar(from,amount,person)
+
+await sendMessage(from,msg.udharRecorded + "\nAmount: Rs " + amount)
+
+return res.sendStatus(200)
+
+}
+
+/* REPORT */
+
+if(message.includes("report")){
+
+const report = await getTodayReport(from)
+
+const sales = report.sales
+const expenses = report.expenses
+const profit = sales - expenses
+
+await sendMessage(
+from,
+`📊 Today's Financial Summary
+
+Sales: Rs ${sales}
+Expenses: Rs ${expenses}
+Profit: Rs ${profit}`
+)
 
 return res.sendStatus(200)
 
