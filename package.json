@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Hisabi Cash WhatsApp Bot",
   "main": "server.js",
-  "type": "module",
+
   "scripts": {
     "start": "node server.js"
   },
