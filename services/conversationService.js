@@ -1,7 +1,9 @@
 import { getUserByPhone, createUser, updateUser } from "./userService.js"
+
 import english from "../messages/english.js"
 import roman from "../messages/roman.js"
 import urdu from "../messages/urdu.js"
+
 
 export async function handleConversation(phone, text) {
 
@@ -9,9 +11,9 @@ const lower = text.toLowerCase()
 
 let user = await getUserByPhone(phone)
 
-/* NEW USER */
 
-if(!user){
+// NEW USER
+if (!user) {
 
 await createUser({
 phone: phone,
@@ -19,137 +21,194 @@ state: "language_select"
 })
 
 return english.welcome
+
 }
 
-/* LANGUAGE SELECTION */
 
-if(user.state === "language_select"){
+// LANGUAGE FILE SELECTOR
 
-if(text === "1"){
+let msg = english
 
-await updateUser(phone,{
+if (user.language === "roman") msg = roman
+if (user.language === "urdu") msg = urdu
+
+
+
+// LANGUAGE SELECTION
+
+if (user.state === "language_select") {
+
+if (text === "1") {
+
+await updateUser(phone, {
 language: "english",
 state: "intro"
 })
 
 return english.languageConfirmation + "\n\n" + english.introduction
+
 }
 
-if(text === "2"){
+if (text === "2") {
 
-await updateUser(phone,{
+await updateUser(phone, {
 language: "roman",
 state: "intro"
 })
 
 return roman.languageConfirmation + "\n\n" + roman.introduction
+
 }
 
-if(text === "3"){
+if (text === "3") {
 
-await updateUser(phone,{
+await updateUser(phone, {
 language: "urdu",
 state: "intro"
 })
 
 return urdu.languageConfirmation + "\n\n" + urdu.introduction
+
 }
 
 return english.welcome
+
 }
 
-/* INTRO → ASK NAME */
 
-if(user.state === "intro"){
 
-await updateUser(phone,{ state: "ask_name" })
+// INTRO → ASK PURPOSE
 
-if(user.language === "roman") return roman.askName
-if(user.language === "urdu") return urdu.askName
-
-return english.askName
-}
-
-/* SAVE NAME */
-
-if(user.state === "ask_name"){
+if (user.state === "intro") {
 
 await updateUser(phone,{
-name: text,
-state: "ask_usage"
+state:"purpose_select"
 })
 
-if(user.language === "roman") return roman.usageSelection
-if(user.language === "urdu") return urdu.usageSelection
+return msg.purposeQuestion
 
-return english.usageSelection
 }
 
-/* USAGE TYPE */
 
-if(user.state === "ask_usage"){
+
+// PURPOSE SELECTION
+
+if (user.state === "purpose_select") {
 
 if(lower.includes("personal")){
 
 await updateUser(phone,{
 usage_type:"personal",
-state:"ask_occupation"
+state:"ask_name"
 })
 
-if(user.language === "roman") return roman.personalOccupation
-if(user.language === "urdu") return urdu.personalOccupation
+return msg.askName
 
-return english.personalOccupation
 }
 
 if(lower.includes("business")){
 
 await updateUser(phone,{
 usage_type:"business",
-state:"ask_business"
+state:"ask_name"
 })
 
-if(user.language === "roman") return roman.businessSetup
-if(user.language === "urdu") return urdu.businessSetup
-
-return english.businessSetup
-}
+return msg.askName
 
 }
 
-/* BUSINESS NAME */
+return msg.purposeQuestion
 
-if(user.state === "ask_business"){
+}
+
+
+
+// NAME
+
+if (user.state === "ask_name") {
 
 await updateUser(phone,{
-business_name:text,
-state:"trial_active"
+name:text,
+state:"ask_occupation"
 })
 
-return english.accountReady
+return msg.askOccupation
+
 }
 
-/* OCCUPATION */
 
-if(user.state === "ask_occupation"){
+
+// OCCUPATION
+
+if (user.state === "ask_occupation") {
 
 await updateUser(phone,{
 occupation:text,
-state:"trial_active"
+state:"ask_email"
 })
 
-return english.accountReady
+return msg.askEmail
+
 }
 
-/* ACTIVE USER */
 
-if(user.state === "trial_active"){
+
+// EMAIL
+
+if (user.state === "ask_email") {
+
+const now = new Date()
+
+const trialEnd = new Date()
+trialEnd.setDate(now.getDate()+7)
+
+await updateUser(phone,{
+email:text,
+trial_start: now,
+trial_end: trialEnd,
+state:"dashboard"
+})
+
+return msg.congratulations
+
+}
+
+
+
+// MENU COMMAND
 
 if(lower === "menu"){
-return english.dashboard(user.name)
-}
+
+return msg.menu
 
 }
 
-return "Type MENU to open dashboard."
+
+
+// PLANS COMMAND
+
+if(lower === "plans"){
+
+return msg.plans
+
+}
+
+
+
+// LANGUAGE CHANGE
+
+if(lower === "language"){
+
+await updateUser(phone,{
+state:"language_select"
+})
+
+return msg.languageMenu
+
+}
+
+
+
+return msg.default
+
 }
