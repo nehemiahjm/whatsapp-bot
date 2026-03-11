@@ -1,308 +1,139 @@
-require("dotenv").config()
+import express from "express";
+import fetch from "node-fetch";
+import dotenv from "dotenv";
 
-const express = require("express")
-const { sendMessage } = require("./whatsapp")
+dotenv.config();
 
-const pool = require("./database/postgres")
+const app = express();
+app.use(express.json());
 
-const {
-findUser,
-createUser,
-updateLanguage
-} = require("./services/userService")
+const PORT = process.env.PORT || 3000;
 
-const {
-recordSale,
-recordExpense,
-recordUdhar,
-getReport
-} = require("./services/financeService")
+const VERIFY_TOKEN = process.env.VERIFY_TOKEN;
+const WHATSAPP_TOKEN = process.env.WHATSAPP_TOKEN;
+const PHONE_NUMBER_ID = process.env.PHONE_NUMBER_ID;
 
-const english = require("./messages/english")
-const roman = require("./messages/roman")
-const urdu = require("./messages/urdu")
+/*
+================================
+WEBHOOK VERIFICATION (META)
+================================
+*/
 
-const { detectTransaction } = require("./ai/openai")
+app.get("/webhook", (req, res) => {
 
-const app = express()
-app.use(express.json())
+  const mode = req.query["hub.mode"];
+  const token = req.query["hub.verify_token"];
+  const challenge = req.query["hub.challenge"];
 
-/* ROOT */
+  if (mode === "subscribe" && token === VERIFY_TOKEN) {
+    console.log("Webhook verified successfully");
+    return res.status(200).send(challenge);
+  }
 
-app.get("/", (req,res)=>{
-res.send("Hisabi Cash Bot Running")
-})
+  return res.sendStatus(403);
 
-/* WEBHOOK VERIFY */
+});
 
-app.get("/webhook",(req,res)=>{
+/*
+================================
+RECEIVE WHATSAPP MESSAGES
+================================
+*/
 
-const verify_token = "hisabi_verify_token"
+app.post("/webhook", async (req, res) => {
 
-const mode = req.query["hub.mode"]
-const token = req.query["hub.verify_token"]
-const challenge = req.query["hub.challenge"]
+  try {
 
-if(mode && token === verify_token){
+    const entry = req.body.entry?.[0];
+    const changes = entry?.changes?.[0];
+    const message = changes?.value?.messages?.[0];
 
-return res.status(200).send(challenge)
+    if (!message) {
+      return res.sendStatus(200);
+    }
 
-}else{
+    const from = message.from;
+    const text = message.text?.body?.toLowerCase() || "";
 
-return res.sendStatus(403)
+    console.log("Message from user:", text);
 
-}
+    let reply = "";
 
-})
+    if (text === "menu") {
 
-/* MAIN BOT */
+      reply =
+`✨ Hisabi Cash Dashboard ✨
 
-app.post("/webhook", async (req,res)=>{
+Type one of the following:
 
-try{
+SALE — record a sale
+EXPENSE — record an expense
+UDHAR — record customer credit
+REPORT — financial report
+PLAN — view subscription
+MENU — return here`;
 
-const entry = req.body.entry?.[0]?.changes?.[0]?.value?.messages?.[0]
+    } else {
 
-if(!entry) return res.sendStatus(200)
+      reply =
+`👋 Welcome to Hisabi Cash
 
-/* CLEAN PHONE NUMBER */
+Your AI Financial Assistant
 
-const from = entry.from.replace("@c.us","")
+Type:
 
-const text = entry.text?.body?.trim()
+MENU
 
-if(!text) return res.sendStatus(200)
+to open your dashboard`;
 
-/* USER */
+    }
 
-let user = await findUser(from)
+    await sendMessage(from, reply);
 
-if(!user){
+    return res.sendStatus(200);
 
-user = await createUser(from)
+  } catch (error) {
 
-await sendMessage(from, english.welcome)
+    console.error(error);
+    return res.sendStatus(500);
 
-return res.sendStatus(200)
+  }
 
-}
+});
 
-/* LANGUAGE */
+/*
+================================
+SEND MESSAGE FUNCTION
+================================
+*/
 
-let lang = user.language || "english"
+async function sendMessage(to, text) {
 
-let msg
-
-if(lang === "english") msg = english
-if(lang === "roman") msg = roman
-if(lang === "urdu") msg = urdu
-
-const message = text.toLowerCase()
-
-/* MENU */
-
-if(message === "menu"){
-
-await sendMessage(from,msg.dashboard("User"))
-
-return res.sendStatus(200)
-
-}
-
-/* PLANS */
-
-if(message === "plans"){
-
-await sendMessage(from,msg.plans)
-
-return res.sendStatus(200)
-
-}
-
-/* SALE */
-
-if(message.startsWith("sale")){
-
-const parts = message.split(" ")
-
-const amount = parseInt(parts[1])
-const item = parts.slice(2).join(" ")
-
-if(!amount){
-
-await sendMessage(from,"Example: SALE 500 tea")
-
-return res.sendStatus(200)
+  await fetch(
+    `https://graph.facebook.com/v19.0/${PHONE_NUMBER_ID}/messages`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${WHATSAPP_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        messaging_product: "whatsapp",
+        to: to,
+        type: "text",
+        text: { body: text },
+      }),
+    }
+  );
 
 }
 
-await recordSale(from,amount,item)
-
-await sendMessage(from,msg.saleRecorded + "\nAmount: Rs " + amount)
-
-return res.sendStatus(200)
-
-}
-
-/* EXPENSE */
-
-if(message.startsWith("expense")){
-
-const parts = message.split(" ")
-
-const amount = parseInt(parts[1])
-const item = parts.slice(2).join(" ")
-
-if(!amount){
-
-await sendMessage(from,"Example: EXPENSE 200 milk")
-
-return res.sendStatus(200)
-
-}
-
-await recordExpense(from,amount,item)
-
-await sendMessage(from,msg.expenseRecorded + "\nAmount: Rs " + amount)
-
-return res.sendStatus(200)
-
-}
-
-/* UDHAR */
-
-if(message.startsWith("udhar")){
-
-const parts = message.split(" ")
-
-const amount = parseInt(parts[1])
-const person = parts.slice(2).join(" ")
-
-if(!amount){
-
-await sendMessage(from,"Example: UDHAR 1000 Ahmed")
-
-return res.sendStatus(200)
-
-}
-
-await recordUdhar(from,amount,person)
-
-await sendMessage(from,msg.udharRecorded + "\nAmount: Rs " + amount)
-
-return res.sendStatus(200)
-
-}
-
-/* REPORT */
-
-if(message.startsWith("report")){
-
-let type = "today"
-
-if(message.includes("week")) type = "week"
-if(message.includes("month")) type = "month"
-
-const report = await getReport(from,type)
-
-const sales = report.sales
-const expenses = report.expenses
-const udhar = report.udhar
-
-const profit = sales - expenses
-const cash = sales - expenses - udhar
-
-const reportText =
-`📊 Hisabi Cash Report
-
-💰 Sales: Rs ${sales}
-📉 Expenses: Rs ${expenses}
-📈 Profit: Rs ${profit}
-
-📒 Udhar Given: Rs ${udhar}
-
-💵 Net Cash Flow: Rs ${cash}`
-
-await sendMessage(from,reportText)
-
-return res.sendStatus(200)
-
-}
-
-/* AI TRANSACTION DETECTION */
-
-const ai = await detectTransaction(message)
-
-if(ai.type === "sale"){
-
-await recordSale(from, ai.amount, ai.description)
-
-await sendMessage(
-from,
-`✅ Sale Recorded
-
-Item: ${ai.description}
-Amount: Rs ${ai.amount}`
-)
-
-return res.sendStatus(200)
-
-}
-
-if(ai.type === "expense"){
-
-await recordExpense(from, ai.amount, ai.description)
-
-await sendMessage(
-from,
-`📉 Expense Recorded
-
-Item: ${ai.description}
-Amount: Rs ${ai.amount}`
-)
-
-return res.sendStatus(200)
-
-}
-
-if(ai.type === "udhar"){
-
-await recordUdhar(from, ai.amount, ai.description)
-
-await sendMessage(
-from,
-`📒 Udhar Recorded
-
-Person: ${ai.description}
-Amount: Rs ${ai.amount}`
-)
-
-return res.sendStatus(200)
-
-}
-
-/* UNKNOWN */
-
-await sendMessage(from,msg.help)
-
-return res.sendStatus(200)
-
-}catch(error){
-
-console.error(error)
-
-res.sendStatus(500)
-
-}
-
-})
-
-/* SERVER */
-
-const PORT = process.env.PORT || 3000
-
-app.listen(PORT,()=>{
-
-console.log("Hisabi Cash Server running on",PORT)
-
-})
+/*
+================================
+START SERVER
+================================
+*/
+
+app.listen(PORT, () => {
+  console.log("Server running on port", PORT);
+});

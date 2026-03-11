@@ -8,15 +8,22 @@ async function findUser(phone) {
   return result.rows[0]
 }
 
-async function createUser(phone) {
-  const result = await pool.query(
-    `INSERT INTO users (phone, trial_start, trial_end)
-     VALUES ($1, NOW(), NOW() + INTERVAL '7 days')
-     RETURNING *`,
-    [phone]
-  )
+async function createUser(phone){
 
-  return result.rows[0]
+const trialStart = new Date()
+
+const trialEnd = new Date()
+trialEnd.setDate(trialEnd.getDate() + 14)
+
+const result = await pool.query(
+`INSERT INTO users(phone,language,state,trial_start,trial_end,subscription_status)
+VALUES($1,'english','new_user',$2,$3,'trial')
+RETURNING *`,
+[phone,trialStart,trialEnd]
+)
+
+return result.rows[0]
+
 }
 
 async function updateLanguage(phone, language) {
