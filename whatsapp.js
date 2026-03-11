@@ -1,24 +1,20 @@
-const axios = require("axios")
+import axios from "axios"
 
 const TOKEN = process.env.WHATSAPP_TOKEN
 const PHONE_NUMBER_ID = process.env.PHONE_NUMBER_ID
 
-async function sendMessage(to, message){
 
-if(!message){
-console.log("⚠ Empty message prevented")
-return
-}
+export async function sendMessage(to, message){
+
+try{
 
 await axios.post(
-`https://graph.facebook.com/v18.0/${PHONE_NUMBER_ID}/messages`,
+`https://graph.facebook.com/v19.0/${PHONE_NUMBER_ID}/messages`,
 {
-messaging_product: "whatsapp",
-to: to,
-type: "text",
-text: {
-body: message
-}
+messaging_product:"whatsapp",
+to:to,
+type:"text",
+text:{ body: message }
 },
 {
 headers:{
@@ -28,6 +24,10 @@ Authorization:`Bearer ${TOKEN}`,
 }
 )
 
+}catch(err){
+
+console.log("Send message error:",err.response?.data || err)
+
 }
 
-module.exports = { sendMessage }
+}
