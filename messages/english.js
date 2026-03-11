@@ -1,88 +1,85 @@
-module.exports = {
+const english = {
 
-welcome: `👋 Welcome to Hisabi Cash
+welcome: `👋 *Welcome to Hisabi Cash*
 
-╭─ 🌐 Select Your Preferred Language
-│
-│ 1️⃣ English
-│ 2️⃣ Roman Urdu
-│ 3️⃣ اردو (Urdu)
-│
-│ Reply with the number of your language.
-╰──────────────`,
+━━━━━━━━━━━━━━━
 
-dashboard: (name)=>`📊 Hisabi Cash Dashboard
+🌐 *Please select your preferred language*
 
-Welcome back ${name} 👋
+1️⃣ English  
+2️⃣ Roman Urdu  
+3️⃣ اردو
 
-You can either:
+Reply with *1, 2, or 3* to continue.`,
 
-• Type a command
-• Or write naturally (example: I sold chai for 500)
+languageConfirmation: `✅ Language Selected: *English*
 
-╭─ 💰 Finance Tools
-│
-│ SALE
-│ Record daily sales
-│
-│ EXPENSE
-│ Track business expenses
-│
-│ UDHAR
-│ Manage customer credit
-╰──────────────
+You can always change language by typing *Language*.`,
 
-╭─ 📈 Reports & Analysis
-│
-│ REPORT
-│ Generate financial reports
-│
-│ INSIGHT
-│ Smart financial insights
-╰──────────────
+introduction: `💼 *About Hisabi Cash*
 
-╭─ ⚙ Account Settings
-│
-│ PLANS
-│ View subscription plans
-│
-│ LANGUAGE
-│ Change assistant language
-╰──────────────`,
+Hisabi Cash helps you manage your money easily and efficiently.
 
-plans:`💼 Hisabi Cash Plans
+• Track business sales and expenses  
+• Manage customer credit (Khata)  
+• Monitor personal spending  
+• Scan and save bills & receipts  
+• View daily financial reports  
 
-╭─ 👤 Personal Plan
-│ Rs 399 / month
-│ Ideal for individuals
-│
-│ Command:
-│ PERSONAL PLAN
-╰──────────────
+Everything directly inside WhatsApp.`,
 
-╭─ 🏪 Business Plan
-│ Rs 999 / month
-│ Perfect for shopkeepers
-│
-│ Command:
-│ BUSINESS PLAN
-╰──────────────`,
+purposeQuestion: `How will you use *Hisabi Cash*?
 
-report:`📊 Financial Reports
+Reply with:
 
-╭─ Available Reports
-│
-│ DAILY REPORT
-│ WEEKLY REPORT
-│ MONTHLY REPORT
-╰──────────────`,
+Personal  
+or  
+Business
 
-saleRecorded:`✅ Sale Recorded Successfully`,
+This helps us personalize your experience.`,
 
-expenseRecorded:`📉 Expense Recorded Successfully`,
+askName: `Please enter your *Name*.`,
 
-udharRecorded:`📒 Udhar Saved Successfully`,
+askOccupation: `What is your *Occupation*?`,
 
-help:`Type MENU to open dashboard.`
+askEmail: `Please enter your *Email Address*.`,
+
+congratulations: `🎉 *Congratulations!*
+
+Your account has been created.
+
+✅ Your *7 Day Free Trial* has started.
+
+You can type:
+
+Menu → Main dashboard  
+Plans → View subscription plans`,
+
+menu: `📊 *Hisabi Cash Menu*
+
+Type:
+
+Add Sale  
+Add Expense  
+Udhar  
+Report  
+Plans`,
+
+plans: `💳 *Subscription Plans*
+
+Personal Monthly  
+Business Monthly  
+
+Send payment screenshot after transfer.`,
+
+languageMenu: `Select language again:
+
+1 English  
+2 Roman Urdu  
+3 Urdu`,
+
+default: `Type *Menu* to see available commands.`
 
 }
+
+export default english

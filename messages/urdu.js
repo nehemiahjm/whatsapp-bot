@@ -1,37 +1,41 @@
-export default {
+const urdu = {
 
-welcome: `👋 حسابی کیش میں خوش آمدید
+welcome:`👋 ہسابی کیش میں خوش آمدید
 
-╭─ 🌐 زبان منتخب کریں ─╮
-│
-│ براہ کرم اپنی پسندیدہ
-│ زبان منتخب کریں
-│
-│ 1️⃣ English
-│ 2️⃣ Roman Urdu
-│ 3️⃣ اردو
-│
-╰────────────────────╯`,
+زبان منتخب کریں
 
-languageConfirmation: `✅ زبان منتخب ہو گئی`,
+1 English
+2 Roman Urdu
+3 اردو`,
 
-introduction: `🚀 حسابی کیش آپ کا مالی معاون ہے۔`,
+languageConfirmation:`✅ زبان منتخب ہو گئی`,
 
-askName: `✨ آپ کا نام کیا ہے؟`,
+introduction:`ہسابی کیش آپ کو اپنے پیسوں کا حساب رکھنے میں مدد دیتا ہے`,
 
-usageSelection: `PERSONAL USE یا BUSINESS USE لکھیں`,
+purposeQuestion:`آپ ہسابی کیش کو کس مقصد کے لئے استعمال کریں گے؟
 
-personalOccupation: `آپ کا پیشہ کیا ہے؟`,
+Personal
+یا
+Business`,
 
-businessSetup: `اپنی دکان کا نام بتائیں`,
+askName:`اپنا نام لکھیں`,
 
-accountReady: `🎉 آپ کا اکاؤنٹ تیار ہے
+askOccupation:`آپ کیا کام کرتے ہیں؟`,
 
-Type: MENU`,
+askEmail:`اپنا ای میل لکھیں`,
 
-dashboard: (name)=>`📊 HISABI CASH DASHBOARD
-User: ${name}
+congratulations:`🎉 آپ کا اکاؤنٹ بن گیا ہے
 
-Type MENU anytime.`
+7 دن کا فری ٹرائل شروع ہو گیا ہے`,
+
+menu:`مینو`,
+
+plans:`پلانز دستیاب ہیں`,
+
+languageMenu:`زبان منتخب کریں`,
+
+default:`مینو لکھیں`
 
 }
+
+export default urdu
