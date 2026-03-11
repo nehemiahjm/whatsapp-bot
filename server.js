@@ -2,9 +2,7 @@ import express from "express"
 import axios from "axios"
 import dotenv from "dotenv"
 
-import english from "./messages/english.js"
-import roman from "./messages/roman.js"
-import urdu from "./messages/urdu.js"
+import { handleConversation } from "./services/conversationService.js"
 
 dotenv.config()
 
@@ -17,12 +15,20 @@ const PHONE_NUMBER_ID = process.env.PHONE_NUMBER_ID
 
 const PORT = process.env.PORT || 8080
 
+
 /* -------------------------------- */
-/* WHATSAPP SEND MESSAGE FUNCTION   */
+/* SEND MESSAGE TO WHATSAPP         */
 /* -------------------------------- */
 
 async function sendMessage(to, message) {
+
+  if (!message) {
+    console.log("⚠ Empty message prevented")
+    return
+  }
+
   try {
+
     await axios.post(
       `https://graph.facebook.com/v18.0/${PHONE_NUMBER_ID}/messages`,
       {
@@ -38,10 +44,15 @@ async function sendMessage(to, message) {
         }
       }
     )
+
   } catch (error) {
-    console.log("Send message error:", error.response?.data || error.message)
+
+    console.log("❌ Send message error:")
+    console.log(error.response?.data || error.message)
+
   }
 }
+
 
 /* -------------------------------- */
 /* WEBHOOK VERIFICATION             */
@@ -54,15 +65,18 @@ app.get("/webhook", (req, res) => {
   const challenge = req.query["hub.challenge"]
 
   if (mode === "subscribe" && token === VERIFY_TOKEN) {
-    console.log("Webhook verified successfully")
+
+    console.log("✅ Webhook verified")
     return res.status(200).send(challenge)
+
   }
 
   res.sendStatus(403)
 })
 
+
 /* -------------------------------- */
-/* RECEIVE WHATSAPP MESSAGES        */
+/* RECEIVE WHATSAPP MESSAGE         */
 /* -------------------------------- */
 
 app.post("/webhook", async (req, res) => {
@@ -81,56 +95,40 @@ app.post("/webhook", async (req, res) => {
     const from = message.from
     const text = message.text?.body || ""
 
-    console.log("Incoming message:", text)
+    console.log("📩 Incoming message:", text)
 
-    const lower = text.toLowerCase()
 
-    /* LANGUAGE DEFAULT */
-    let lang = "english"
+    /* PASS MESSAGE TO CONVERSATION ENGINE */
 
-    let msg = english
-    if (lang === "roman") msg = roman
-    if (lang === "urdu") msg = urdu
+    const response = await handleConversation(from, text)
 
-    /* MENU COMMAND */
 
-    if (lower === "menu") {
+    if (response) {
 
-      let dashboardMessage = msg.dashboard
+      await sendMessage(from, response)
 
-      if (typeof dashboardMessage !== "string") {
-        dashboardMessage = String(dashboardMessage)
-      }
-
-      await sendMessage(from, dashboardMessage)
-      return res.sendStatus(200)
     }
-
-    /* LANGUAGE CHANGE */
-
-    if (lower === "language") {
-
-      await sendMessage(from, msg.language)
-      return res.sendStatus(200)
-    }
-
-    /* DEFAULT RESPONSE */
-
-    await sendMessage(from, msg.default)
 
     res.sendStatus(200)
 
-  } catch (err) {
+  } catch (error) {
+
+    console.log("❌ Webhook error:", error)
 
     console.log("ERROR:", err)
     res.sendStatus(200)
+
   }
+
 })
+
 
 /* -------------------------------- */
 /* START SERVER                     */
 /* -------------------------------- */
 
 app.listen(PORT, () => {
-  console.log(`Hisabi Cash server running on port ${PORT}`)
+
+  console.log(`🚀 Hisabi Cash server running on port ${PORT}`)
+
 })
