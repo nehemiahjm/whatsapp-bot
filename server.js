@@ -337,7 +337,7 @@ return res.sendStatus(200)
 
 /* DEFAULT */
 
-await sendMessage(from,msg.dashboard.replace("Ali",user.name))
+await sendMessage(from, String(msg.dashboard).replace("{user}", userName))
 
 return res.sendStatus(200)
 
