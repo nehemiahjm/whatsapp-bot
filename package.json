@@ -1,18 +1,15 @@
 {
   "name": "whatsapp-bot",
   "version": "1.0.0",
-  "description": "WhatsApp Railway Bot",
+  "description": "Hisabi Cash WhatsApp Bot",
   "main": "server.js",
+  "type": "module",
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
-    "axios": "^1.13.5",
-    "dotenv": "^17.3.1",
-    "exceljs": "^4.4.0",
-    "express": "^5.2.1",
-    "openai": "^6.27.0",
-    "pg": "^8.20.0",
-    "qrcode": "^1.5.4"
+    "dotenv": "^16.4.0",
+    "express": "^4.19.2",
+    "node-fetch": "^3.3.2"
   }
 }
