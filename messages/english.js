@@ -1,13 +1,20 @@
-const english = {
+export default {
 
-welcome: `👋 Welcome to Hisabi Cash
+welcome: `👋 Welcome to *Hisabi Cash*
 
-Please select language
+╭─ 🌐 Language Selection ─╮
+│
+│ Please choose your preferred language
+│ to continue.
+│
+│ 1️⃣  English
+│ 2️⃣  Roman Urdu
+│ 3️⃣  اردو
+│
+╰──────────────╯
 
-1 English
-2 Roman Urdu
-3 Urdu`
+✨ Hisabi Cash will guide you in the language you choose.
+
+Reply with *1*, *2*, or *3* to continue.`
 
 }
-
-export default english

@@ -7,23 +7,23 @@ export async function handleConversation(phone, text) {
 
   let user = await getUserByPhone(phone)
 
-  // New user
+  const greetings = ["hi","hello","salam","menu","start"]
+
+  // FIRST MESSAGE
   if (!user) {
     
     await createUser(phone)
-
-    return `👋 Welcome to *Hisabi Cash*
-
-Please select your language:
-
-1️⃣ English
-2️⃣ Roman Urdu
-3️⃣ Urdu`
+    return english.welcome
   }
 
-  // Language selection
-  if (text === "1") {
+  // GREETING ALWAYS SHOWS LANGUAGE MENU
+  if (greetings.includes(text.toLowerCase())) {
     return english.welcome
+  }
+
+  // LANGUAGE SELECTION
+  if (text === "1") {
+    return romanToEnglishSelection()
   }
 
   if (text === "2") {
@@ -35,4 +35,10 @@ Please select your language:
   }
 
   return "Please choose a valid option."
+}
+
+function romanToEnglishSelection(){
+  return `✅ Language set to *English*
+
+Next step coming soon...`
 }
