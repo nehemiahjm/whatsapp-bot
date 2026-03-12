@@ -1,20 +1,22 @@
 import axios from "axios"
 
-export async function sendMessage(to, message){
+const token = process.env.WHATSAPP_TOKEN
+const phoneId = process.env.PHONE_NUMBER_ID
 
-const url = `https://graph.facebook.com/v19.0/${process.env.PHONE_NUMBER_ID}/messages`
+export async function sendMessage(to, text) {
 
-await axios.post(url,{
-messaging_product:"whatsapp",
-to:to,
-type:"text",
-text:{ body:message }
-},
-{
-headers:{
-Authorization:`Bearer ${process.env.WHATSAPP_TOKEN}`,
-"Content-Type":"application/json"
-}
-})
-
+  await axios.post(
+    `https://graph.facebook.com/v19.0/${phoneId}/messages`,
+    {
+      messaging_product: "whatsapp",
+      to: to,
+      text: { body: text }
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json"
+      }
+    }
+  )
 }

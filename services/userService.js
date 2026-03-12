@@ -11,7 +11,7 @@ export async function getUserByPhone(phone) {
 
 }
 
-export async function createUser(phone){
+export async function createUser(phone) {
 
   await pool.query(
     "INSERT INTO users (phone) VALUES ($1)",

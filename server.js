@@ -1,61 +1,54 @@
 import express from "express"
-import bodyParser from "body-parser"
+
 
 import { sendMessage } from "./whatsapp.js"
 import { handleConversation } from "./services/conversationService.js"
-import { sendMessage } from "./whatsapp.js"
+
 
 const app = express()
 
 app.use(express.json())
 
-app.use(bodyParser.json())
+
 
 const PORT = process.env.PORT || 8080
 
-
-app.get("/", (req,res)=>{
-res.send("Hisabi Cash Bot Running")
+app.get("/", (req, res) => {
+  res.send("Hisabi Cash Bot Running")
 })
 
+app.post("/webhook", async (req, res) => {
+  try {
 
-app.post("/webhook", async (req,res)=>{
+    const entry = req.body.entry?.[0]
+    const change = entry?.changes?.[0]
+    const message = change?.value?.messages?.[0]
 
-try{
+    if (!message) {
+      return res.sendStatus(200)
+    }
 
-const entry = req.body.entry?.[0]
-const change = entry?.changes?.[0]
-const message = change?.value?.messages?.[0]
+    const phone = message.from
+    const text = message.text?.body
 
-if(!message){
-return res.sendStatus(200)
-}
+    console.log("Incoming:", text)
 
-const phone = message.from
-const text = message.text?.body
+    const reply = await handleConversation(phone, text)
 
-console.log("Incoming:", text)
+    if (reply) {
+      await sendMessage(phone, reply)
+    }
 
-const reply = await handleConversation(phone,text)
+    res.sendStatus(200)
 
-if(reply){
-await sendMessage(phone,reply)
-}
+  } catch (err) {
 
+    console.log("Webhook error:", err)
+    res.sendStatus(200)
 
-res.sendStatus(200)
-
-}catch(err){
-
-console.log("Webhook error:",err)
-
-res.sendStatus(200)
-
-}
-
+  }
 })
 
-
-app.listen(PORT,()=>{
-console.log(`🚀 Hisabi Cash running on port ${PORT}`)
+app.listen(PORT, () => {
+  console.log(`🚀 Hisabi Cash running on port ${PORT}`)
 })
