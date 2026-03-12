@@ -3,105 +3,168 @@ import english from "../messages/english.js"
 import roman from "../messages/roman.js"
 import urdu from "../messages/urdu.js"
 
-import { getUser, createUser, updateUserLanguage, updateUserState } from "./userService.js"
+import {
+getUser,
+createUser,
+updateUserLanguage,
+updateUserState
+} from "./userService.js"
 
 
-function getMessages(language) {
+function getMessages(language){
 
-    if (language === "roman") return roman
-    if (language === "urdu") return urdu
+if(language === "roman") return roman
+if(language === "urdu") return urdu
 
-    return english
+return english
+
 }
 
 
-export async function handleConversation(phone, message) {
 
-    message = message.trim()
+export async function handleConversation(phone,message){
 
-    let user = await getUser(phone)
+message = message.trim()
 
-    // NEW USER
-    if (!user) {
-  await createUser(phone)
-  user = await getUser(phone)
-  return english.welcome
+let user = await getUser(phone)
+
+
+
+// NEW USER
+if(!user){
+
+await createUser(phone)
+
+return english.welcome
+
 }
 
 
-    // LANGUAGE SELECTION
-    if (user.state === "new_user") {
 
-        if (message === "1") {
+// LANGUAGE SELECTION
+if(user.state === "new_user"){
 
-            await updateUserLanguage(phone, "english")
-            await updateUserState(phone, "language_selected")
+if(message === "1"){
 
-            return english.languageSelected + "\n\n" + english.introduction
-        }
+await updateUserLanguage(phone,"english")
+await updateUserState(phone,"introduction")
 
-        if (message === "2") {
+return english.languageSelected + "\n\n" + english.introduction
 
-            await updateUserLanguage(phone, "roman")
-            await updateUserState(phone, "language_selected")
+}
 
-            return roman.languageSelected + "\n\n" + roman.introduction
-        }
+if(message === "2"){
 
-        if (message === "3") {
+await updateUserLanguage(phone,"roman")
+await updateUserState(phone,"introduction")
 
-            await updateUserLanguage(phone, "urdu")
-            await updateUserState(phone, "language_selected")
+return roman.languageSelected + "\n\n" + roman.introduction
 
-            return urdu.languageSelected + "\n\n" + urdu.introduction
-        }
+}
 
-        return english.welcome
-    }
+if(message === "3"){
 
+await updateUserLanguage(phone,"urdu")
+await updateUserState(phone,"introduction")
 
-    // AFTER INTRO → SHOW MODE SELECTION
-    if (user.state === "language_selected") {
+return urdu.languageSelected + "\n\n" + urdu.introduction
 
-        const messages = getMessages(user.language)
+}
 
-        await updateUserState(phone, "choose_mode")
+return english.welcome
 
-        return messages.modeExplanation
-    }
+}
 
 
-    // MODE SELECTION
-    if (user.state === "choose_mode") {
 
-        const messages = getMessages(user.language)
+// ASK USER NAME
+if(user.state === "introduction"){
 
-        const text = message.toLowerCase()
+const messages = getMessages(user.language)
 
-        if (text === "personal use") {
+await updateUserState(phone,"ask_name")
 
-            await updateUserState(phone, "active")
+return messages.askName
 
-            return "✅ Personal mode activated. Your account is ready."
-        }
-
-        if (text === "business use") {
-
-            await updateUserState(phone, "active")
-
-            return "✅ Business mode activated. Your account is ready."
-        }
-
-        return messages.modeExplanation
-    }
+}
 
 
-    // ACTIVE USER
-    if (user.state === "active") {
 
-        const messages = getMessages(user.language)
+// SAVE USER NAME
+if(user.state === "ask_name"){
 
-        return "✅ Hisabi Cash is ready. Start sending your transactions."
-    }
+await updateUserState(phone,"choose_usage")
+
+const messages = getMessages(user.language)
+
+return messages.usageSelection.replace("Ali",message)
+
+}
+
+
+
+// USAGE TYPE SELECTION
+if(user.state === "choose_usage"){
+
+const messages = getMessages(user.language)
+
+const text = message.toLowerCase()
+
+if(text === "personal use"){
+
+await updateUserState(phone,"personal_profile")
+
+return messages.personalProfile.replace("Ali","User")
+
+}
+
+if(text === "business use"){
+
+await updateUserState(phone,"business_profile")
+
+return messages.businessProfile.replace("Ali","User")
+
+}
+
+return messages.usageSelection
+
+}
+
+
+
+// PERSONAL PROFILE
+if(user.state === "personal_profile"){
+
+await updateUserState(phone,"active")
+
+const messages = getMessages(user.language)
+
+return messages.accountReady.replace("Ali","User") + "\n\n" + messages.dashboard
+
+}
+
+
+
+// BUSINESS PROFILE
+if(user.state === "business_profile"){
+
+await updateUserState(phone,"active")
+
+const messages = getMessages(user.language)
+
+return messages.accountReady.replace("Ali","User") + "\n\n" + messages.dashboard
+
+}
+
+
+
+// ACTIVE USER
+if(user.state === "active"){
+
+const messages = getMessages(user.language)
+
+return messages.dashboard
+
+}
 
 }
