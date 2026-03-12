@@ -23,11 +23,10 @@ export async function handleConversation(phone, message) {
 
     // NEW USER
     if (!user) {
-
-        await createUser(phone)
-
-        return english.welcome
-    }
+  await createUser(phone)
+  user = await getUser(phone)
+  return english.welcome
+}
 
 
     // LANGUAGE SELECTION

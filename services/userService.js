@@ -14,11 +14,10 @@ export async function getUser(phone) {
 
 
 export async function createUser(phone) {
-
-    await pool.query(
-        "INSERT INTO users (phone, state) VALUES ($1, 'new_user')",
-        [phone]
-    )
+  await pool.query(
+    "INSERT INTO users (phone, state, language) VALUES ($1, 'new_user', 'english')",
+    [phone]
+  )
 }
 
 
