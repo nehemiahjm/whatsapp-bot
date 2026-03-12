@@ -1,44 +1,108 @@
-import { getUserByPhone, createUser } from "./userService.js"
+
 import english from "../messages/english.js"
 import roman from "../messages/roman.js"
 import urdu from "../messages/urdu.js"
 
-export async function handleConversation(phone, text) {
+import { getUser, createUser, updateUserLanguage, updateUserState } from "./userService.js"
 
-  let user = await getUserByPhone(phone)
 
-  const greetings = ["hi","hello","salam","menu","start"]
+function getMessages(language) {
 
-  // FIRST MESSAGE
-  if (!user) {
-    
-    await createUser(phone)
-    return english.welcome
-  }
+    if (language === "roman") return roman
+    if (language === "urdu") return urdu
 
-  // GREETING ALWAYS SHOWS LANGUAGE MENU
-  if (greetings.includes(text.toLowerCase())) {
-    return english.welcome
-  }
-
-  // LANGUAGE SELECTION
-  if (text === "1") {
-    return romanToEnglishSelection()
-  }
-
-  if (text === "2") {
-    return roman.welcome
-  }
-
-  if (text === "3") {
-    return urdu.welcome
-  }
-
-  return "Please choose a valid option."
+    return english
 }
 
-function romanToEnglishSelection(){
-  return `✅ Language set to *English*
 
-Next step coming soon...`
+export async function handleConversation(phone, message) {
+
+    message = message.trim()
+
+    let user = await getUser(phone)
+
+    // NEW USER
+    if (!user) {
+
+        await createUser(phone)
+
+        return english.welcome
+    }
+
+
+    // LANGUAGE SELECTION
+    if (user.state === "new_user") {
+
+        if (message === "1") {
+
+            await updateUserLanguage(phone, "english")
+            await updateUserState(phone, "language_selected")
+
+            return english.languageSelected + "\n\n" + english.introduction
+        }
+
+        if (message === "2") {
+
+            await updateUserLanguage(phone, "roman")
+            await updateUserState(phone, "language_selected")
+
+            return roman.languageSelected + "\n\n" + roman.introduction
+        }
+
+        if (message === "3") {
+
+            await updateUserLanguage(phone, "urdu")
+            await updateUserState(phone, "language_selected")
+
+            return urdu.languageSelected + "\n\n" + urdu.introduction
+        }
+
+        return english.welcome
+    }
+
+
+    // AFTER INTRO → SHOW MODE SELECTION
+    if (user.state === "language_selected") {
+
+        const messages = getMessages(user.language)
+
+        await updateUserState(phone, "choose_mode")
+
+        return messages.modeExplanation
+    }
+
+
+    // MODE SELECTION
+    if (user.state === "choose_mode") {
+
+        const messages = getMessages(user.language)
+
+        const text = message.toLowerCase()
+
+        if (text === "personal use") {
+
+            await updateUserState(phone, "active")
+
+            return "✅ Personal mode activated. Your account is ready."
+        }
+
+        if (text === "business use") {
+
+            await updateUserState(phone, "active")
+
+            return "✅ Business mode activated. Your account is ready."
+        }
+
+        return messages.modeExplanation
+    }
+
+
+    // ACTIVE USER
+    if (user.state === "active") {
+
+        const messages = getMessages(user.language)
+
+        return "✅ Hisabi Cash is ready. Start sending your transactions."
+    }
+
 }
