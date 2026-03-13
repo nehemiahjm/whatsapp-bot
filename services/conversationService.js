@@ -163,6 +163,25 @@ if(user.state === "active"){
 
 const messages = getMessages(user.language)
 
+const text = message.toLowerCase()
+
+if(text === "menu"){
+    return messages.dashboard
+}
+
+if(text === "plans"){
+    return messages.plans
+}
+
+if(text === "report"){
+    return messages.financialSummary
+}
+
+if(text === "language"){
+    await updateUserState(phone,"new_user")
+    return messages.welcome
+}
+
 return messages.dashboard
 
 }
