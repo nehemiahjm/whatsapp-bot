@@ -6,16 +6,13 @@ welcome: `👋 Welcome to *Hisabi Cash*
 🌐 Language Selection
 ───────────────
 
-Please choose your preferred language
-to continue.
+Please choose your preferred language.
 
-• • • • • • • •
+1️⃣ English  
+2️⃣ Roman Urdu  
+3️⃣ اردو
 
-1️⃣  English
-2️⃣  Roman Urdu
-3️⃣  اردو
-
-• • • • • • • •
+───────────────
 
 ✨ Hisabi Cash will guide you in the language you choose.
 
@@ -43,47 +40,36 @@ Your Smart Money Assistant
 Imagine managing your money
 as easily as sending a message.
 
-No complicated apps.
-No messy notebooks.
-No confusing spreadsheets.
+No complicated apps  
+No messy notebooks  
+No confusing spreadsheets
 
-• • • • • • • •
-
-Just simple conversations
-with your financial assistant.
-
+───────────────
 
 With Hisabi Cash you can:
 
-💰 Track your income or daily sales  
+💰 Track income or daily sales  
 📉 Record expenses instantly  
-📒 Manage udhar and credit records  
-📊 View clear financial reports anytime  
-
-• • • • • • • •
+📒 Manage udhar / credit records  
+📊 View financial reports anytime
 
 ───────────────
-Let's Get Started
-───────────────
 
-We'll set up your account in
-just a few seconds so Hisabi Cash
-can personalize everything for you.`,
+✨ Let's set up your account in just a few seconds.`,
 
 
 
-askName: `👤 Before we begin…
+askName: `👤 Let's Get To Know You
 
 ───────────────
 Personalizing Your Experience
 ───────────────
 
-To make Hisabi Cash more helpful for you,
+To make Hisabi Cash more helpful,
 I'd like to know your name.
 
-This allows your assistant to recognize
-you and organize your financial insights
-more personally.
+Your assistant will use this name
+while managing your records.
 
 ───────────────
 
@@ -96,27 +82,42 @@ Ahmed`,
 
 
 
-usageSelection: `👤 Before we begin…
+usageSelection: `🤝 Nice to meet you, {user}.
 
 ───────────────
-Personalizing Your Experience
+How Will You Use Hisabi Cash?
 ───────────────
 
-To make Hisabi Cash more helpful for you,
-I'd like to know your name.
+Please select how you want
+to use your assistant.
 
-This allows your assistant to recognize
-you and organize your financial insights
-more personally.
+👤 PERSONAL USE
+
+Perfect for individuals who want to:
+
+• Track daily expenses  
+• Manage personal income  
+• Understand spending habits
 
 ───────────────
 
-✨ What should I call you?
+🏪 BUSINESS USE
 
-Example:
-Ali  
-Sara  
-Ahmed`,
+Perfect for shopkeepers who want to:
+
+• Record daily sales  
+• Track shop expenses  
+• Manage customer udhar
+
+───────────────
+
+Type:
+
+PERSONAL USE
+
+or
+
+BUSINESS USE`,
 
 
 
@@ -126,21 +127,18 @@ personalProfile: `🧑 Personal Profile Setup
 Understanding Your Work
 ───────────────
 
-Thanks, Ali.
+Thanks {user}.
 
-To provide more relevant financial
-insights, I'd like to understand
-a little about what you do.
-
-Your occupation helps Hisabi Cash
-give better spending and savings
-guidance.
+Knowing your occupation helps
+Hisabi Cash give better financial
+insights and suggestions.
 
 ───────────────
 
 ✨ What is your occupation?
 
-Examples:
+Example:
+
 Student  
 Teacher  
 Freelancer  
@@ -154,58 +152,43 @@ businessProfile: `🏪 Business Profile Setup
 Your Business Information
 ───────────────
 
-Great choice, Ali.
+Great choice {user}.
 
-Hisabi Cash will help you manage
-your business finances more
-efficiently.
-
-To begin, please tell me the name
-of your shop or business.
+Hisabi Cash will help manage
+your shop finances professionally.
 
 ───────────────
 
 ✨ What is your shop or business name?
 
 Example:
+
 Ali General Store  
 Ahmed Tea Stall  
 Sara Boutique`,
 
 
 
-accountReady: `🎉 Your Account is Ready, Ali!
+accountReady: `🎉 Your Account is Ready, {user}!
 
 ───────────────
 Welcome to Hisabi Cash
 ───────────────
 
-Your account has been successfully
-created and your personal assistant
-is now ready to help you manage
-your finances.
+Your assistant is now ready
+to help manage your financial
+records.
 
 ───────────────
 
 🗓 Free Trial Activated: 14 Days
 
 During your trial you can explore
-all features of Hisabi Cash and see
-how it helps you stay organized
-with your financial activities.
-
-───────────────
-What You Can Do Now
-───────────────
-
-💰 Record sales or income
-📉 Track expenses instantly
-📒 Manage udhar / credit records
-📊 View financial reports
+all features of Hisabi Cash.
 
 ───────────────
 
-✨ To open your dashboard anytime
+✨ To open your dashboard
 
 Type: *MENU*`,
 
@@ -214,88 +197,61 @@ Type: *MENU*`,
 dashboard: `📊 HISABI CASH DASHBOARD
 
 ───────────────
-Your Assistant is Ready
+Your Assistant Is Ready
 ───────────────
 
-👤 User: Ali
-🏪 Business: Ali General Store
-🗓 Trial Remaining: 14 days
+👤 User: {user}  
+🏪 Business: {business}  
+🗓 Trial Remaining: {trial}
 
 ───────────────
-What Would You Like To Do?
+Available Actions
 ───────────────
 
-💰 Record Sale / Income
+💰 Record Sale / Income  
 Example:
 Sale 500 Tea
 
-📉 Record Expense
+📉 Record Expense  
 Example:
 Expense 200 Milk
 
-📒 Record Udhar
+📒 Record Udhar  
 Example:
 Udhar 1000 Ahmed
 
-📊 View Financial Report
-Command:
-REPORT
+📊 View Financial Report  
+Command: REPORT
 
-💼 View Subscription Plans
-Command:
-PLANS
+💼 View Subscription Plans  
+Command: PLANS
 
-🌐 Change Language
-Command:
-LANGUAGE
+🌐 Change Language  
+Command: LANGUAGE
 
 ───────────────
 
-───────────────
-Smart Input Supported
-───────────────
-
-You can also send messages naturally.
-
-Examples:
-
-I sold tea for 500
-Bought milk for 200
-Ahmed ko 1000 udhar diya
-
-Hisabi Cash will understand
-and record the transaction.
-
-───────────────
-
-✨ Type *MENU* anytime to return here.`,
+✨ Type *MENU* anytime
+to return to this dashboard.`,
 
 
 
-saleRecorded: `✅ Transaction Recorded Successfully
+saleRecorded: `✅ Sale Recorded Successfully
 
 ───────────────
 Sale / Income Entry
 ───────────────
 
-💰 Amount: Rs 500
-🧾 Item: Tea
+💰 Amount: Rs {amount}  
+🧾 Item: {item}
 
-This transaction has been added
+This sale has been added
 to your financial records.
 
 ───────────────
 
-Your updated financial activity
-will be reflected in your reports.
-
-✨ To view your summary
-
-Type: *REPORT*
-
-✨ To return to dashboard
-
-Type: *MENU*`,
+Type *REPORT* to view summary  
+Type *MENU* to return dashboard`,
 
 
 
@@ -305,24 +261,16 @@ expenseRecorded: `✅ Expense Recorded Successfully
 Expense Entry
 ───────────────
 
-📉 Amount: Rs 200
-🧾 Item: Milk
+📉 Amount: Rs {amount}  
+🧾 Item: {item}
 
 This expense has been added
 to your financial records.
 
 ───────────────
 
-Your reports will now include
-this expense entry.
-
-✨ To view your updated report
-
-Type: *REPORT*
-
-✨ To return to dashboard
-
-Type: *MENU*`,
+Type *REPORT* to view summary  
+Type *MENU* to return dashboard`,
 
 
 
@@ -332,65 +280,339 @@ udharRecorded: `✅ Udhar Recorded Successfully
 Credit Entry
 ───────────────
 
-👤 Customer: Ahmed
-💰 Amount: Rs 1000
-📅 Udhar Date: 15 March 2026
+👤 Customer: {customer}  
+💰 Amount: Rs {amount}
 
-This udhar entry has been added
-to your credit records.
+This credit entry has been
+added to your records.
 
 ───────────────
 
-You can track outstanding payments
-in your financial reports.
-
-━━━━━━━━━━━━━━━━━━━━━━
-
-📩 Send Receipt to Customer
-
-Would you like to send a khata
-receipt to the customer?
-
-Type: YES  
-Type: NO
-
-━━━━━━━━━━━━━━━━━━━━━━
-
-✨ To view your report
-
-Type: REPORT
-
-✨ To return to dashboard
-
-Type: MENU`,
+Type *REPORT* to view summary  
+Type *MENU* to return dashboard`,
 
 
 
-customerNumber: `📱 Customer WhatsApp Number
+plans: `💼 HISABI CASH PLANS
 
-Please enter Ahmed's WhatsApp
-number to send the khata receipt.
+Choose the plan that fits
+your financial needs.
+
+───────────────
+
+👤 PERSONAL PLAN
+
+Ideal for individuals who want
+to manage personal finances.
+
+Includes:
+
+• Expense tracking  
+• Income monitoring  
+• Financial insights
+
+💳 Price  
+Rs 399 / month
+
+To activate type:
+
+PERSONAL PLAN
+
+───────────────
+
+🏪 BUSINESS PLAN
+
+Perfect for shopkeepers and
+small businesses.
+
+Includes:
+
+• Daily sales tracking  
+• Expense management  
+• Udhar records  
+• Business reports
+
+💳 Price  
+Rs 999 / month
+
+To activate type:
+
+BUSINESS PLAN`,
+
+
+
+paymentInstructions: `💳 Subscription Payment
+
+───────────────
+Selected Plan
+───────────────
+
+PERSONAL PLAN
+
+Monthly Price:
+Rs 399
+
+───────────────
+
+Send payment using:
+
+• JazzCash  
+• Easypaisa
+
+Payment Number:
+
+📱 0316-3154140
+
+───────────────
+
+After payment send
+the screenshot here.
+
+Verification takes
+12 — 24 hours.`,
+
+
+
+paymentVerification: `🧾 Payment Verification In Progress
+
+Your payment screenshot
+has been received.
+
+───────────────
+
+Our team will verify the
+transaction within:
+
+12 — 24 hours.
+
+───────────────
+
+You will receive a confirmation
+once the subscription is active.
+
+✨ Thank you for choosing
+Hisabi Cash.`,
+
+
+
+businessSummary: `📊 Financial Summary
+
+───────────────
+
+Here you will see:
+
+• Total sales  
+• Total expenses  
+• Udhar balance  
+• Profit overview
+
+───────────────
+
+✨ Detailed reports feature
+is coming soon.`,
+
+
+
+personalPlanActivated: `✅ Personal Plan Activated
+
+Your Personal Plan has been
+successfully activated.
+
+You now have access to:
+
+• Personal expense tracking  
+• Income monitoring  
+• Financial insights
+
+Type *MENU* to continue.`,
+
+
+
+businessPlanActivated: `✅ Business Plan Activated
+
+Your Business Plan has been
+successfully activated.
+
+You now have access to:
+
+• Sales tracking  
+• Expense records  
+• Udhar management  
+• Business reports
+
+Type *MENU* to continue.`,
+
+
+trialEndingSoon: `⏳ Trial Ending Soon
+
+───────────────
+Your Free Trial
+───────────────
+
+Your 14-day trial of Hisabi Cash
+will expire soon.
+
+You currently have limited time
+left to continue using all
+features of the assistant.
+
+───────────────
+
+✨ To continue using Hisabi Cash
+without interruption,
+
+please activate a subscription.
+
+Type: *PLANS*`,
+
+
+
+trialEnded: `⚠️ Trial Period Ended
+
+───────────────
+Subscription Required
+───────────────
+
+Your free trial of Hisabi Cash
+has ended.
+
+To continue recording sales,
+expenses, and udhar records,
+please activate a subscription.
+
+───────────────
+
+✨ View available plans
+
+Type: *PLANS*`,
+
+
+
+subscriptionEndingSoon: `⏳ Subscription Expiring Soon
+
+───────────────
+Subscription Notice
+───────────────
+
+Your Hisabi Cash subscription
+will expire soon.
+
+To avoid interruption in your
+financial tracking and records,
+please renew your subscription.
+
+───────────────
+
+✨ View subscription plans
+
+Type: *PLANS*`,
+
+
+
+subscriptionExpired: `⚠️ Subscription Expired
+
+───────────────
+Access Paused
+───────────────
+
+Your Hisabi Cash subscription
+has expired.
+
+Recording new financial
+transactions is currently paused.
+
+───────────────
+
+✨ To restore access
+
+please renew your subscription.
+
+Type: *PLANS*`,
+
+
+
+askCustomerNumber: `📱 Customer WhatsApp Number
+
+───────────────
+Send Udhar Receipt
+───────────────
+
+To send a khata receipt to
+your customer, please enter
+their WhatsApp number.
 
 Example:
-923001234567`,
 
+923001234567
+
+───────────────
+
+The receipt will be sent
+directly to the customer.`,
+
+
+
+sendingUdharReceipt: `📨 Sending Khata Receipt
+
+───────────────
+Customer Notification
+───────────────
+
+The udhar receipt is being
+sent to the customer.
+
+This helps maintain clear
+records and transparency
+between you and your customer.
+
+───────────────
+
+✨ The customer will receive
+their receipt shortly.`,
+
+
+
+udharReminderOwner: `📒 Udhar Reminder
+
+───────────────
+Outstanding Payment
+───────────────
+
+One of your customers has
+an unpaid udhar balance.
+
+👤 Customer: {customer}  
+💰 Amount: Rs {amount}
+
+This udhar has been pending
+for several days.
+
+───────────────
+
+Would you like to send a
+reminder to the customer?
+
+Type:
+
+YES  
+NO`,
 
 
 customerReceipt: `📄 Khata Receipt
 
-Salam Ahmed,
+Salam {customer},
 
 A credit entry has been recorded
 for you at:
 
-🏪 Madina Store
+🏪 {business}
 
 ───────────────
 Khata Details
 ───────────────
 
-💰 Amount: Rs 1000
-📅 Date: 15 March 2026
+💰 Amount: Rs {amount}  
+📅 Date: {date}
 
 ───────────────
 
@@ -400,210 +622,7 @@ outstanding balance.
 
 ━━━━━━━━━━━━━━━━━━━━━━
 
-Powered by Hisabi Cash`,
-
-
-
-receiptSent: `✅ Receipt Sent Successfully
-
-The khata receipt has been
-successfully delivered to
-the customer.
-
-You can continue managing
-your financial records.
-
-━━━━━━━━━━━━━━━━━━━━━━
-
-Type: MENU`,
-
-
-
-udharReminder: `📒 Udhar Reminder
-
-Ahmed has an outstanding
-balance of Rs 1000.
-
-This udhar has been pending
-for 7 days.
-
-Would you like to send
-a reminder to the customer?
-
-Type: YES
-Type: NO`,
-
-
-
-plans: `💼 HISABI CASH PLANS
-
-Choose the plan that best matches
-your financial needs.
-
-━━━━━━━━━━━━━━━━━━━━━━
-
-👤 PERSONAL PLAN
-Designed for individuals who want
-to manage their personal money
-in a smart and organized way.
-
-✨ Ideal For
-• Salary tracking
-• Pocket money management
-• Daily expense recording
-• Personal financial reports
-• Smart AI financial insights
-
-💳 Monthly Subscription
-Rs 399 / month
-
-🧾 To Activate
-Type:
-PERSONAL PLAN
-
-━━━━━━━━━━━━━━━━━━━━━━
-
-🏪 BUSINESS PLAN
-Perfect for shopkeepers and
-small business owners who want
-to manage their shop finances
-professionally.
-
-✨ Ideal For
-• Recording shop sales
-• Tracking shop expenses
-• Managing customer udhar
-• Daily profit insights
-• Business performance reports
-
-💳 Monthly Subscription
-Rs 999 / month
-
-🧾 To Activate
-Type:
-BUSINESS PLAN
-
-━━━━━━━━━━━━━━━━━━━━━━
-
-🔐 Every Plan Includes
-
-• Secure financial records
-• Automated financial reports
-• AI powered insights
-• WhatsApp based management
-• Easy daily accounting
-
-━━━━━━━━━━━━━━━━━━━━━━
-
-✨ To subscribe
-
-Simply type the plan command.
-
-Example:
-
-PERSONAL PLAN
-
-or
-
-BUSINESS PLAN`,
-
-
-
-paymentInstructions: `💳 Subscription Payment
-
-You are about to activate your
-Hisabi Cash subscription.
-
-━━━━━━━━━━━━━━━━━━━━━━
-
-📦 Selected Plan
-
-PERSONAL PLAN
-
-Monthly Subscription
-Rs 399 / month
-
-━━━━━━━━━━━━━━━━━━━━━━
-
-💰 Payment Methods
-
-You can complete your payment using:
-
-• JazzCash
-• Easypaisa
-
-Send the payment to the number below:
-
-📱 0316-3154140
-
-━━━━━━━━━━━━━━━━━━━━━━
-
-📸 Payment Verification
-
-After sending the payment,
-
-please take a screenshot of the
-transaction receipt and send it
-here in this chat.
-
-━━━━━━━━━━━━━━━━━━━━━━
-
-⏳ Verification Process
-
-Our team will verify your payment
-within the next:
-
-12 — 24 hours
-
-Once your payment is verified,
-
-your subscription will be activated
-and you will receive a confirmation
-message from Hisabi Cash.
-
-━━━━━━━━━━━━━━━━━━━━━━
-
-✨ Need help?
-
-Type: MENU`,
-
-
-
-paymentVerification: `🧾 Payment Verification In Progress
-
-Your payment confirmation has
-been successfully submitted.
-
-━━━━━━━━━━━━━━━━━━━━━━
-
-📸 Verification Process
-
-Our Hisabi Cash team will now
-review and verify the transaction.
-
-━━━━━━━━━━━━━━━━━━━━━━
-
-⏳ Estimated Verification Time
-
-12 — 24 hours
-
-Once verification is completed,
-your subscription will be activated
-and you will receive a confirmation
-message from Hisabi Cash.
-
-━━━━━━━━━━━━━━━━━━━━━━
-
-🔐 Your financial data remains
-secure and protected.
-
-━━━━━━━━━━━━━━━━━━━━━━
-
-✨ Thank you for choosing
-Hisabi Cash.
-
-Type: MENU
-to continue exploring features.`
+Powered by Hisabi Cash`
 
 }
 

@@ -24,22 +24,18 @@ ka hisaab utni asaani se
 rakh sakein jitni asaani se
 aap WhatsApp par message bhejte hain.
 
-Na mushkil apps
-Na messy notebooks
+Na mushkil apps  
+Na messy notebooks  
 Na confusing spreadsheets
 
-• • • • • • • •
-
-Sirf simple conversation
-aur aapka financial assistant.
-
+───────────────
 
 Hisabi Cash se aap:
 
 💰 Income ya daily sales track kar sakte hain  
 📉 Expenses turant record kar sakte hain  
 📒 Udhar aur credit manage kar sakte hain  
-📊 Clear financial reports dekh sakte hain  
+📊 Clear financial reports dekh sakte hain
 
 • • • • • • • •
 
@@ -47,10 +43,7 @@ Hisabi Cash se aap:
 Chaliye Shuru Karte Hain
 ───────────────
 
-Bas kuch seconds mein
-aapka account setup ho jayega
-aur Hisabi Cash aapko
-personalized madad dena shuru karega.`,
+✨ Chaliye account setup karte hain.`,
 
 
 
@@ -60,8 +53,9 @@ askName: `👤 Shuru karne se pehle…
 Aapka Experience Personalize Karna
 ───────────────
 
-Hisabi Cash ko aapke liye zyada helpful
-banane ke liye mujhe aapka naam maloom
+Hisabi Cash ko aapke liye
+zyaada helpful banane ke liye
+mujhe aapka naam maloom
 hona zaroori hai.
 
 Is se aapka assistant aapko pehchan
@@ -70,43 +64,45 @@ insights de sakega.
 
 ───────────────
 
-✨ Main aapko kis naam se bulaun?`,
+✨ Main aapko kis naam se bulaun?
+
+Example:
+
+Ali  
+Sara  
+Ahmed`,
 
 
 
-usageSelection: `🤝 Aap se mil kar khushi hui, Ali.
+usageSelection: `🤝 Aap se mil kar khushi hui, {user}.
 
 ───────────────
-Aapko Samajhna Zaroori Hai
+Aap Hisabi Cash Kaise Use Karenge?
 ───────────────
 
-Aapko behtar financial insights dene ke
-liye Hisabi Cash ko yeh samajhna zaroori
-hai ke aap assistant ko kis tarah use
-karna chahte hain.
+Please select karein ke
+aap assistant ko kis
+purpose ke liye use karna
+chahte hain.
 
-💼 PERSONAL USE
+👤 PERSONAL USE
 
-Un logon ke liye behtareen jo:
+Un logon ke liye jo:
 
-• Apne personal expenses track karna chahte hain  
+• Personal expenses track karna chahte hain  
 • Income aur savings samajhna chahte hain  
-• Paisa kahan kharch ho raha hai dekhna chahte hain  
+• Spending habits monitor karna chahte hain
 
+───────────────
 
 🏪 BUSINESS USE
 
-Shopkeepers aur businesses ke liye
-perfect jo:
+Shopkeepers ke liye jo:
 
-• Daily sales track karna chahte hain  
-• Shop expenses record karna chahte hain  
-• Customer udhar manage karna chahte hain  
-• Business performance samajhna chahte hain  
+• Daily sales record karna chahte hain  
+• Shop expenses manage karna chahte hain  
+• Customer udhar track karna chahte hain
 
-
-───────────────
-Apna Option Select Karein
 ───────────────
 
 Type karein:
@@ -125,21 +121,18 @@ personalProfile: `🧑 Personal Profile Setup
 Aapke Kaam Ko Samajhna
 ───────────────
 
-Shukriya, Ali.
+Shukriya {user}.
 
-Behtar financial insights dene ke liye
-Hisabi Cash ko yeh samajhna zaroori hai
-ke aap kya kaam karte hain.
-
-Aapki occupation ki madad se assistant
-aapko behtar spending aur savings
-guidance de sakta hai.
+Aapka occupation jaan kar
+Hisabi Cash aapko behtar
+financial insights de sakta hai.
 
 ───────────────
 
 ✨ Aapka occupation kya hai?
 
 Example:
+
 Student  
 Teacher  
 Freelancer  
@@ -153,53 +146,41 @@ businessProfile: `🏪 Business Profile Setup
 Aapke Business Ki Maloomat
 ───────────────
 
-Behtareen choice, Ali.
+Behtareen choice {user}.
 
-Hisabi Cash aapko apne business
-finances ko behtar tareeke se
-manage karne mein madad karega.
-
-Shuru karne ke liye apni shop
-ya business ka naam batayein.
+Hisabi Cash aapko apne
+business finances manage
+karne mein madad karega.
 
 ───────────────
 
 ✨ Aapki shop ya business ka naam kya hai?
 
 Example:
-Ali General Store`,
+
+Madina Store`,
 
 
 
-accountReady: `🎉 Mubarak ho, Ali!
+accountReady: `🎉 Mubarak ho {user}!
 
 ───────────────
 Hisabi Cash Mein Khush Aamdeed
 ───────────────
 
-Aapka account successfully create
-ho chuka hai aur aapka personal
-assistant ab aapko apne financial
-records manage karne mein madad dega.
+Aapka account successfully
+create ho chuka hai aur
+assistant ab aapki madad
+ke liye ready hai.
 
 ───────────────
 
 🗓 Free Trial Activated: 14 Days
 
-Is trial period mein aap Hisabi Cash
-ki tamam features explore kar sakte hain
-aur dekh sakte hain ke yeh aapke
-financial records ko kitna asaan
-banata hai.
-
-───────────────
-Ab Aap Kya Kar Sakte Hain
-───────────────
-
-💰 Sales ya income record karein
-📉 Expenses track karein
-📒 Udhar manage karein
-📊 Financial reports dekhein
+Trial ke dauran aap
+Hisabi Cash ki tamam
+features explore kar
+sakte hain.
 
 ───────────────
 
@@ -215,87 +196,56 @@ dashboard: `📊 HISABI CASH DASHBOARD
 Aapka Assistant Ready Hai
 ───────────────
 
-👤 User: Ali
-🏪 Business: Ali General Store
-🗓 Trial Remaining: 14 days
+👤 User: {user}  
+🏪 Business: {business}  
+🗓 Trial Remaining: {trial}
 
 ───────────────
 Aap Kya Karna Chahte Hain?
 ───────────────
 
-💰 Sale / Income Record Karein
-Example:
-Sale 500 Tea
+💰 Sale / Income Record Karein  
+Example: Sale 500 Tea
 
-📉 Expense Record Karein
-Example:
-Expense 200 Milk
+📉 Expense Record Karein  
+Example: Expense 200 Milk
 
-📒 Udhar Record Karein
-Example:
-Udhar 1000 Ahmed
+📒 Udhar Record Karein  
+Example: Udhar 1000 Ahmed
 
-📊 Financial Report Dekhein
-Command:
-REPORT
+📊 Financial Report  
+Command: REPORT
 
-💼 Plans Dekhein
-Command:
-PLANS
+💼 Plans Dekhein  
+Command: PLANS
 
-🌐 Language Change Karein
-Command:
-LANGUAGE
+🌐 Language Change Karein  
+Command: LANGUAGE
 
 ───────────────
 
-───────────────
-Smart Message Bhi Kaam Karega
-───────────────
-
-Aap simple message bhi bhej sakte hain.
-
-Example:
-
-I sold tea for 500
-Bought milk for 200
-Ahmed ko 1000 udhar diya
-
-Hisabi Cash samajh kar
-transaction record kar lega.
-
-───────────────
-
-✨ Dashboard dobara kholne ke liye
+✨ Dashboard wapas kholne ke liye
 
 Type karein: *MENU*`,
 
 
 
-saleRecorded: `✅ Transaction Successfully Record Ho Gayi
+saleRecorded: `✅ Sale Successfully Record Ho Gayi
 
 ───────────────
 Sale / Income Entry
 ───────────────
 
-💰 Amount: Rs 500
-🧾 Item: Tea
+💰 Amount: Rs {amount}  
+🧾 Item: {item}
 
-Yeh transaction aapke financial
-records mein add kar di gayi hai.
+Yeh sale aapke records
+mein add kar di gayi hai.
 
 ───────────────
 
-Ab yeh entry aapki reports mein
-automatically reflect hogi.
-
-✨ Summary dekhne ke liye
-
-Type karein: *REPORT*
-
-✨ Dashboard par wapas jane ke liye
-
-Type karein: *MENU*`,
+Type *REPORT* summary ke liye  
+Type *MENU* dashboard ke liye`,
 
 
 
@@ -305,24 +255,17 @@ expenseRecorded: `✅ Expense Successfully Record Ho Gaya
 Expense Entry
 ───────────────
 
-📉 Amount: Rs 200
-🧾 Item: Milk
+📉 Amount: Rs {amount}  
+🧾 Item: {item}
 
-Yeh expense aapke financial
-records mein add ho gaya hai.
+Yeh expense aapke
+financial records mein
+add ho gaya hai.
 
 ───────────────
 
-Ab yeh entry aapki reports mein
-automatically show hogi.
-
-✨ Updated report dekhne ke liye
-
-Type karein: *REPORT*
-
-✨ Dashboard par wapas jane ke liye
-
-Type karein: *MENU*`,
+Type *REPORT* summary ke liye  
+Type *MENU* dashboard ke liye`,
 
 
 
@@ -332,67 +275,70 @@ udharRecorded: `✅ Udhar Record Ho Gaya
 Credit Entry
 ───────────────
 
-👤 Customer: Ahmed
-💰 Amount: Rs 1000
-📅 Udhar Date: 15 March 2026
+👤 Customer: {customer}  
+💰 Amount: Rs {amount}
 
-Yeh udhar entry aapke
-credit records mein add
+Yeh udhar entry
+successfully save
 ho chuki hai.
 
 ───────────────
 
-Outstanding payments aap
-financial reports mein
-dekh sakte hain.
-
-━━━━━━━━━━━━━━━━━━━━━━
-
-📩 Customer Ko Receipt Bhejna
-
-Kya aap customer ko khata
-receipt bhejna chahte hain?
-
-Type karein: YES  
-Type karein: NO
-
-━━━━━━━━━━━━━━━━━━━━━━
-
-✨ Report dekhne ke liye
-
-Type karein: REPORT
-
-✨ Dashboard par wapas jane ke liye
-
-Type karein: MENU`,
+Type *REPORT* summary ke liye  
+Type *MENU* dashboard ke liye`,
 
 
 
 customerNumber: `📱 Customer WhatsApp Number
 
 Khata receipt bhejne ke liye
-Ahmed ka WhatsApp number
+customer ka WhatsApp number
 enter karein.
 
 Example:
+
 923001234567`,
+
+
+
+customerReceipt: `📄 Khata Receipt
+
+Salam {customer},
+
+Aap ke naam par ek
+udhar entry record hui hai
+is shop par:
+
+🏪 {business}
+
+───────────────
+Khata Details
+───────────────
+
+💰 Amount: Rs {amount}  
+📅 Date: {date}
+
+───────────────
+
+Meherbani karke shop
+owner se contact karein
+taake balance clear kiya
+ja sake.
+
+━━━━━━━━━━━━━━━━━━━━━━
+
+Powered by Hisabi Cash`,
 
 
 
 receiptSent: `✅ Receipt Sent Successfully
 
-Khata receipt customer ko
+Customer ko khata receipt
 successfully bhej di gayi hai.
 
 ━━━━━━━━━━━━━━━━━━━━━━
 
-Customer ko uske balance
-ke baare mein inform kar
-diya gaya hai.
-
-✨ Continue karne ke liye
-
-Type karein: MENU`,
+Type: MENU`,
 
 
 
@@ -405,12 +351,11 @@ clear nahi hua.
 Pending Khata
 ───────────────
 
-👤 Customer: Ahmed
-💰 Amount: Rs 1000
-📅 Udhar Date: 15 March 2026
+👤 Customer: {customer}  
+💰 Amount: Rs {amount}
 
-Yeh udhar ab tak
-7 din se pending hai.
+Yeh udhar kuch dinon
+se pending hai.
 
 ───────────────
 
@@ -418,14 +363,10 @@ Kya aap customer ko
 payment reminder bhejna
 chahte hain?
 
-Type karein: YES  
-Type karein: NO
+Type karein:
 
-━━━━━━━━━━━━━━━━━━━━━━
-
-✨ Dashboard par wapas jane ke liye
-
-Type karein: MENU`,
+YES  
+NO`,
 
 
 
@@ -437,71 +378,26 @@ munasib plan choose karein.
 ━━━━━━━━━━━━━━━━━━━━━━
 
 👤 PERSONAL PLAN
-Un logon ke liye jo apni
-personal finances ko
-smart aur organized tareeqay
-se manage karna chahte hain.
 
-✨ Ideal For
-• Salary tracking
-• Pocket money management
-• Daily expense recording
-• Personal financial reports
-• Smart AI financial insights
+Personal finance management
+ke liye.
 
-💳 Monthly Subscription
-Rs 399 / month
+Price: Rs 399 / month
 
-🧾 Activate Karne Ke Liye
-Type karein:
+Activate karne ke liye type karein:
 
 PERSONAL PLAN
 
 ━━━━━━━━━━━━━━━━━━━━━━
 
 🏪 BUSINESS PLAN
-Shopkeepers aur small business
-owners ke liye best plan jo
-apni shop finances ko
-professionally manage karna
-chahte hain.
 
-✨ Ideal For
-• Shop sales record
-• Shop expenses tracking
-• Customer udhar management
-• Daily profit insights
-• Business performance reports
+Shop aur business management
+ke liye.
 
-💳 Monthly Subscription
-Rs 999 / month
+Price: Rs 999 / month
 
-🧾 Activate Karne Ke Liye
-Type karein:
-
-BUSINESS PLAN
-
-━━━━━━━━━━━━━━━━━━━━━━
-
-🔐 Har Plan Mein Shamil
-
-• Secure financial records
-• Automated financial reports
-• AI powered insights
-• WhatsApp se management
-• Easy daily accounting
-
-━━━━━━━━━━━━━━━━━━━━━━
-
-✨ Subscribe karne ke liye
-
-Plan ka command type karein.
-
-Example:
-
-PERSONAL PLAN
-
-ya
+Activate karne ke liye type karein:
 
 BUSINESS PLAN`,
 
@@ -509,81 +405,47 @@ BUSINESS PLAN`,
 
 paymentInstructions: `💳 Subscription Payment
 
-Aap Hisabi Cash ka
-subscription activate karne
-wale hain.
-
-━━━━━━━━━━━━━━━━━━━━━━
-
-📦 Selected Plan
+───────────────
+Selected Plan
+───────────────
 
 PERSONAL PLAN
 
-Monthly Subscription
-Rs 399 / month
+Monthly Price:
+Rs 399
 
-━━━━━━━━━━━━━━━━━━━━━━
+───────────────
 
-💰 Payment Methods
+Payment methods:
 
-Payment bhejne ke liye aap
-in methods ka use kar sakte hain:
-
-• JazzCash
+• JazzCash  
 • Easypaisa
 
-Payment is number par bhejein:
+Send payment to:
 
 📱 0316-3154140
 
-━━━━━━━━━━━━━━━━━━━━━━
+───────────────
 
-📸 Payment Verification
+Payment screenshot
+yahan send karein.
 
-Payment bhejne ke baad
-
-transaction ki screenshot
-le kar isi chat mein
-send karein.
-
-━━━━━━━━━━━━━━━━━━━━━━
-
-⏳ Verification Process
-
-Hamari team aapki payment
-verify karegi:
-
-12 — 24 hours ke andar.
-
-Verification complete hone
-ke baad aapka subscription
-activate kar diya jayega
-aur aapko confirmation
-message mil jayega.
-
-━━━━━━━━━━━━━━━━━━━━━━
-
-✨ Madad ke liye
-
-Type karein: MENU`,
+Verification time:
+12 — 24 hours.`,
 
 
 
 paymentVerification: `🧾 Payment Verification In Progress
 
-Aapki payment confirmation
-successfully submit ho chuki hai.
+Aapki payment screenshot
+receive ho chuki hai.
 
 ━━━━━━━━━━━━━━━━━━━━━━
 
-📸 Verification Process
+Team transaction verify
+karegi.
 
-Hisabi Cash ki team ab
-aapki transaction verify karegi.
-
-━━━━━━━━━━━━━━━━━━━━━━
-
-⏳ Estimated Verification Time
+Estimated time:
 
 12 — 24 hours
 
@@ -595,227 +457,81 @@ message mil jayega.
 
 ━━━━━━━━━━━━━━━━━━━━━━
 
-🔐 Aapka financial data
-completely secure hai.
+Shukriya Hisabi Cash
+use karne ke liye.`,
 
-━━━━━━━━━━━━━━━━━━━━━━
 
-✨ Hisabi Cash choose karne
-ka shukriya.
 
-Continue karne ke liye
+subscriptionActivatedPersonal: `🎉 Personal Plan Activated
 
-Type karein: MENU`,
+Aapka Personal Plan
+successfully activate
+ho gaya hai.
 
+Type *MENU* dashboard
+dekhne ke liye.`,
 
 
-subscriptionActivatedPersonal: `🎉 Subscription Activated Successfully
 
-Mubarak ho!
+subscriptionActivatedBusiness: `🎉 Business Plan Activated
 
-Aapka Hisabi Cash subscription
-successfully activate ho chuka hai.
+Aapka Business Plan
+successfully activate
+ho gaya hai.
 
-━━━━━━━━━━━━━━━━━━━━━━
+Type *MENU* dashboard
+dekhne ke liye.`,
 
-📦 Active Plan
 
-PERSONAL PLAN
 
-━━━━━━━━━━━━━━━━━━━━━━
+trialExpiring: `⏳ Trial Ending Soon
 
-✨ Ab Aap Kar Sakte Hain
+Aapka trial period
+jaldi khatam hone
+wala hai.
 
-• Apni income sources track
-• Daily personal expenses record
-• Detailed financial summaries dekhna
-• Apne spending patterns samajhna
-• AI powered financial insights lena
+Type *PLANS*
+subscription activate
+karne ke liye.`,
 
-━━━━━━━━━━━━━━━━━━━━━━
 
-📊 Aapka financial dashboard
-ab fully unlock ho chuka hai.
 
-Dashboard kholne ke liye
+trialExpired: `⚠️ Trial Expired
 
-Type karein: MENU`,
+Aapka Hisabi Cash
+trial khatam ho gaya hai.
 
+Service continue karne
+ke liye subscription
+activate karein.
 
-
-subscriptionActivatedBusiness: `🎉 Subscription Activated Successfully
-
-Mubarak ho!
-
-Aapka Hisabi Cash subscription
-successfully activate ho chuka hai.
-
-━━━━━━━━━━━━━━━━━━━━━━
-
-📦 Active Plan
-
-BUSINESS PLAN
-
-━━━━━━━━━━━━━━━━━━━━━━
-
-✨ Ab Aap Kar Sakte Hain
-
-• Shop sales record
-• Business expenses track
-• Customer udhar manage
-• Daily shop profit monitor
-• Business performance reports dekhna
-• AI powered business insights lena
-
-━━━━━━━━━━━━━━━━━━━━━━
-
-📊 Aapka business dashboard
-ab fully unlock ho chuka hai.
-
-Dashboard kholne ke liye
-
-Type karein: MENU`,
-
-
-
-trialExpiring: `⏳ Trial Reminder
-
-Aapka Hisabi Cash trial period
-ab khatam hone ke qareeb hai.
-
-━━━━━━━━━━━━━━━━━━━━━━
-
-📅 Trial Details
-
-Trial Start Date:
-01 March 2026
-
-Trial Expiry Date:
-15 March 2026
-
-━━━━━━━━━━━━━━━━━━━━━━
-
-Agar aap Hisabi Cash ko
-bina rukawat use karna
-chahte hain to trial expiry
-se pehle subscription
-plan activate karein.
-
-━━━━━━━━━━━━━━━━━━━━━━
-
-💼 Available Plans
-
-• Personal Plan
-• Business Plan
-
-━━━━━━━━━━━━━━━━━━━━━━
-
-✨ Plans dekhne ke liye
-
-Type karein: PLANS`,
-
-
-
-trialExpired: `⚠️ Trial Period Expired
-
-Aapka Hisabi Cash trial period
-ab khatam ho chuka hai.
-
-━━━━━━━━━━━━━━━━━━━━━━
-
-📅 Trial Summary
-
-Trial Start Date:
-01 March 2026
-
-Trial Expiry Date:
-15 March 2026
-
-━━━━━━━━━━━━━━━━━━━━━━
-
-Abhi Hisabi Cash ke features
-temporarily pause kar diye
-gaye hain.
-
-Agar aap apni financial
-management continue karna
-chahte hain to subscription
-plan activate karein.
-
-━━━━━━━━━━━━━━━━━━━━━━
-
-💼 Available Plans
-
-• Personal Plan
-• Business Plan
-
-━━━━━━━━━━━━━━━━━━━━━━
-
-✨ Subscribe karne ke liye
-
-Type karein: PLANS`,
+Type *PLANS*`,
 
 
 
 subscriptionExpiring: `⏳ Subscription Expiring Soon
 
-Aapka Hisabi Cash subscription
-jaldi expire hone wala hai.
+Aapka subscription
+jaldi expire hone
+wala hai.
 
-━━━━━━━━━━━━━━━━━━━━━━
+Renew karne ke liye
+type karein:
 
-📅 Subscription Details
-
-Active Plan:
-PERSONAL PLAN
-
-Subscription Expiry:
-30 April 2026
-
-━━━━━━━━━━━━━━━━━━━━━━
-
-Agar aap Hisabi Cash ko
-bina rukawat use karna
-chahte hain to expiry se
-pehle subscription renew karein.
-
-━━━━━━━━━━━━━━━━━━━━━━
-
-✨ Renew karne ke liye
-
-Type karein: PLANS`,
+PLANS`,
 
 
 
 subscriptionExpired: `⚠️ Subscription Expired
 
-Aapka Hisabi Cash subscription
-expire ho chuka hai.
+Aapka Hisabi Cash
+subscription expire
+ho chuka hai.
 
-━━━━━━━━━━━━━━━━━━━━━━
+Service resume karne
+ke liye plan renew karein.
 
-📅 Subscription Summary
-
-Active Plan:
-PERSONAL PLAN
-
-Expiry Date:
-30 April 2026
-
-━━━━━━━━━━━━━━━━━━━━━━
-
-Premium features abhi
-temporarily pause kar diye
-gaye hain.
-
-Continue karne ke liye
-subscription renew karein.
-
-━━━━━━━━━━━━━━━━━━━━━━
-
-✨ Renew karne ke liye
-
-Type karein: PLANS`
+Type *PLANS*`
 
 }
 
