@@ -121,10 +121,12 @@ export async function updateTrial(phone) {
     end.setDate(start.getDate() + 14)
 
     await pool.query(
-        `UPDATE users 
-         SET trial_start = $1,
-             trial_end = $2
-         WHERE phone = $3`,
+        `
+        UPDATE users
+        SET trial_start = $1,
+            trial_end = $2
+        WHERE phone = $3
+        `,
         [start, end, phone]
     )
 
