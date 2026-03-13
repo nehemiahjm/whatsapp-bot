@@ -97,7 +97,7 @@ const messages = getMessages(user.language)
 
 await updateUserState(phone,"ask_name")
 
-return messages.introduction
+return messages.introduction + "\n\n" + messages.askName
 
 }
 
@@ -113,6 +113,8 @@ await updateUserName(phone,message)
 
 await updateUserState(phone,"choose_usage")
 
+user = await getUser(phone)
+
 const messages = getMessages(user.language)
 
 return messages.usageSelection.replace("{user}",message)
@@ -127,13 +129,13 @@ USAGE TYPE
 
 if(user.state === "choose_usage"){
 
-const text = message.toLowerCase()
+const text = message.toLowerCase().trim()
 
 const messages = getMessages(user.language)
 
 
 
-if(text === "personal use"){
+if(text.includes("personal"))
 
 await updateUserUsage(phone,"personal")
 
@@ -145,7 +147,7 @@ return messages.personalProfile.replace("{user}",user.name || "User")
 
 
 
-if(text === "business use"){
+if(text.includes("business"))
 
 await updateUserUsage(phone,"business")
 
@@ -159,7 +161,7 @@ return messages.businessProfile.replace("{user}",user.name || "User")
 
 return messages.usageSelection.replace("{user}",user.name || "User")
 
-}
+
 
 
 
@@ -351,4 +353,3 @@ return messages.dashboard
 
 }
 
-}
