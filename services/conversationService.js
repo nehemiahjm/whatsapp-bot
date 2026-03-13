@@ -107,17 +107,15 @@ return messages.introduction + "\n\n" + messages.askName
 ASK NAME
 ========================= */
 
-if(user.state === "ask_name"){
+if (user.state === "ask_name") {
 
-await updateUserName(phone,message)
+    await updateUserName(phone, message)
 
-await updateUserState(phone,"choose_usage")
+    await updateUserState(phone, "choose_usage")
 
-user = await getUser(phone)
+    const messages = getMessages(user.language)
 
-const messages = getMessages(user.language)
-
-return messages.usageSelection.replace("{user}",message)
+    return messages.usageSelection.replace("{user}", message)
 
 }
 
