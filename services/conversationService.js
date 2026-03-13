@@ -1,4 +1,3 @@
-
 import english from "../messages/english.js"
 import roman from "../messages/roman.js"
 import urdu from "../messages/urdu.js"
@@ -49,7 +48,10 @@ if(message === "1"){
 await updateUserLanguage(phone,"english")
 await updateUserState(phone,"introduction")
 
-return english.languageSelected + "\n\n" + english.introduction
+return [
+english.languageSelected,
+english.introduction
+]
 
 }
 
@@ -58,7 +60,10 @@ if(message === "2"){
 await updateUserLanguage(phone,"roman")
 await updateUserState(phone,"introduction")
 
-return roman.languageSelected + "\n\n" + roman.introduction
+return [
+roman.languageSelected,
+roman.introduction
+]
 
 }
 
@@ -67,7 +72,10 @@ if(message === "3"){
 await updateUserLanguage(phone,"urdu")
 await updateUserState(phone,"introduction")
 
-return urdu.languageSelected + "\n\n" + urdu.introduction
+return [
+urdu.languageSelected,
+urdu.introduction
+]
 
 }
 
@@ -114,7 +122,7 @@ if(text === "personal use"){
 
 await updateUserState(phone,"personal_profile")
 
-return messages.personalProfile.replace("Ali","User")
+return messages.personalProfile.replace("Ali",message)
 
 }
 
@@ -122,7 +130,7 @@ if(text === "business use"){
 
 await updateUserState(phone,"business_profile")
 
-return messages.businessProfile.replace("Ali","User")
+return messages.businessProfile.replace("Ali",message)
 
 }
 
@@ -139,7 +147,10 @@ await updateUserState(phone,"active")
 
 const messages = getMessages(user.language)
 
-return messages.accountReady.replace("Ali","User") + "\n\n" + messages.dashboard
+return [
+messages.accountReady.replace("Ali",message),
+messages.dashboard
+]
 
 }
 
@@ -152,36 +163,62 @@ await updateUserState(phone,"active")
 
 const messages = getMessages(user.language)
 
-return messages.accountReady.replace("Ali","User") + "\n\n" + messages.dashboard
+return [
+messages.accountReady.replace("Ali",message),
+messages.dashboard
+]
 
 }
 
 
 
 // ACTIVE USER
-if(user.state === "active"){
+if (user.state === "active") {
 
 const messages = getMessages(user.language)
 
 const text = message.toLowerCase()
 
-if(text === "menu"){
-    return messages.dashboard
+
+
+// MENU
+if (text === "menu") {
+return messages.dashboard
 }
 
-if(text === "plans"){
-    return messages.plans
+
+// PLANS
+if (text === "plans") {
+return messages.plans
 }
 
-if(text === "report"){
-    return messages.financialSummary
+
+// REPORT
+if (text === "report") {
+return messages.businessSummary
 }
 
-if(text === "language"){
-    await updateUserState(phone,"new_user")
-    return messages.welcome
+
+// CHANGE LANGUAGE
+if (text === "language") {
+await updateUserState(phone, "new_user")
+return messages.welcome
 }
 
+
+// PERSONAL PLAN ACTIVATION
+if (text === "personal plan") {
+return messages.personalPlanActivated
+}
+
+
+// BUSINESS PLAN ACTIVATION
+if (text === "business plan") {
+return messages.businessPlanActivated
+}
+
+
+// DEFAULT RESPONSE
 return messages.dashboard
 
 }

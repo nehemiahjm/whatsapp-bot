@@ -24,24 +24,32 @@ export async function handleWebhook(req, res) {
 
             console.log("Incoming:", text)
 
-            const reply = await handleConversation(phone, text)
+            const replies = await handleConversation(phone, text)
 
-            if (reply) {
+            if (replies) {
 
-                await axios.post(
-                    `https://graph.facebook.com/v19.0/${PHONE_ID}/messages`,
-                    {
-                        messaging_product: "whatsapp",
-                        to: phone,
-                        text: { body: reply }
-                    },
-                    {
-                        headers: {
-                            Authorization: `Bearer ${TOKEN}`,
-                            "Content-Type": "application/json"
+                // Convert single reply to array
+                const messagesToSend = Array.isArray(replies) ? replies : [replies]
+
+                // Send messages one by one
+                for (const reply of messagesToSend) {
+
+                    await axios.post(
+                        `https://graph.facebook.com/v19.0/${PHONE_ID}/messages`,
+                        {
+                            messaging_product: "whatsapp",
+                            to: phone,
+                            text: { body: reply }
+                        },
+                        {
+                            headers: {
+                                Authorization: `Bearer ${TOKEN}`,
+                                "Content-Type": "application/json"
+                            }
                         }
-                    }
-                )
+                    )
+
+                }
             }
         }
 
