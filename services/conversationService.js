@@ -32,6 +32,25 @@ message = message.trim()
 
 let user = await getUser(phone)
 
+/* RETURNING USER */
+
+if(user && user.state === "active"){
+
+const text = message.toLowerCase()
+
+if(text === "hello" || text === "hi" || text === "start"){
+
+const messages = getMessages(user.language)
+
+return messages.dashboard
+.replace("{user}",user.name || "User")
+.replace("{business}",user.business_name || "—")
+.replace("{trial}","14 days")
+
+}
+
+}
+
 
 /* NEW USER */
 
@@ -76,6 +95,56 @@ return urdu.languageSelected + "\n\n" + urdu.introduction
 }
 
 return english.welcome
+
+}
+
+/* CHANGE LANGUAGE */
+
+if(user.state === "change_language"){
+
+if(message === "1"){
+
+await updateUserLanguage(phone,"english")
+await updateUserState(phone,"active")
+
+const messages = english
+
+return messages.dashboard
+.replace("{user}",user.name || "User")
+.replace("{business}",user.business_name || "—")
+.replace("{trial}","14 days")
+
+}
+
+if(message === "2"){
+
+await updateUserLanguage(phone,"roman")
+await updateUserState(phone,"active")
+
+const messages = roman
+
+return messages.dashboard
+.replace("{user}",user.name || "User")
+.replace("{business}",user.business_name || "—")
+.replace("{trial}","14 days")
+
+}
+
+if(message === "3"){
+
+await updateUserLanguage(phone,"urdu")
+await updateUserState(phone,"active")
+
+const messages = urdu
+
+return messages.dashboard
+.replace("{user}",user.name || "User")
+.replace("{business}",user.business_name || "—")
+.replace("{trial}","14 days")
+
+}
+
+return getMessages(user.language).languageSelection
 
 }
 
@@ -151,7 +220,7 @@ return messages.usageSelection.replace("{user}",user.name || "User")
 
 if(user.state === "personal_profile"){
 
-
+await updateTrial(phone)
 
 await updateUserState(phone,"active")
 
@@ -222,9 +291,9 @@ if(text === "report") return messages.businessSummary
 
 if(text === "language"){
 
-await updateUserState(phone,"new_user")
+await updateUserState(phone,"change_language")
 
-return messages.welcome
+return messages.languageSelection
 
 }
 
