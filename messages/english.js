@@ -31,6 +31,21 @@ you in English.`,
 
 
 
+languageChanged: `
+✅ Language Changed Successfully
+
+🌍 Selected Language: English
+
+Your assistant will now communicate with you in English.
+
+━━━━━━━━━━━━━━━
+
+📊 Returning to your dashboard...
+
+`,
+
+
+
 introduction: `🚀 Discover *Hisabi Cash*
 
 ───────────────

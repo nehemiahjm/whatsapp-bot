@@ -98,6 +98,7 @@ return english.welcome
 
 }
 
+
 /* CHANGE LANGUAGE */
 
 if(user.state === "change_language"){
@@ -109,7 +110,8 @@ await updateUserState(phone,"active")
 
 const messages = english
 
-return messages.dashboard
+return messages.languageChanged + "\n\n" +
+messages.dashboard
 .replace("{user}",user.name || "User")
 .replace("{business}",user.business_name || "—")
 .replace("{trial}","14 days")
@@ -123,7 +125,8 @@ await updateUserState(phone,"active")
 
 const messages = roman
 
-return messages.dashboard
+return messages.languageChanged + "\n\n" +
+messages.dashboard
 .replace("{user}",user.name || "User")
 .replace("{business}",user.business_name || "—")
 .replace("{trial}","14 days")
@@ -137,7 +140,8 @@ await updateUserState(phone,"active")
 
 const messages = urdu
 
-return messages.dashboard
+return messages.languageChanged + "\n\n" +
+messages.dashboard
 .replace("{user}",user.name || "User")
 .replace("{business}",user.business_name || "—")
 .replace("{trial}","14 days")

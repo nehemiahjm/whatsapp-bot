@@ -12,6 +12,20 @@ Ab Hisabi Cash aapko
 Roman Urdu mein guide karega.`,
 
 
+languageChanged: `
+✅ Zubaan Kamyabi Se Tabdeel Ho Gayi
+
+🌍 Intikhab Ki Gayi Zubaan: Roman Urdu
+
+Ab Hisabi Cash aap se Roman Urdu mein baat karega.
+
+━━━━━━━━━━━━━━━
+
+📊 Aapka dashboard khola ja raha hai...
+
+`,
+
+
 
 introduction: `🚀 *Hisabi Cash* ko discover karein
 
