@@ -12,6 +12,15 @@ Ab Hisabi Cash aapko
 Roman Urdu mein guide karega.`,
 
 
+welcomeBack: `
+👋 Wapas Khush Aamdeed {user}
+
+Aapko dobara dekh kar khushi hui.
+
+Hisabi Cash dashboard khola ja raha hai...
+`,
+
+
 languageChanged: `
 ✅ Zubaan Kamyabi Se Tabdeel Ho Gayi
 

@@ -19,6 +19,15 @@ Please choose your preferred language.
 Reply with *1*, *2*, or *3* to continue.`,
 
 
+welcomeBack: `
+👋 Welcome Back {user}
+
+We're glad to see you again.
+
+Opening your Hisabi Cash dashboard...
+`,
+
+
 
 languageSelected: `✅ Language Selected: English
 

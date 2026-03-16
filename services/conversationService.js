@@ -32,6 +32,8 @@ message = message.trim()
 
 let user = await getUser(phone)
 
+
+
 /* RETURNING USER */
 
 if(user && user.state === "active"){
@@ -42,14 +44,14 @@ if(text === "hello" || text === "hi" || text === "start"){
 
 const messages = getMessages(user.language)
 
-return messages.dashboard
+return messages.welcomeBack
 .replace("{user}",user.name || "User")
-.replace("{business}",user.business_name || "—")
-.replace("{trial}","14 days")
+
 
 }
 
 }
+
 
 
 /* NEW USER */
@@ -61,6 +63,7 @@ await createUser(phone)
 return english.welcome
 
 }
+
 
 
 /* LANGUAGE SELECTION */
@@ -99,6 +102,7 @@ return english.welcome
 }
 
 
+
 /* CHANGE LANGUAGE */
 
 if(user.state === "change_language"){
@@ -108,13 +112,7 @@ if(message === "1"){
 await updateUserLanguage(phone,"english")
 await updateUserState(phone,"active")
 
-const messages = english
-
-return messages.languageChanged + "\n\n" +
-messages.dashboard
-.replace("{user}",user.name || "User")
-.replace("{business}",user.business_name || "—")
-.replace("{trial}","14 days")
+return english.languageChanged
 
 }
 
@@ -123,13 +121,7 @@ if(message === "2"){
 await updateUserLanguage(phone,"roman")
 await updateUserState(phone,"active")
 
-const messages = roman
-
-return messages.languageChanged + "\n\n" +
-messages.dashboard
-.replace("{user}",user.name || "User")
-.replace("{business}",user.business_name || "—")
-.replace("{trial}","14 days")
+return roman.languageChanged
 
 }
 
@@ -138,19 +130,14 @@ if(message === "3"){
 await updateUserLanguage(phone,"urdu")
 await updateUserState(phone,"active")
 
-const messages = urdu
-
-return messages.languageChanged + "\n\n" +
-messages.dashboard
-.replace("{user}",user.name || "User")
-.replace("{business}",user.business_name || "—")
-.replace("{trial}","14 days")
+return urdu.languageChanged
 
 }
 
-return getMessages(user.language).languageSelection
+return english.languageSelection
 
 }
+
 
 
 /* INTRODUCTION */
@@ -164,6 +151,7 @@ await updateUserState(phone,"ask_name")
 return messages.askName
 
 }
+
 
 
 /* ASK NAME */
@@ -181,6 +169,7 @@ const messages = getMessages(user.language)
 return messages.usageSelection.replace("{user}",message)
 
 }
+
 
 
 /* USAGE TYPE */
@@ -220,6 +209,7 @@ return messages.usageSelection.replace("{user}",user.name || "User")
 }
 
 
+
 /* PERSONAL PROFILE */
 
 if(user.state === "personal_profile"){
@@ -235,6 +225,7 @@ return messages.accountReady
 .replace("{business}","—")
 
 }
+
 
 
 /* BUSINESS PROFILE */
@@ -256,6 +247,7 @@ return messages.accountReady
 }
 
 
+
 /* ACTIVE USER */
 
 if(user.state === "active"){
@@ -263,6 +255,8 @@ if(user.state === "active"){
 const messages = getMessages(user.language)
 
 const text = message.toLowerCase()
+
+
 
 if(text.startsWith("sale")){
 return "✅ Sale recorded"
@@ -278,7 +272,7 @@ return "✅ Udhar recorded"
 
 
 
-
+/* DASHBOARD */
 
 if(text === "menu"){
 
@@ -289,17 +283,33 @@ return messages.dashboard
 
 }
 
+
+
+/* PLANS */
+
 if(text === "plans") return messages.plans
 
+
+
+/* REPORT */
+
 if(text === "report") return messages.businessSummary
+
+
+
+/* LANGUAGE */
 
 if(text === "language"){
 
 await updateUserState(phone,"change_language")
 
-return messages.languageSelection
+return english.languageSelection
 
 }
+
+
+
+/* DEFAULT */
 
 return messages.dashboard
 .replace("{user}",user.name || "User")
