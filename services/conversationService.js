@@ -7,7 +7,10 @@ getUser,
 createUser,
 updateUserLanguage,
 updateUserState,
-updateUserName
+updateUserName,
+updateUserUsage,
+updateUserBusiness,
+updateTrial
 } from "./userService.js"
 
 
@@ -119,6 +122,8 @@ const text = message.toLowerCase()
 
 if(text === "personal use"){
 
+await updateUserUsage(phone,"personal")
+
 await updateUserState(phone,"personal_profile")
 
 return messages.personalProfile.replace("{user}",user.name || "User")
@@ -126,6 +131,8 @@ return messages.personalProfile.replace("{user}",user.name || "User")
 }
 
 if(text === "business use"){
+
+await updateUserUsage(phone,"business")
 
 await updateUserState(phone,"business_profile")
 
@@ -161,9 +168,9 @@ return messages.accountReady
 
 if(user.state === "business_profile"){
 
+await updateUserBusiness(phone,message)
 
-    
-
+await updateTrial(phone)
 
 await updateUserState(phone,"active")
 
@@ -183,6 +190,18 @@ if(user.state === "active"){
 const messages = getMessages(user.language)
 
 const text = message.toLowerCase()
+
+if(text.startsWith("sale")){
+return "✅ Sale recorded"
+}
+
+if(text.startsWith("expense")){
+return "✅ Expense recorded"
+}
+
+if(text.startsWith("udhar")){
+return "✅ Udhar recorded"
+}
 
 
 
