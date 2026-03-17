@@ -34,23 +34,7 @@ let user = await getUser(phone)
 
 
 
-/* RETURNING USER */
 
-if(user && user.state === "active"){
-
-const text = message.toLowerCase()
-
-if(text === "hello" || text === "hi" || text === "start"){
-
-const messages = getMessages(user.language)
-
-return messages.welcomeBack
-.replace("{user}",user.name || "User")
-
-
-}
-
-}
 
 
 
@@ -133,6 +117,8 @@ await updateUserState(phone,"active")
 return urdu.languageChanged
 
 }
+
+/* ALWAYS SHOW CLEAN LANGUAGE UI */
 
 return english.languageSelection
 
@@ -258,6 +244,31 @@ const text = message.toLowerCase()
 
 
 
+/* WELCOME BACK */
+
+if(text === "hello" || text === "hi" || text === "start"){
+
+return messages.welcomeBack
+.replace("{user}",user.name || "User")
+
+}
+
+
+
+/* LANGUAGE COMMAND */
+
+if(text === "language"){
+
+await updateUserState(phone,"change_language")
+
+return english.languageSelection
+
+}
+
+
+
+/* QUICK ENTRIES */
+
 if(text.startsWith("sale")){
 return "✅ Sale recorded"
 }
@@ -297,19 +308,7 @@ if(text === "report") return messages.businessSummary
 
 
 
-/* LANGUAGE */
-
-if(text === "language"){
-
-await updateUserState(phone,"change_language")
-
-return english.languageSelection
-
-}
-
-
-
-/* DEFAULT */
+/* DEFAULT FALLBACK */
 
 return messages.dashboard
 .replace("{user}",user.name || "User")
