@@ -157,3 +157,25 @@ export async function saveTransaction(phone, type, amount, description) {
     )
 
 }
+
+/* =========================
+GET REPORT
+========================= */
+
+export async function getReport(phone){
+
+    const result = await pool.query(
+        `
+        SELECT 
+        SUM(CASE WHEN type='sale' THEN amount ELSE 0 END) as total_sales,
+        SUM(CASE WHEN type='expense' THEN amount ELSE 0 END) as total_expense,
+        SUM(CASE WHEN type='udhar' THEN amount ELSE 0 END) as total_udhar
+        FROM transactions
+        WHERE phone = $1
+        `,
+        [phone]
+    )
+
+    return result.rows[0]
+
+}

@@ -11,7 +11,8 @@ updateUserName,
 updateUserUsage,
 updateUserBusiness,
 updateTrial,
-saveTransaction
+saveTransaction,
+getReport
 } from "./userService.js"
 
 
@@ -368,9 +369,34 @@ if(text === "plans") return messages.plans
 
 
 
-/* REPORT */
+/* 🔥 REAL REPORT */
 
-if(text === "report") return messages.businessSummary
+if(text === "report"){
+
+const data = await getReport(phone)
+
+const sales = parseInt(data.total_sales) || 0
+const expense = parseInt(data.total_expense) || 0
+const udhar = parseInt(data.total_udhar) || 0
+const profit = sales - expense
+
+return `📊 *FINANCIAL REPORT*
+
+───────────────
+
+💰 Total Sales: Rs ${sales}  
+📉 Total Expenses: Rs ${expense}  
+📒 Udhar Given: Rs ${udhar}  
+
+───────────────
+
+📈 *Net Profit:* Rs ${profit}
+
+───────────────
+
+✨ Type MENU to return dashboard`
+
+}
 
 
 
