@@ -34,10 +34,6 @@ let user = await getUser(phone)
 
 
 
-
-
-
-
 /* NEW USER */
 
 if(!user){
@@ -118,9 +114,10 @@ return urdu.languageChanged
 
 }
 
-/* ALWAYS SHOW CLEAN LANGUAGE UI */
+/* fallback → show correct UI */
 
-return english.languageSelection
+const messages = getMessages(user.language)
+return messages.changeLanguagePrompt
 
 }
 
@@ -255,13 +252,20 @@ return messages.welcomeBack
 
 
 
-/* LANGUAGE COMMAND */
+/* PREMIUM++ LANGUAGE COMMAND */
 
-if(text === "language"){
+if(
+text === "language" ||
+text === "lang" ||
+text === "zabaan" ||
+text === "zuban" ||
+text === "urdu" ||
+text === "english"
+){
 
 await updateUserState(phone,"change_language")
 
-return english.languageSelection
+return messages.changeLanguagePrompt
 
 }
 
@@ -308,7 +312,7 @@ if(text === "report") return messages.businessSummary
 
 
 
-/* DEFAULT FALLBACK */
+/* DEFAULT */
 
 return messages.dashboard
 .replace("{user}",user.name || "User")

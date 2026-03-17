@@ -21,18 +21,21 @@ Hisabi Cash dashboard khola ja raha hai...
 `,
 
 
-languageChanged: `
-✅ Zubaan Kamyabi Se Tabdeel Ho Gayi
+changeLanguagePrompt: `🌐 Zubaan Tabdeel Karein
 
-🌍 Intikhab Ki Gayi Zubaan: Roman Urdu
+───────────────
+Apni Pasandeeda Zubaan Select Karein
+───────────────
 
-Ab Hisabi Cash aap se Roman Urdu mein baat karega.
+1️⃣ English  
+2️⃣ Roman Urdu  
+3️⃣ Urdu  
 
-━━━━━━━━━━━━━━━
+───────────────
 
-📊 Aapka dashboard khola ja raha hai...
+✨ Aapka assistant foran nai zubaan mein baat karega.
 
-`,
+Reply karein *1*, *2*, ya *3*.`,
 
 
 

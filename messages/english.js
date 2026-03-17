@@ -40,18 +40,22 @@ you in English.`,
 
 
 
-languageChanged: `
-✅ Language Changed Successfully
+changeLanguagePrompt: `🌐 Change Language
 
-🌍 Selected Language: English
+───────────────
+Select Your Preferred Language
+───────────────
 
-Your assistant will now communicate with you in English.
+1️⃣ English  
+2️⃣ Roman Urdu  
+3️⃣ اردو  
 
-━━━━━━━━━━━━━━━
+───────────────
 
-📊 Returning to your dashboard...
+✨ Your assistant will instantly
+start responding in your selected language.
 
-`,
+Reply with *1*, *2*, or *3* to continue.`,
 
 
 
