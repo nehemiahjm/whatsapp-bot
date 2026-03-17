@@ -10,7 +10,8 @@ updateUserState,
 updateUserName,
 updateUserUsage,
 updateUserBusiness,
-updateTrial
+updateTrial,
+saveTransaction
 } from "./userService.js"
 
 
@@ -46,7 +47,7 @@ return english.welcome
 
 
 
-/* LANGUAGE SELECTION (FIRST TIME) */
+/* LANGUAGE SELECTION */
 
 if(user.state === "new_user"){
 
@@ -83,7 +84,7 @@ return english.welcome
 
 
 
-/* CHANGE LANGUAGE (ELITE UX - 2 MESSAGES) */
+/* CHANGE LANGUAGE */
 
 if(user.state === "change_language"){
 
@@ -135,7 +136,7 @@ urdu.dashboard
 ]
 }
 
-/* fallback */
+
 const messages = getMessages(user.language)
 return messages.changeLanguagePrompt
 
@@ -175,7 +176,7 @@ return messages.usageSelection.replace("{user}",message)
 
 
 
-/* USAGE TYPE */
+/* USAGE */
 
 if(user.state === "choose_usage"){
 
@@ -213,7 +214,7 @@ return messages.usageSelection.replace("{user}",user.name || "User")
 
 
 
-/* PERSONAL PROFILE */
+/* PERSONAL */
 
 if(user.state === "personal_profile"){
 
@@ -231,7 +232,7 @@ return messages.accountReady
 
 
 
-/* BUSINESS PROFILE */
+/* BUSINESS */
 
 if(user.state === "business_profile"){
 
@@ -261,26 +262,29 @@ const text = message.toLowerCase()
 
 
 
-/* WELCOME BACK */
+/* WELCOME BACK + DASHBOARD */
 
 if(text === "hello" || text === "hi" || text === "start"){
 
-return messages.welcomeBack
+return [
+messages.welcomeBack.replace("{user}",user.name || "User"),
+messages.dashboard
 .replace("{user}",user.name || "User")
+.replace("{business}",user.business_name || "—")
+.replace("{trial}","14 days")
+]
 
 }
 
 
 
-/* LANGUAGE COMMAND (PREMIUM TRIGGER) */
+/* LANGUAGE */
 
 if(
 text === "language" ||
 text === "lang" ||
 text === "zabaan" ||
-text === "zuban" ||
-text === "urdu" ||
-text === "english"
+text === "zuban"
 ){
 
 await updateUserState(phone,"change_language")
@@ -291,29 +295,61 @@ return messages.changeLanguagePrompt
 
 
 
-/* QUICK ENTRIES */
+/* SALE */
 
 if(text.startsWith("sale")){
+
+const parts = text.split(" ")
+const amount = parseInt(parts[1]) || 0
+const item = parts.slice(2).join(" ") || "Item"
+
+await saveTransaction(phone,"sale",amount,item)
+
 return messages.saleRecorded
-.replace("{amount}",text.split(" ")[1] || "0")
-.replace("{item}",text.split(" ").slice(2).join(" ") || "Item")
+.replace("{amount}",amount)
+.replace("{item}",item)
+
 }
+
+
+
+/* EXPENSE */
 
 if(text.startsWith("expense")){
+
+const parts = text.split(" ")
+const amount = parseInt(parts[1]) || 0
+const item = parts.slice(2).join(" ") || "Item"
+
+await saveTransaction(phone,"expense",amount,item)
+
 return messages.expenseRecorded
-.replace("{amount}",text.split(" ")[1] || "0")
-.replace("{item}",text.split(" ").slice(2).join(" ") || "Item")
+.replace("{amount}",amount)
+.replace("{item}",item)
+
 }
+
+
+
+/* UDHAR */
 
 if(text.startsWith("udhar")){
+
+const parts = text.split(" ")
+const amount = parseInt(parts[1]) || 0
+const customer = parts.slice(2).join(" ") || "Customer"
+
+await saveTransaction(phone,"udhar",amount,customer)
+
 return messages.udharRecorded
-.replace("{amount}",text.split(" ")[1] || "0")
-.replace("{customer}",text.split(" ").slice(2).join(" ") || "Customer")
+.replace("{amount}",amount)
+.replace("{customer}",customer)
+
 }
 
 
 
-/* DASHBOARD */
+/* MENU */
 
 if(text === "menu"){
 

@@ -126,7 +126,7 @@ export async function updateTrial(phone) {
     if(user?.trial_start) return
 
     const start = new Date()
-    
+
     const end = new Date()
 
     end.setDate(start.getDate() + 14)
@@ -139,6 +139,21 @@ export async function updateTrial(phone) {
         WHERE phone = $3
         `,
         [start, end, phone]
+    )
+    
+
+}
+
+/* =========================
+SAVE TRANSACTION
+========================= */
+
+export async function saveTransaction(phone, type, amount, description) {
+
+    await pool.query(
+        `INSERT INTO transactions (phone, type, amount, description)
+         VALUES ($1, $2, $3, $4)`,
+        [phone, type, amount, description]
     )
 
 }

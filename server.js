@@ -10,7 +10,21 @@ app.get("/", (req, res) => {
     res.send("Hisabi Cash Bot Running")
 })
 
-app.post("/webhook", handleWebhook)
+app.post("/webhook", async (req, res) => {
+
+    try {
+
+        await handleWebhook(req, res)
+
+    } catch (error) {
+
+        console.error("❌ Webhook Error:", error.message)
+
+        res.sendStatus(200) // prevent crash
+
+    }
+
+})
 
 const PORT = process.env.PORT || 8080
 
