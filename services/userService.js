@@ -12,23 +12,29 @@ export async function getUser(phone) {
         [phone]
     )
 
-    return result.rows[0]
-
+    return result.rows[0] || null
 }
 
 
 
 /* =========================
-CREATE USER
+CREATE USER (SAFE)
 ========================= */
 
 export async function createUser(phone) {
 
-    await pool.query(
-        "INSERT INTO users (phone, state, language) VALUES ($1, 'new_user', 'english')",
+    const existing = await getUser(phone)
+
+    if(existing) return existing
+
+    const result = await pool.query(
+        `INSERT INTO users (phone, state, language)
+         VALUES ($1, 'new_user', 'english')
+         RETURNING *`,
         [phone]
     )
 
+    return result.rows[0]
 }
 
 
@@ -109,13 +115,18 @@ export async function updateUserBusiness(phone, business) {
 
 
 /* =========================
-START TRIAL
+START TRIAL (SAFE - ONLY ONCE)
 ========================= */
 
 export async function updateTrial(phone) {
 
-    const start = new Date()
+    const user = await getUser(phone)
 
+    // Prevent resetting trial again
+    if(user?.trial_start) return
+
+    const start = new Date()
+    
     const end = new Date()
 
     end.setDate(start.getDate() + 14)

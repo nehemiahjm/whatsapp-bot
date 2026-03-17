@@ -46,7 +46,7 @@ return english.welcome
 
 
 
-/* LANGUAGE SELECTION */
+/* LANGUAGE SELECTION (FIRST TIME) */
 
 if(user.state === "new_user"){
 
@@ -83,7 +83,7 @@ return english.welcome
 
 
 
-/* CHANGE LANGUAGE */
+/* CHANGE LANGUAGE (ELITE UX - 2 MESSAGES) */
 
 if(user.state === "change_language"){
 
@@ -92,8 +92,15 @@ if(message === "1"){
 await updateUserLanguage(phone,"english")
 await updateUserState(phone,"active")
 
-return english.languageChanged
+const userData = await getUser(phone)
 
+return [
+english.languageChanged,
+english.dashboard
+.replace("{user}",userData.name || "User")
+.replace("{business}",userData.business_name || "—")
+.replace("{trial}","14 days")
+]
 }
 
 if(message === "2"){
@@ -101,8 +108,15 @@ if(message === "2"){
 await updateUserLanguage(phone,"roman")
 await updateUserState(phone,"active")
 
-return roman.languageChanged
+const userData = await getUser(phone)
 
+return [
+roman.languageChanged,
+roman.dashboard
+.replace("{user}",userData.name || "User")
+.replace("{business}",userData.business_name || "—")
+.replace("{trial}","14 days")
+]
 }
 
 if(message === "3"){
@@ -110,12 +124,18 @@ if(message === "3"){
 await updateUserLanguage(phone,"urdu")
 await updateUserState(phone,"active")
 
-return urdu.languageChanged
+const userData = await getUser(phone)
 
+return [
+urdu.languageChanged,
+urdu.dashboard
+.replace("{user}",userData.name || "User")
+.replace("{business}",userData.business_name || "—")
+.replace("{trial}","14 days")
+]
 }
 
-/* fallback → show correct UI */
-
+/* fallback */
 const messages = getMessages(user.language)
 return messages.changeLanguagePrompt
 
@@ -252,7 +272,7 @@ return messages.welcomeBack
 
 
 
-/* PREMIUM++ LANGUAGE COMMAND */
+/* LANGUAGE COMMAND (PREMIUM TRIGGER) */
 
 if(
 text === "language" ||
@@ -274,15 +294,21 @@ return messages.changeLanguagePrompt
 /* QUICK ENTRIES */
 
 if(text.startsWith("sale")){
-return "✅ Sale recorded"
+return messages.saleRecorded
+.replace("{amount}",text.split(" ")[1] || "0")
+.replace("{item}",text.split(" ").slice(2).join(" ") || "Item")
 }
 
 if(text.startsWith("expense")){
-return "✅ Expense recorded"
+return messages.expenseRecorded
+.replace("{amount}",text.split(" ")[1] || "0")
+.replace("{item}",text.split(" ").slice(2).join(" ") || "Item")
 }
 
 if(text.startsWith("udhar")){
-return "✅ Udhar recorded"
+return messages.udharRecorded
+.replace("{amount}",text.split(" ")[1] || "0")
+.replace("{customer}",text.split(" ").slice(2).join(" ") || "Customer")
 }
 
 
