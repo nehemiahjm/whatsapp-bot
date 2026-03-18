@@ -93,12 +93,13 @@ return english.welcome
 /* CHANGE LANGUAGE */
 
 if(user.state === "change_language"){
+const u = await getUser(phone)
 
 if(message === "1"){
 
 await updateUserLanguage(phone,"english")
 await updateUserState(phone,"active")
-const u = await getUser(phone)
+
 return [
 english.languageChanged,
 english.dashboard.replace("{user}",u.name || "User").replace("{business}",u.business_name || "—").replace("{trial}","14 days")
@@ -109,7 +110,7 @@ if(message === "2"){
 
 await updateUserLanguage(phone,"roman")
 await updateUserState(phone,"active")
-const u = await getUser(phone)
+
 return [
 roman.languageChanged,
 roman.dashboard.replace("{user}",u.name || "User").replace("{business}",u.business_name || "—").replace("{trial}","14 days")
@@ -120,7 +121,7 @@ if(message === "3"){
 
 await updateUserLanguage(phone,"urdu")
 await updateUserState(phone,"active")
-const u = await getUser(phone)
+
 return [
 urdu.languageChanged,
 urdu.dashboard.replace("{user}",u.name || "User").replace("{business}",u.business_name || "—").replace("{trial}","14 days")
@@ -135,9 +136,9 @@ return getMessages(user.language).changeLanguagePrompt
 /* INTRO */
 
 if(user.state === "introduction"){
-const m = getMessages(user.language)
+
 await updateUserState(phone,"ask_name")
-return m.askName
+return getMessages(user.language).askName
 }
 
 
@@ -190,8 +191,7 @@ if(user.state === "personal_profile"){
 await updateTrial(phone)
 
 await updateUserState(phone,"active")
-const m = getMessages(user.language)
-return m.accountReady.replace("{user}",user.name || "User").replace("{business}","—")
+return getMessages(user.language).accountReady.replace("{user}",user.name || "User").replace("{business}","—")
 }
 
 if(user.state === "business_profile"){
@@ -201,8 +201,7 @@ await updateUserBusiness(phone,message)
 await updateTrial(phone)
 
 await updateUserState(phone,"active")
-const m = getMessages(user.language)
-return m.accountReady.replace("{user}",user.name || "User").replace("{business}",message)
+return getMessages(user.language).accountReady.replace("{user}",user.name || "User").replace("{business}",message)
 }
 
 
@@ -212,7 +211,7 @@ return m.accountReady.replace("{user}",user.name || "User").replace("{business}"
 if(user.state === "awaiting_customer_number"){
 
 const customerPhone = message
-const customer = user.usage_type || "Customer"
+const customer = user.usage_type // stored earlier
 
 await saveCustomerPhone(phone, customer, customerPhone)
 
@@ -298,93 +297,38 @@ if(text === "udhar list"){
 const data = await getUdharSummary(phone)
 
 if(!data.length){
-return `📒 *UDHAR SUMMARY*
-
-───────────────
-
-No pending udhar found.
-
-───────────────
-
-✨ Type MENU to return dashboard`
+return `📒 *UDHAR SUMMARY*\n\nNo pending udhar found.`
 }
 
-let r = `📒 *UDHAR SUMMARY*
-
-───────────────
-
-`
-
+let r = `📒 *UDHAR SUMMARY*\n\n`
 data.forEach(x=>{
-r += `👤 ${x.customer_name}
-💰 Rs ${x.total}
-
-`
+r += `👤 ${x.customer_name}\n💰 Rs ${x.total}\n\n`
 })
 
-r += `───────────────
 
-✨ Type MENU to return dashboard`
+
 
 return r
 }
 
-
-
-/* UDHAR PENDING */
-
-if(text === "udhar pending"){
-
-const data = await getPendingUdhar(phone)
-
-if(!data.length){
-return `📒 *NO PENDING UDHAR*
-
-───────────────
-
-All customers clear ✅
-
-───────────────
-
-✨ Type MENU to return dashboard`
-}
-
-let r = `📒 *PENDING UDHAR*
-
-───────────────
-
-`
-
-data.forEach(x=>{
-r += `👤 ${x.customer_name}
-💰 Rs ${x.total}
-
-`
-})
-
-r += `───────────────
-
-✨ Type MENU to return dashboard`
-
-return r
-}
-
-
-
-/* 🔥 ADD UDHAR + ASK NUMBER */
-
+/* 🔥 ADD UDHAR + VALIDATION */
 if(text.startsWith("udhar")){
 
 const parts = text.split(" ")
+
+if(parts.length < 3){
+return "⚠️ Format incorrect.\n\nExample:\nUdhar 1000 Ahmed"
+}
+
 const amount = parseInt(parts[1]) || 0
-const customer = parts.slice(2).join(" ") || "Customer"
+const customer = parts.slice(2).join(" ")
 
 await saveUdhar(phone, customer, amount)
 
-/* STORE CUSTOMER TEMP */
+/* STORE TEMP CUSTOMER */
 await updateUserUsage(phone, customer)
 
-/* MOVE STATE */
+/* ASK NUMBER */
 await updateUserState(phone,"awaiting_customer_number")
 
 return m.askCustomerNumber
@@ -412,14 +356,15 @@ const amount = parseInt(p[1]) || 0
 const item = p.slice(2).join(" ") || "Item"
 await saveTransaction(phone,"expense",amount,item)
 return m.expenseRecorded.replace("{amount}",amount).replace("{item}",item)
-}
 
 
 
-/* MENU */
 
-if(text === "menu"){
-return m.dashboard.replace("{user}",user.name || "User").replace("{business}",user.business_name || "—").replace("{trial}","14 days")
+
+
+
+
+
 }
 
 
@@ -437,23 +382,17 @@ const profit = sales - expense
 
 return `📊 *FINANCIAL REPORT*
 
-───────────────
+💰 Sales: Rs ${sales}
+📉 Expense: Rs ${expense}
+📒 Udhar: Rs ${udhar}
 
-💰 Total Sales: Rs ${sales}  
-📉 Total Expenses: Rs ${expense}  
-📒 Udhar Given: Rs ${udhar}  
-
-───────────────
-
-📈 *Net Profit:* Rs ${profit}
-
-───────────────
-
-✨ Type MENU to return dashboard`
-
+📈 Profit: Rs ${profit}`
 }
 
-
+/* MENU */
+if(text === "menu"){
+return m.dashboard.replace("{user}",user.name || "User").replace("{business}",user.business_name || "—").replace("{trial}","14 days")
+}
 
 /* DEFAULT */
 

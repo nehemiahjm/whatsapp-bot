@@ -262,7 +262,7 @@ export async function getPendingUdhar(phone){
 }
 
 /* =========================
-SAVE CUSTOMER PHONE
+SAVE CUSTOMER PHONE (FIXED)
 ========================= */
 
 export async function saveCustomerPhone(phone, customer, customerPhone){
@@ -271,10 +271,12 @@ export async function saveCustomerPhone(phone, customer, customerPhone){
         `
         UPDATE "Udhar"
         SET customer_phone = $1
-        WHERE phone = $2 
-        AND customer_name = $3
-        ORDER BY id DESC
-        LIMIT 1
+        WHERE id = (
+            SELECT id FROM "Udhar"
+            WHERE phone = $2 AND customer_name = $3
+            ORDER BY id DESC
+            LIMIT 1
+        )
         `,
         [customerPhone, phone, customer]
     )
