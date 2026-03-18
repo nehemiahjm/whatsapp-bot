@@ -7,57 +7,65 @@ const PHONE_ID = process.env.PHONE_NUMBER_ID
 
 export async function handleWebhook(req, res) {
 
-    const body = req.body
+    try {
 
-    if (body.object) {
+        const body = req.body
+
+        if (!body.object) return res.sendStatus(404)
 
         const entry = body.entry?.[0]
         const change = entry?.changes?.[0]
         const value = change?.value
         const messages = value?.messages
 
-        if (messages) {
+        if (!messages) return res.sendStatus(200)
 
-            const message = messages[0]
-            const phone = message.from
-            const text = message.text?.body
+        const msg = messages[0]
+        const phone = msg.from
 
-            console.log("Incoming:", text)
+        // 🔥 FIX: safe text extraction
+        const text = msg.text?.body || ""
 
-            const replies = await handleConversation(phone, text)
+        console.log("Incoming:", text)
 
-            if (replies) {
+        // ignore empty messages
+        if (!text) return res.sendStatus(200)
 
-                // Convert single reply to array
-                const messagesToSend = Array.isArray(replies) ? replies : [replies]
+        const replies = await handleConversation(phone, text)
 
-                // Send messages one by one
-                for (const reply of messagesToSend) {
+        if (replies) {
 
-                    await axios.post(
-                        `https://graph.facebook.com/v19.0/${PHONE_ID}/messages`,
-                        {
-                            messaging_product: "whatsapp",
-                            to: phone,
-                            text: { body: reply }
-                        },
-                        {
-                            headers: {
-                                Authorization: `Bearer ${TOKEN}`,
-                                "Content-Type": "application/json"
-                            }
+            const messagesToSend = Array.isArray(replies) ? replies : [replies]
+
+            for (const reply of messagesToSend) {
+
+                if (!reply) continue // 🔥 prevent empty send
+
+                await axios.post(
+                    `https://graph.facebook.com/v19.0/${PHONE_ID}/messages`,
+                    {
+                        messaging_product: "whatsapp",
+                        to: phone,
+                        text: { body: String(reply) } // 🔥 force string
+                    },
+                    {
+                        headers: {
+                            Authorization: `Bearer ${TOKEN}`,
+                            "Content-Type": "application/json"
                         }
-                    )
+                    }
+                )
 
-                }
+                // 🔥 small delay prevents 400 errors
+                await new Promise(r => setTimeout(r, 300))
             }
         }
 
         res.sendStatus(200)
 
-    } else {
+    } catch (err) {
 
-        res.sendStatus(404)
-
+        console.error("Webhook Crash:", err.response?.data || err.message)
+        res.sendStatus(200) // prevent WhatsApp retries loop
     }
 }

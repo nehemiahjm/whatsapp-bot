@@ -35,7 +35,10 @@ return english
 
 export async function handleConversation(phone,message){
 
-message = message.trim()
+message = message?.trim()
+
+// 🔥 HARD SAFETY
+if(!message) return null
 
 let user = await getUser(phone)
 
@@ -93,6 +96,7 @@ return english.welcome
 /* CHANGE LANGUAGE */
 
 if(user.state === "change_language"){
+
 const u = await getUser(phone)
 
 if(message === "1"){
@@ -102,7 +106,10 @@ await updateUserState(phone,"active")
 
 return [
 english.languageChanged,
-english.dashboard.replace("{user}",u.name || "User").replace("{business}",u.business_name || "—").replace("{trial}","14 days")
+english.dashboard
+.replace("{user}",u.name || "User")
+.replace("{business}",u.business_name || "—")
+.replace("{trial}","14 days")
 ]
 }
 
@@ -113,7 +120,10 @@ await updateUserState(phone,"active")
 
 return [
 roman.languageChanged,
-roman.dashboard.replace("{user}",u.name || "User").replace("{business}",u.business_name || "—").replace("{trial}","14 days")
+roman.dashboard
+.replace("{user}",u.name || "User")
+.replace("{business}",u.business_name || "—")
+.replace("{trial}","14 days")
 ]
 }
 
@@ -124,7 +134,10 @@ await updateUserState(phone,"active")
 
 return [
 urdu.languageChanged,
-urdu.dashboard.replace("{user}",u.name || "User").replace("{business}",u.business_name || "—").replace("{trial}","14 days")
+urdu.dashboard
+.replace("{user}",u.name || "User")
+.replace("{business}",u.business_name || "—")
+.replace("{trial}","14 days")
 ]
 }
 
@@ -160,6 +173,7 @@ return getMessages(user.language).usageSelection.replace("{user}",message)
 /* USAGE */
 
 if(user.state === "choose_usage"){
+
 const m = getMessages(user.language)
 const text = message.toLowerCase()
 
@@ -191,7 +205,11 @@ if(user.state === "personal_profile"){
 await updateTrial(phone)
 
 await updateUserState(phone,"active")
-return getMessages(user.language).accountReady.replace("{user}",user.name || "User").replace("{business}","—")
+
+return getMessages(user.language)
+.accountReady
+.replace("{user}",user.name || "User")
+.replace("{business}","—")
 }
 
 if(user.state === "business_profile"){
@@ -201,17 +219,20 @@ await updateUserBusiness(phone,message)
 await updateTrial(phone)
 
 await updateUserState(phone,"active")
-return getMessages(user.language).accountReady.replace("{user}",user.name || "User").replace("{business}",message)
+
+return getMessages(user.language)
+.accountReady
+.replace("{user}",user.name || "User")
+.replace("{business}",message)
 }
 
 
 
-/* 🔥 CUSTOMER NUMBER STATE */
-
+/* 🔥 CUSTOMER NUMBER */
 if(user.state === "awaiting_customer_number"){
 
 const customerPhone = message
-const customer = user.usage_type // stored earlier
+const customer = user.usage_type
 
 await saveCustomerPhone(phone, customer, customerPhone)
 
@@ -247,7 +268,10 @@ if(text === "hello" || text === "hi" || text === "start"){
 
 return [
 m.welcomeBack.replace("{user}",user.name || "User"),
-m.dashboard.replace("{user}",user.name || "User").replace("{business}",user.business_name || "—").replace("{trial}","14 days")
+m.dashboard
+.replace("{user}",user.name || "User")
+.replace("{business}",user.business_name || "—")
+.replace("{trial}","14 days")
 ]
 
 }
@@ -270,22 +294,12 @@ if(text.startsWith("udhar paid")){
 const customer = text.replace("udhar paid","").trim()
 
 if(!customer){
-return "⚠️ Please specify customer name.\n\nExample:\nUdhar Paid Ahmed"
+return "⚠️ Please specify customer name.\nExample:\nUdhar Paid Ahmed"
 }
 
 await markUdharPaid(phone, customer)
 
-return `✅ *UDHAR CLEARED*
-
-───────────────
-
-👤 Customer: ${customer}
-
-All pending udhar marked as PAID.
-
-───────────────
-
-✨ Type MENU to return dashboard`
+return `✅ UDHAR CLEARED\nCustomer: ${customer}`
 }
 
 
@@ -297,12 +311,13 @@ if(text === "udhar list"){
 const data = await getUdharSummary(phone)
 
 if(!data.length){
-return `📒 *UDHAR SUMMARY*\n\nNo pending udhar found.`
+return "📒 No pending udhar found."
 }
 
-let r = `📒 *UDHAR SUMMARY*\n\n`
+let r = "📒 UDHAR SUMMARY\n\n"
+
 data.forEach(x=>{
-r += `👤 ${x.customer_name}\n💰 Rs ${x.total}\n\n`
+r += `${x.customer_name} → Rs ${x.total}\n`
 })
 
 
@@ -311,13 +326,13 @@ r += `👤 ${x.customer_name}\n💰 Rs ${x.total}\n\n`
 return r
 }
 
-/* 🔥 ADD UDHAR + VALIDATION */
+/* ADD UDHAR */
 if(text.startsWith("udhar")){
 
 const parts = text.split(" ")
 
 if(parts.length < 3){
-return "⚠️ Format incorrect.\n\nExample:\nUdhar 1000 Ahmed"
+return "⚠️ Format:\nUdhar 1000 Ahmed"
 }
 
 const amount = parseInt(parts[1]) || 0
@@ -325,10 +340,10 @@ const customer = parts.slice(2).join(" ")
 
 await saveUdhar(phone, customer, amount)
 
-/* STORE TEMP CUSTOMER */
+
 await updateUserUsage(phone, customer)
 
-/* ASK NUMBER */
+
 await updateUserState(phone,"awaiting_customer_number")
 
 return m.askCustomerNumber
@@ -342,8 +357,12 @@ if(text.startsWith("sale")){
 const p = text.split(" ")
 const amount = parseInt(p[1]) || 0
 const item = p.slice(2).join(" ") || "Item"
+
 await saveTransaction(phone,"sale",amount,item)
-return m.saleRecorded.replace("{amount}",amount).replace("{item}",item)
+
+return m.saleRecorded
+.replace("{amount}",amount)
+.replace("{item}",item)
 }
 
 
@@ -354,20 +373,13 @@ if(text.startsWith("expense")){
 const p = text.split(" ")
 const amount = parseInt(p[1]) || 0
 const item = p.slice(2).join(" ") || "Item"
+
 await saveTransaction(phone,"expense",amount,item)
-return m.expenseRecorded.replace("{amount}",amount).replace("{item}",item)
 
-
-
-
-
-
-
-
-
+return m.expenseRecorded
+.replace("{amount}",amount)
+.replace("{item}",item)
 }
-
-
 
 /* REPORT */
 
@@ -380,24 +392,22 @@ const expense = parseInt(d.total_expense) || 0
 const udhar = parseInt(d.total_udhar) || 0
 const profit = sales - expense
 
-return `📊 *FINANCIAL REPORT*
-
-💰 Sales: Rs ${sales}
-📉 Expense: Rs ${expense}
-📒 Udhar: Rs ${udhar}
-
-📈 Profit: Rs ${profit}`
+return `REPORT\nSales: ${sales}\nExpense: ${expense}\nUdhar: ${udhar}\nProfit: ${profit}`
 }
 
 /* MENU */
 if(text === "menu"){
-return m.dashboard.replace("{user}",user.name || "User").replace("{business}",user.business_name || "—").replace("{trial}","14 days")
+return m.dashboard
+.replace("{user}",user.name || "User")
+.replace("{business}",user.business_name || "—")
+.replace("{trial}","14 days")
 }
 
 /* DEFAULT */
-
-return m.dashboard.replace("{user}",user.name || "User").replace("{business}",user.business_name || "—").replace("{trial}","14 days")
-
+return m.dashboard
+.replace("{user}",user.name || "User")
+.replace("{business}",user.business_name || "—")
+.replace("{trial}","14 days")
 }
 
 }
