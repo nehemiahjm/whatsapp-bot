@@ -16,7 +16,8 @@ getReport,
 saveUdhar,
 getUdharSummary,
 markUdharPaid,
-getPendingUdhar
+getPendingUdhar,
+saveCustomerPhone
 } from "./userService.js"
 
 
@@ -206,6 +207,32 @@ return m.accountReady.replace("{user}",user.name || "User").replace("{business}"
 
 
 
+/* 🔥 CUSTOMER NUMBER STATE */
+
+if(user.state === "awaiting_customer_number"){
+
+const customerPhone = message
+const customer = user.usage_type || "Customer"
+
+await saveCustomerPhone(phone, customer, customerPhone)
+
+await updateUserState(phone,"active")
+
+const m = getMessages(user.language)
+
+return [
+m.sendingUdharReceipt,
+m.customerReceipt
+.replace("{customer}",customer)
+.replace("{business}",user.business_name || "Your Store")
+.replace("{amount}","—")
+.replace("{date}",new Date().toLocaleDateString())
+]
+
+}
+
+
+
 /* ACTIVE */
 
 if(user.state === "active"){
@@ -237,7 +264,7 @@ return m.changeLanguagePrompt
 
 
 
-/* 🔥 UDHAR PAID */
+/* UDHAR PAID */
 
 if(text.startsWith("udhar paid")){
 
@@ -264,7 +291,7 @@ All pending udhar marked as PAID.
 
 
 
-/* 🔥 UDHAR LIST */
+/* UDHAR LIST */
 
 if(text === "udhar list"){
 
@@ -304,7 +331,7 @@ return r
 
 
 
-/* 🔥 UDHAR PENDING */
+/* UDHAR PENDING */
 
 if(text === "udhar pending"){
 
@@ -344,7 +371,7 @@ return r
 
 
 
-/* 🔥 ADD UDHAR */
+/* 🔥 ADD UDHAR + ASK NUMBER */
 
 if(text.startsWith("udhar")){
 
@@ -354,7 +381,13 @@ const customer = parts.slice(2).join(" ") || "Customer"
 
 await saveUdhar(phone, customer, amount)
 
-return m.udharRecorded.replace("{amount}",amount).replace("{customer}",customer)
+/* STORE CUSTOMER TEMP */
+await updateUserUsage(phone, customer)
+
+/* MOVE STATE */
+await updateUserState(phone,"awaiting_customer_number")
+
+return m.askCustomerNumber
 }
 
 

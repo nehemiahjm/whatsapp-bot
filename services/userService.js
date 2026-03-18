@@ -260,3 +260,45 @@ export async function getPendingUdhar(phone){
     return result.rows
 
 }
+
+/* =========================
+SAVE CUSTOMER PHONE
+========================= */
+
+export async function saveCustomerPhone(phone, customer, customerPhone){
+
+    await pool.query(
+        `
+        UPDATE "Udhar"
+        SET customer_phone = $1
+        WHERE phone = $2 
+        AND customer_name = $3
+        ORDER BY id DESC
+        LIMIT 1
+        `,
+        [customerPhone, phone, customer]
+    )
+
+}
+
+
+
+/* =========================
+GET CUSTOMER PHONE
+========================= */
+
+export async function getCustomerPhone(phone, customer){
+
+    const result = await pool.query(
+        `
+        SELECT customer_phone 
+        FROM "Udhar"
+        WHERE phone = $1 AND customer_name = $2
+        ORDER BY id DESC
+        LIMIT 1
+        `,
+        [phone, customer]
+    )
+
+    return result.rows[0]?.customer_phone
+}
