@@ -14,7 +14,9 @@ updateTrial,
 saveTransaction,
 getReport,
 saveUdhar,
-getUdharSummary
+getUdharSummary,
+markUdharPaid,
+getPendingUdhar
 } from "./userService.js"
 
 
@@ -95,15 +97,10 @@ if(message === "1"){
 
 await updateUserLanguage(phone,"english")
 await updateUserState(phone,"active")
-
-const userData = await getUser(phone)
-
+const u = await getUser(phone)
 return [
 english.languageChanged,
-english.dashboard
-.replace("{user}",userData.name || "User")
-.replace("{business}",userData.business_name || "—")
-.replace("{trial}","14 days")
+english.dashboard.replace("{user}",u.name || "User").replace("{business}",u.business_name || "—").replace("{trial}","14 days")
 ]
 }
 
@@ -111,15 +108,10 @@ if(message === "2"){
 
 await updateUserLanguage(phone,"roman")
 await updateUserState(phone,"active")
-
-const userData = await getUser(phone)
-
+const u = await getUser(phone)
 return [
 roman.languageChanged,
-roman.dashboard
-.replace("{user}",userData.name || "User")
-.replace("{business}",userData.business_name || "—")
-.replace("{trial}","14 days")
+roman.dashboard.replace("{user}",u.name || "User").replace("{business}",u.business_name || "—").replace("{trial}","14 days")
 ]
 }
 
@@ -127,41 +119,29 @@ if(message === "3"){
 
 await updateUserLanguage(phone,"urdu")
 await updateUserState(phone,"active")
-
-const userData = await getUser(phone)
-
+const u = await getUser(phone)
 return [
 urdu.languageChanged,
-urdu.dashboard
-.replace("{user}",userData.name || "User")
-.replace("{business}",userData.business_name || "—")
-.replace("{trial}","14 days")
+urdu.dashboard.replace("{user}",u.name || "User").replace("{business}",u.business_name || "—").replace("{trial}","14 days")
 ]
 }
 
-
-const messages = getMessages(user.language)
-return messages.changeLanguagePrompt
-
+return getMessages(user.language).changeLanguagePrompt
 }
 
 
 
-/* INTRODUCTION */
+/* INTRO */
 
 if(user.state === "introduction"){
-
-const messages = getMessages(user.language)
-
+const m = getMessages(user.language)
 await updateUserState(phone,"ask_name")
-
-return messages.askName
-
+return m.askName
 }
 
 
 
-/* ASK NAME */
+/* NAME */
 
 if(user.state === "ask_name"){
 
@@ -170,11 +150,7 @@ await updateUserName(phone,message)
 await updateUserState(phone,"choose_usage")
 
 user = await getUser(phone)
-
-const messages = getMessages(user.language)
-
-return messages.usageSelection.replace("{user}",message)
-
+return getMessages(user.language).usageSelection.replace("{user}",message)
 }
 
 
@@ -182,11 +158,7 @@ return messages.usageSelection.replace("{user}",message)
 /* USAGE */
 
 if(user.state === "choose_usage"){
-
-
-
-const messages = getMessages(user.language)
-
+const m = getMessages(user.language)
 const text = message.toLowerCase()
 
 if(text === "personal use"){
@@ -194,9 +166,7 @@ if(text === "personal use"){
 await updateUserUsage(phone,"personal")
 
 await updateUserState(phone,"personal_profile")
-
-return messages.personalProfile.replace("{user}",user.name || "User")
-
+return m.personalProfile.replace("{user}",user.name || "User")
 }
 
 if(text === "business use"){
@@ -204,38 +174,24 @@ if(text === "business use"){
 await updateUserUsage(phone,"business")
 
 await updateUserState(phone,"business_profile")
+return m.businessProfile.replace("{user}",user.name || "User")
+}
 
-return messages.businessProfile.replace("{user}",user.name || "User")
-
+return m.usageSelection.replace("{user}",user.name || "User")
 }
 
 
 
-return messages.usageSelection.replace("{user}",user.name || "User")
-
-}
-
-
-
-/* PERSONAL */
+/* PROFILE */
 
 if(user.state === "personal_profile"){
 
 await updateTrial(phone)
 
 await updateUserState(phone,"active")
-
-const messages = getMessages(user.language)
-
-return messages.accountReady
-.replace("{user}",user.name || "User")
-.replace("{business}","—")
-
+const m = getMessages(user.language)
+return m.accountReady.replace("{user}",user.name || "User").replace("{business}","—")
 }
-
-
-
-/* BUSINESS */
 
 if(user.state === "business_profile"){
 
@@ -244,37 +200,28 @@ await updateUserBusiness(phone,message)
 await updateTrial(phone)
 
 await updateUserState(phone,"active")
-
-const messages = getMessages(user.language)
-
-return messages.accountReady
-.replace("{user}",user.name || "User")
-.replace("{business}",message)
-
+const m = getMessages(user.language)
+return m.accountReady.replace("{user}",user.name || "User").replace("{business}",message)
 }
 
 
 
-/* ACTIVE USER */
+/* ACTIVE */
 
 if(user.state === "active"){
 
-const messages = getMessages(user.language)
-
+const m = getMessages(user.language)
 const text = message.toLowerCase()
 
 
 
-/* WELCOME BACK */
+/* WELCOME */
 
 if(text === "hello" || text === "hi" || text === "start"){
 
 return [
-messages.welcomeBack.replace("{user}",user.name || "User"),
-messages.dashboard
-.replace("{user}",user.name || "User")
-.replace("{business}",user.business_name || "—")
-.replace("{trial}","14 days")
+m.welcomeBack.replace("{user}",user.name || "User"),
+m.dashboard.replace("{user}",user.name || "User").replace("{business}",user.business_name || "—").replace("{trial}","14 days")
 ]
 
 }
@@ -283,71 +230,36 @@ messages.dashboard
 
 /* LANGUAGE */
 
-if(
-text === "language" ||
-text === "lang" ||
-text === "zabaan" ||
-text === "zuban"
-){
-
+if(text === "language" || text === "lang" || text === "zabaan" || text === "zuban"){
 await updateUserState(phone,"change_language")
-
-return messages.changeLanguagePrompt
-
+return m.changeLanguagePrompt
 }
 
 
 
-/* SALE */
+/* 🔥 UDHAR PAID */
 
-if(text.startsWith("sale")){
+if(text.startsWith("udhar paid")){
 
-const parts = text.split(" ")
-const amount = parseInt(parts[1]) || 0
-const item = parts.slice(2).join(" ") || "Item"
+const customer = text.replace("udhar paid","").trim()
 
-await saveTransaction(phone,"sale",amount,item)
-
-return messages.saleRecorded
-.replace("{amount}",amount)
-.replace("{item}",item)
-
+if(!customer){
+return "⚠️ Please specify customer name.\n\nExample:\nUdhar Paid Ahmed"
 }
 
+await markUdharPaid(phone, customer)
 
+return `✅ *UDHAR CLEARED*
 
-/* EXPENSE */
+───────────────
 
-if(text.startsWith("expense")){
+👤 Customer: ${customer}
 
-const parts = text.split(" ")
-const amount = parseInt(parts[1]) || 0
-const item = parts.slice(2).join(" ") || "Item"
+All pending udhar marked as PAID.
 
-await saveTransaction(phone,"expense",amount,item)
+───────────────
 
-return messages.expenseRecorded
-.replace("{amount}",amount)
-.replace("{item}",item)
-
-}
-
-
-
-/* 🔥 UDHAR (FIXED SYSTEM) */
-
-if(text.startsWith("udhar")){
-
-const parts = text.split(" ")
-const amount = parseInt(parts[1]) || 0
-const customer = parts.slice(2).join(" ") || "Customer"
-
-await saveUdhar(phone, customer, amount)
-
-return messages.udharRecorded
-.replace("{amount}",amount)
-.replace("{customer}",customer)
-
+✨ Type MENU to return dashboard`
 }
 
 
@@ -370,25 +282,103 @@ No pending udhar found.
 ✨ Type MENU to return dashboard`
 }
 
-let response = `📒 *UDHAR SUMMARY*
+let r = `📒 *UDHAR SUMMARY*
 
 ───────────────
 
 `
 
-data.forEach(row => {
-response += `👤 ${row.customer_name}
-💰 Rs ${row.total}
+data.forEach(x=>{
+r += `👤 ${x.customer_name}
+💰 Rs ${x.total}
 
 `
 })
 
-response += `───────────────
+r += `───────────────
 
 ✨ Type MENU to return dashboard`
 
-return response
+return r
+}
 
+
+
+/* 🔥 UDHAR PENDING */
+
+if(text === "udhar pending"){
+
+const data = await getPendingUdhar(phone)
+
+if(!data.length){
+return `📒 *NO PENDING UDHAR*
+
+───────────────
+
+All customers clear ✅
+
+───────────────
+
+✨ Type MENU to return dashboard`
+}
+
+let r = `📒 *PENDING UDHAR*
+
+───────────────
+
+`
+
+data.forEach(x=>{
+r += `👤 ${x.customer_name}
+💰 Rs ${x.total}
+
+`
+})
+
+r += `───────────────
+
+✨ Type MENU to return dashboard`
+
+return r
+}
+
+
+
+/* 🔥 ADD UDHAR */
+
+if(text.startsWith("udhar")){
+
+const parts = text.split(" ")
+const amount = parseInt(parts[1]) || 0
+const customer = parts.slice(2).join(" ") || "Customer"
+
+await saveUdhar(phone, customer, amount)
+
+return m.udharRecorded.replace("{amount}",amount).replace("{customer}",customer)
+}
+
+
+
+/* SALE */
+
+if(text.startsWith("sale")){
+const p = text.split(" ")
+const amount = parseInt(p[1]) || 0
+const item = p.slice(2).join(" ") || "Item"
+await saveTransaction(phone,"sale",amount,item)
+return m.saleRecorded.replace("{amount}",amount).replace("{item}",item)
+}
+
+
+
+/* EXPENSE */
+
+if(text.startsWith("expense")){
+const p = text.split(" ")
+const amount = parseInt(p[1]) || 0
+const item = p.slice(2).join(" ") || "Item"
+await saveTransaction(phone,"expense",amount,item)
+return m.expenseRecorded.replace("{amount}",amount).replace("{item}",item)
 }
 
 
@@ -396,19 +386,8 @@ return response
 /* MENU */
 
 if(text === "menu"){
-
-return messages.dashboard
-.replace("{user}",user.name || "User")
-.replace("{business}",user.business_name || "—")
-.replace("{trial}","14 days")
-
+return m.dashboard.replace("{user}",user.name || "User").replace("{business}",user.business_name || "—").replace("{trial}","14 days")
 }
-
-
-
-/* PLANS */
-
-if(text === "plans") return messages.plans
 
 
 
@@ -416,11 +395,11 @@ if(text === "plans") return messages.plans
 
 if(text === "report"){
 
-const data = await getReport(phone)
+const d = await getReport(phone)
 
-const sales = parseInt(data.total_sales) || 0
-const expense = parseInt(data.total_expense) || 0
-const udhar = parseInt(data.total_udhar) || 0
+const sales = parseInt(d.total_sales) || 0
+const expense = parseInt(d.total_expense) || 0
+const udhar = parseInt(d.total_udhar) || 0
 const profit = sales - expense
 
 return `📊 *FINANCIAL REPORT*
@@ -445,10 +424,7 @@ return `📊 *FINANCIAL REPORT*
 
 /* DEFAULT */
 
-return messages.dashboard
-.replace("{user}",user.name || "User")
-.replace("{business}",user.business_name || "—")
-.replace("{trial}","14 days")
+return m.dashboard.replace("{user}",user.name || "User").replace("{business}",user.business_name || "—").replace("{trial}","14 days")
 
 }
 

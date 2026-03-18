@@ -218,3 +218,45 @@ export async function getUdharSummary(phone){
     return result.rows
 
 }
+
+/* =========================
+MARK UDHAR AS PAID
+========================= */
+
+export async function markUdharPaid(phone, customer){
+
+    await pool.query(
+        `
+        UPDATE "Udhar"
+        SET status = 'paid'
+        WHERE phone = $1 
+        AND customer_name ILIKE $2
+        AND status = 'pending'
+        `,
+        [phone, customer]
+    )
+
+}
+
+
+
+/* =========================
+GET PENDING UDHAR
+========================= */
+
+export async function getPendingUdhar(phone){
+
+    const result = await pool.query(
+        `
+        SELECT customer_name, SUM(amount) as total
+        FROM "Udhar"
+        WHERE phone = $1 AND status = 'pending'
+        GROUP BY customer_name
+        ORDER BY total DESC
+        `,
+        [phone]
+    )
+
+    return result.rows
+
+}
