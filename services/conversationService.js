@@ -17,7 +17,8 @@ saveUdhar,
 getUdharSummary,
 markUdharPaid,
 getPendingUdhar,
-saveCustomerPhone
+saveCustomerPhone,
+getCustomerPhone
 } from "./userService.js"
 
 
@@ -37,7 +38,7 @@ export async function handleConversation(phone,message){
 
 message = message?.trim()
 
-// 🔥 HARD SAFETY
+
 if(!message) return null
 
 let user = await getUser(phone)
@@ -106,10 +107,7 @@ await updateUserState(phone,"active")
 
 return [
 english.languageChanged,
-english.dashboard
-.replace("{user}",u.name || "User")
-.replace("{business}",u.business_name || "—")
-.replace("{trial}","14 days")
+english.dashboard.replace("{user}",u.name || "User").replace("{business}",u.business_name || "—").replace("{trial}","14 days")
 ]
 }
 
@@ -120,10 +118,7 @@ await updateUserState(phone,"active")
 
 return [
 roman.languageChanged,
-roman.dashboard
-.replace("{user}",u.name || "User")
-.replace("{business}",u.business_name || "—")
-.replace("{trial}","14 days")
+roman.dashboard.replace("{user}",u.name || "User").replace("{business}",u.business_name || "—").replace("{trial}","14 days")
 ]
 }
 
@@ -134,10 +129,7 @@ await updateUserState(phone,"active")
 
 return [
 urdu.languageChanged,
-urdu.dashboard
-.replace("{user}",u.name || "User")
-.replace("{business}",u.business_name || "—")
-.replace("{trial}","14 days")
+urdu.dashboard.replace("{user}",u.name || "User").replace("{business}",u.business_name || "—").replace("{trial}","14 days")
 ]
 }
 
@@ -205,9 +197,7 @@ if(user.state === "personal_profile"){
 await updateTrial(phone)
 
 await updateUserState(phone,"active")
-
-return getMessages(user.language)
-.accountReady
+return getMessages(user.language).accountReady
 .replace("{user}",user.name || "User")
 .replace("{business}","—")
 }
@@ -219,22 +209,24 @@ await updateUserBusiness(phone,message)
 await updateTrial(phone)
 
 await updateUserState(phone,"active")
-
-return getMessages(user.language)
-.accountReady
+return getMessages(user.language).accountReady
 .replace("{user}",user.name || "User")
 .replace("{business}",message)
 }
 
-
-
-/* 🔥 CUSTOMER NUMBER */
+/* 🔥 CUSTOMER NUMBER (FIXED) */
 if(user.state === "awaiting_customer_number"){
 
 const customerPhone = message
 const customer = user.usage_type
 
 await saveCustomerPhone(phone, customer, customerPhone)
+
+// 🔥 GET LATEST UDHAR
+const data = await getPendingUdhar(phone)
+const row = data.find(x => x.customer_name === customer)
+
+const amount = row?.total || 0
 
 await updateUserState(phone,"active")
 
@@ -245,7 +237,7 @@ m.sendingUdharReceipt,
 m.customerReceipt
 .replace("{customer}",customer)
 .replace("{business}",user.business_name || "Your Store")
-.replace("{amount}","—")
+.replace("{amount}",amount)
 .replace("{date}",new Date().toLocaleDateString())
 ]
 
@@ -285,27 +277,23 @@ await updateUserState(phone,"change_language")
 return m.changeLanguagePrompt
 }
 
+/* PLANS */
+if(text === "plans"){
+return m.plans
+}
 
-
-/* UDHAR PAID */
-
+/* 🔥 UDHAR PAID */
 if(text.startsWith("udhar paid")){
 
 const customer = text.replace("udhar paid","").trim()
 
-if(!customer){
-return "⚠️ Please specify customer name.\nExample:\nUdhar Paid Ahmed"
-}
+
 
 await markUdharPaid(phone, customer)
-
-return `✅ UDHAR CLEARED\nCustomer: ${customer}`
+return `✅ Udhar cleared for ${customer}`
 }
 
-
-
-/* UDHAR LIST */
-
+/* 🔥 UDHAR LIST (IMPROVED) */
 if(text === "udhar list"){
 
 const data = await getUdharSummary(phone)
@@ -314,22 +302,23 @@ if(!data.length){
 return "📒 No pending udhar found."
 }
 
-let r = "📒 UDHAR SUMMARY\n\n"
+let r = "📒 UDHAR SUMMARY\n───────────────\n\n"
+let total = 0
 
 data.forEach(x=>{
-r += `${x.customer_name} → Rs ${x.total}\n`
+r += `👤 ${x.customer_name} → Rs ${x.total}\n`
+total += parseInt(x.total)
 })
 
-
-
+r += `\n───────────────\n💰 Total: Rs ${total}`
 
 return r
 }
 
-/* ADD UDHAR */
+/* 🔥 ADD UDHAR (FIXED FLOW) */
 if(text.startsWith("udhar")){
 
-const parts = text.split(" ")
+const parts = message.split(" ")
 
 if(parts.length < 3){
 return "⚠️ Format:\nUdhar 1000 Ahmed"
@@ -346,23 +335,30 @@ await updateUserUsage(phone, customer)
 
 await updateUserState(phone,"awaiting_customer_number")
 
-return m.askCustomerNumber
+return [
+m.udharRecorded
+.replace("{customer}",customer)
+.replace("{amount}",amount),
+
+m.askCustomerNumber
+]
 }
-
-
 
 /* SALE */
 
 if(text.startsWith("sale")){
-const p = text.split(" ")
+const p = message.split(" ")
 const amount = parseInt(p[1]) || 0
 const item = p.slice(2).join(" ") || "Item"
 
 await saveTransaction(phone,"sale",amount,item)
+return m.saleRecorded.replace("{amount}",amount).replace("{item}",item)
 
-return m.saleRecorded
-.replace("{amount}",amount)
-.replace("{item}",item)
+
+
+
+
+
 }
 
 
@@ -370,19 +366,15 @@ return m.saleRecorded
 /* EXPENSE */
 
 if(text.startsWith("expense")){
-const p = text.split(" ")
+const p = message.split(" ")
 const amount = parseInt(p[1]) || 0
 const item = p.slice(2).join(" ") || "Item"
 
 await saveTransaction(phone,"expense",amount,item)
-
-return m.expenseRecorded
-.replace("{amount}",amount)
-.replace("{item}",item)
+return m.expenseRecorded.replace("{amount}",amount).replace("{item}",item)
 }
 
-/* REPORT */
-
+/* 🔥 REPORT (RESTORED PREMIUM) */
 if(text === "report"){
 
 const d = await getReport(phone)
@@ -392,7 +384,21 @@ const expense = parseInt(d.total_expense) || 0
 const udhar = parseInt(d.total_udhar) || 0
 const profit = sales - expense
 
-return `REPORT\nSales: ${sales}\nExpense: ${expense}\nUdhar: ${udhar}\nProfit: ${profit}`
+return `📊 *FINANCIAL REPORT*
+
+───────────────
+
+💰 Total Sales: Rs ${sales}  
+📉 Total Expenses: Rs ${expense}  
+📒 Udhar Given: Rs ${udhar}  
+
+───────────────
+
+📈 *Net Profit:* Rs ${profit}
+
+───────────────
+
+✨ Type MENU to return dashboard`
 }
 
 /* MENU */
