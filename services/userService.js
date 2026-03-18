@@ -179,3 +179,42 @@ export async function getReport(phone){
     return result.rows[0]
 
 }
+
+/* =========================
+SAVE UDHAR
+========================= */
+
+export async function saveUdhar(phone, customer, amount){
+
+    await pool.query(
+        `INSERT INTO "Udhar" (phone, customer_name, amount, status)
+         VALUES ($1, $2, $3, 'pending')`,
+        [phone, customer, amount]
+    )
+
+}
+
+
+
+/* =========================
+GET UDHAR SUMMARY
+========================= */
+
+export async function getUdharSummary(phone){
+
+    const result = await pool.query(
+        `
+        SELECT 
+        customer_name,
+        SUM(amount) as total
+        FROM "Udhar"
+        WHERE phone = $1 AND status = 'pending'
+        GROUP BY customer_name
+        ORDER BY total DESC
+        `,
+        [phone]
+    )
+
+    return result.rows
+
+}

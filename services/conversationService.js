@@ -12,7 +12,9 @@ updateUserUsage,
 updateUserBusiness,
 updateTrial,
 saveTransaction,
-getReport
+getReport,
+saveUdhar,
+getUdharSummary
 } from "./userService.js"
 
 
@@ -263,7 +265,7 @@ const text = message.toLowerCase()
 
 
 
-/* WELCOME BACK + DASHBOARD */
+/* WELCOME BACK */
 
 if(text === "hello" || text === "hi" || text === "start"){
 
@@ -332,7 +334,7 @@ return messages.expenseRecorded
 
 
 
-/* UDHAR */
+/* 🔥 UDHAR (FIXED SYSTEM) */
 
 if(text.startsWith("udhar")){
 
@@ -340,11 +342,52 @@ const parts = text.split(" ")
 const amount = parseInt(parts[1]) || 0
 const customer = parts.slice(2).join(" ") || "Customer"
 
-await saveTransaction(phone,"udhar",amount,customer)
+await saveUdhar(phone, customer, amount)
 
 return messages.udharRecorded
 .replace("{amount}",amount)
 .replace("{customer}",customer)
+
+}
+
+
+
+/* 🔥 UDHAR LIST */
+
+if(text === "udhar list"){
+
+const data = await getUdharSummary(phone)
+
+if(!data.length){
+return `📒 *UDHAR SUMMARY*
+
+───────────────
+
+No pending udhar found.
+
+───────────────
+
+✨ Type MENU to return dashboard`
+}
+
+let response = `📒 *UDHAR SUMMARY*
+
+───────────────
+
+`
+
+data.forEach(row => {
+response += `👤 ${row.customer_name}
+💰 Rs ${row.total}
+
+`
+})
+
+response += `───────────────
+
+✨ Type MENU to return dashboard`
+
+return response
 
 }
 
@@ -369,7 +412,7 @@ if(text === "plans") return messages.plans
 
 
 
-/* 🔥 REAL REPORT */
+/* REPORT */
 
 if(text === "report"){
 
