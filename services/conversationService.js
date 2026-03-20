@@ -21,6 +21,7 @@ saveCustomerPhone
 } from "./userService.js"
 
 import { detectTransaction } from "../ai/openai.js"
+import { generatePDF } from "./pdfService.js" // ✅ NEW
 
 
 
@@ -244,7 +245,7 @@ ACTIVE (AI ENABLED)
 ========================= */
 
 if(user.state === "active"){
-
+    
 
 const text = message.toLowerCase()
 
@@ -284,15 +285,7 @@ return `✅ Udhar cleared for ${ai.description}`
 
 
 
-/* FALLBACK COMMANDS */
-
-if(text === "hello" || text === "hi"){
-return [
-m.welcomeBack.replace("{user}",user.name || "User"),
-m.dashboard.replace("{user}",user.name || "User").replace("{business}",user.business_name || "—").replace("{trial}",`${remainingDays} days`)
-]
-}
-
+/* 🔥 PDF REPORT */
 if(text === "report"){
 
 const d = await getReport(phone)
@@ -302,26 +295,26 @@ const expense = parseInt(d.total_expense) || 0
 const udhar = parseInt(d.total_udhar) || 0
 const profit = sales - expense
 
-if(user.language === "urdu"){
-return `📊 مالیاتی رپورٹ
+const pdfPath = generatePDF(user, {
+sales,
+expense,
+udhar,
+profit
+})
 
-💰 کل سیلز: ${sales}
-📉 اخراجات: ${expense}
-📒 ادھار: ${udhar}
-
-📈 منافع: ${profit}`
-}
-
-return `📊 REPORT
-
-Sales: ${sales}
-Expense: ${expense}
-Udhar: ${udhar}
-Profit: ${profit}`
+return [
+"📄 Generating your PDF report...",
+{ type: "pdf", path: pdfPath }
+]
 }
 
 
-return m.dashboard.replace("{user}",user.name || "User").replace("{business}",user.business_name || "—").replace("{trial}",`${remainingDays} days`)
+
+/* FALLBACK */
+return m.dashboard
+.replace("{user}",user.name || "User")
+.replace("{business}",user.business_name || "—")
+.replace("{trial}",`${remainingDays} days`)
 }
 
 }

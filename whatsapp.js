@@ -4,7 +4,8 @@ import { handleConversation } from "./services/conversationService.js"
 const TOKEN = process.env.WHATSAPP_TOKEN
 const PHONE_ID = process.env.PHONE_NUMBER_ID
 
-/* 🔥 SEND NORMAL TEXT */
+
+/* 🔥 SEND TEXT */
 async function sendText(to, body){
     await axios.post(
         `https://graph.facebook.com/v19.0/${PHONE_ID}/messages`,
@@ -22,7 +23,32 @@ async function sendText(to, body){
     )
 }
 
-/* 🔥 SEND TEMPLATE (FOR RECEIPTS LATER) */
+
+/* 🔥 SEND DOCUMENT (PDF) */
+async function sendDocument(to, filePath){
+
+    await axios.post(
+        `https://graph.facebook.com/v19.0/${PHONE_ID}/messages`,
+        {
+            messaging_product: "whatsapp",
+            to: to,
+            type: "document",
+            document: {
+                link: filePath, // ⚠️ MUST be public URL
+                filename: "Hisabi_Report.pdf"
+            }
+        },
+        {
+            headers: {
+                Authorization: `Bearer ${TOKEN}`,
+                "Content-Type": "application/json"
+            }
+        }
+    )
+}
+
+
+/* 🔥 SEND TEMPLATE */
 async function sendTemplate(to, templateName, params, lang="en_US"){
 
     await axios.post(
@@ -54,6 +80,8 @@ async function sendTemplate(to, templateName, params, lang="en_US"){
     )
 }
 
+
+
 /* 🔥 MAIN WEBHOOK */
 export async function handleWebhook(req, res) {
 
@@ -72,7 +100,7 @@ export async function handleWebhook(req, res) {
 
         const msg = messages[0]
         const phone = msg.from
-        
+
 
         const text = msg.text?.body || ""
 
@@ -85,12 +113,12 @@ export async function handleWebhook(req, res) {
 
         if (!replies) return res.sendStatus(200)
 
-        /* 🔥 NEW FLEXIBLE SYSTEM */
 
-        // CASE 1: Object (advanced response)
+
+        /* 🔥 CASE 1: OBJECT RESPONSE */
         if (typeof replies === "object" && !Array.isArray(replies)) {
 
-            // 🔥 TEMPLATE MESSAGE
+
             if (replies.type === "template") {
 
                 await sendTemplate(
@@ -100,31 +128,37 @@ export async function handleWebhook(req, res) {
                     replies.language || "en_US"
                 )
 
-                // owner confirmation
+
                 if (replies.ownerMessage){
                     await sendText(phone, replies.ownerMessage)
                 }
 
                 return res.sendStatus(200)
             }
+            
 
-            // 🔥 CUSTOM TARGET MESSAGE
             if (replies.to && replies.message){
                 await sendText(replies.to, replies.message)
                 return res.sendStatus(200)
             }
         }
 
-        // CASE 2: NORMAL FLOW (array or string)
+
+        /* 🔥 CASE 2: ARRAY / STRING */
         const messagesToSend = Array.isArray(replies) ? replies : [replies]
 
         for (const reply of messagesToSend) {
 
             if (!reply) continue
 
-            await sendText(phone, reply)
+            // 🔥 PDF DETECTION
+            if (typeof reply === "object" && reply.type === "pdf") {
+                await sendDocument(phone, reply.path)
+            } else {
+                await sendText(phone, reply)
+            }
 
-            await new Promise(r => setTimeout(r, 300))
+            await new Promise(r => setTimeout(r, 400))
         }
 
         res.sendStatus(200)
