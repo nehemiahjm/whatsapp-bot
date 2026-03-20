@@ -20,12 +20,12 @@ getPendingUdhar,
 saveCustomerPhone
 } from "./userService.js"
 
-import { detectTransaction } from "../openai.js"
+import { detectTransaction } from "../ai/openai.js"
 
 
 
 function getMessages(language){
-    
+
 if(language === "roman") return roman
 if(language === "urdu") return urdu
 
