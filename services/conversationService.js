@@ -20,24 +20,25 @@ getPendingUdhar,
 saveCustomerPhone
 } from "./userService.js"
 
+import { detectTransaction } from "../openai.js"
+
 
 
 function getMessages(language){
-
+    
 if(language === "roman") return roman
 if(language === "urdu") return urdu
 
 return english
 }
 
-/* 🔥 REAL TRIAL CALCULATION */
+
 function getRemainingDays(user){
 if(!user.trial_end) return 0
 
 const now = new Date()
 const end = new Date(user.trial_end)
-
-const diff = Math.ceil((end - now) / (1000 * 60 * 60 * 24))
+const diff = Math.ceil((end - now)/(1000*60*60*24))
 return diff > 0 ? diff : 0
 }
 
@@ -168,34 +169,7 @@ await updateUserState(phone,"choose_usage")
 
 user = await getUser(phone)
 return getMessages(user.language).usageSelection.replace("{user}",message)
-}
 
-
-
-/* USAGE */
-
-if(user.state === "choose_usage"){
-
-const m = getMessages(user.language)
-const text = message.toLowerCase()
-
-if(text === "personal use"){
-
-await updateUserUsage(phone,"personal")
-
-await updateUserState(phone,"personal_profile")
-return m.personalProfile.replace("{user}",user.name || "User")
-}
-
-if(text === "business use"){
-
-await updateUserUsage(phone,"business")
-
-await updateUserState(phone,"business_profile")
-return m.businessProfile.replace("{user}",user.name || "User")
-}
-
-return m.usageSelection.replace("{user}",user.name || "User")
 }
 
 
@@ -220,7 +194,9 @@ await updateUserState(phone,"active")
 return getMessages(user.language).accountReady.replace("{user}",user.name || "User").replace("{business}",message)
 }
 
-/* 🔥 TRIAL SECURITY WALL */
+
+
+/* TRIAL LOCK */
 const remainingDays = getRemainingDays(user)
 const m = getMessages(user.language)
 
@@ -229,6 +205,8 @@ if(message.toLowerCase() !== "plans"){
 return m.trialEnded
 }
 }
+
+
 
 /* CUSTOMER NUMBER */
 if(user.state === "awaiting_customer_number"){
@@ -261,120 +239,60 @@ m.customerReceipt
 
 
 
-/* ACTIVE */
+/* =========================
+ACTIVE (AI ENABLED)
+========================= */
 
 if(user.state === "active"){
 
 
 const text = message.toLowerCase()
 
+// 🔥 AI CORE
+const ai = await detectTransaction(message)
+console.log("AI RESULT:", ai)
 
-
-/* WELCOME */
-
-if(text === "hello" || text === "hi" || text === "start"){
-
-return [
-m.welcomeBack.replace("{user}",user.name || "User"),
-m.dashboard.replace("{user}",user.name || "User").replace("{business}",user.business_name || "—").replace("{trial}",`${remainingDays} days`)
-]
-
+/* AI SALE */
+if(ai.type === "sale"){
+await saveTransaction(phone,"sale",ai.amount,ai.description)
+return m.saleRecorded.replace("{amount}",ai.amount).replace("{item}",ai.description)
 }
 
-
-
-/* LANGUAGE */
-if(text === "language"){
-await updateUserState(phone,"change_language")
-return m.changeLanguagePrompt
+/* AI EXPENSE */
+if(ai.type === "expense"){
+await saveTransaction(phone,"expense",ai.amount,ai.description)
+return m.expenseRecorded.replace("{amount}",ai.amount).replace("{item}",ai.description)
 }
 
-/* PLANS */
-if(text === "plans"){
-return m.plans
-}
-
-/* UDHAR PAID */
-if(text.startsWith("udhar paid")){
-
-const customer = text.replace("udhar paid","").trim()
-
-
-
-await markUdharPaid(phone, customer)
-return `✅ Udhar cleared for ${customer}`
-}
-
-/* UDHAR LIST */
-if(text === "udhar list"){
-
-const data = await getUdharSummary(phone)
-
-if(!data.length){
-return m.language === "urdu" ? "کوئی ادھار نہیں" : "No pending udhar"
-}
-
-let r = "📒 UDHAR SUMMARY\n\n"
-let total = 0
-
-data.forEach(x=>{
-r += `👤 ${x.customer_name} → Rs ${x.total}\n`
-total += parseInt(x.total)
-})
-
-r += `\n💰 Total: Rs ${total}`
-return r
-}
-
-/* ADD UDHAR */
-if(text.startsWith("udhar")){
-
-const parts = message.split(" ")
-
-if(parts.length < 3){
-return "⚠️ Format:\nUdhar 1000 Ahmed"
-}
-
-const amount = parseInt(parts[1]) || 0
-const customer = parts.slice(2).join(" ")
-
-await saveUdhar(phone, customer, amount)
-
-
-await updateUserUsage(phone, customer)
-
-
+/* AI UDHAR */
+if(ai.type === "udhar"){
+await saveUdhar(phone, ai.description, ai.amount)
+await updateUserUsage(phone, ai.description)
 await updateUserState(phone,"awaiting_customer_number")
 
 return [
-m.udharRecorded.replace("{customer}",customer).replace("{amount}",amount),
+m.udharRecorded.replace("{customer}",ai.description).replace("{amount}",ai.amount),
 m.askCustomerNumber
 ]
 }
 
-/* SALE */
-
-if(text.startsWith("sale")){
-const p = message.split(" ")
-const amount = parseInt(p[1]) || 0
-const item = p.slice(2).join(" ") || "Item"
-
-await saveTransaction(phone,"sale",amount,item)
-return m.saleRecorded.replace("{amount}",amount).replace("{item}",item)
+/* AI UDHAR PAID */
+if(ai.type === "udhar_paid"){
+await markUdharPaid(phone, ai.description)
+return `✅ Udhar cleared for ${ai.description}`
 }
 
-/* EXPENSE */
 
-if(text.startsWith("expense")){
-const p = message.split(" ")
-const amount = parseInt(p[1]) || 0
-const item = p.slice(2).join(" ") || "Item"
 
-await saveTransaction(phone,"expense",amount,item)
-return m.expenseRecorded.replace("{amount}",amount).replace("{item}",item)
+/* FALLBACK COMMANDS */
+
+if(text === "hello" || text === "hi"){
+return [
+m.welcomeBack.replace("{user}",user.name || "User"),
+m.dashboard.replace("{user}",user.name || "User").replace("{business}",user.business_name || "—").replace("{trial}",`${remainingDays} days`)
+]
 }
 
-/* 🔥 REPORT MULTI LANGUAGE */
 if(text === "report"){
 
 const d = await getReport(phone)
@@ -387,28 +305,22 @@ const profit = sales - expense
 if(user.language === "urdu"){
 return `📊 مالیاتی رپورٹ
 
-💰 کل سیلز: ${sales} روپے
-📉 کل اخراجات: ${expense} روپے
-📒 ادھار: ${udhar} روپے
+💰 کل سیلز: ${sales}
+📉 اخراجات: ${expense}
+📒 ادھار: ${udhar}
 
-📈 منافع: ${profit} روپے`
+📈 منافع: ${profit}`
 }
 
-return `📊 *FINANCIAL REPORT*
+return `📊 REPORT
 
-💰 Sales: Rs ${sales}
-📉 Expense: Rs ${expense}
-📒 Udhar: Rs ${udhar}
-
-📈 Profit: Rs ${profit}`
+Sales: ${sales}
+Expense: ${expense}
+Udhar: ${udhar}
+Profit: ${profit}`
 }
 
-/* MENU */
-if(text === "menu"){
-return m.dashboard.replace("{user}",user.name || "User").replace("{business}",user.business_name || "—").replace("{trial}",`${remainingDays} days`)
-}
 
-/* DEFAULT */
 return m.dashboard.replace("{user}",user.name || "User").replace("{business}",user.business_name || "—").replace("{trial}",`${remainingDays} days`)
 }
 
