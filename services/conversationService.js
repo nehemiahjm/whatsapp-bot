@@ -245,7 +245,7 @@ ACTIVE (AI ENABLED)
 ========================= */
 
 if(user.state === "active"){
-    
+
 
 const text = message.toLowerCase()
 
@@ -295,16 +295,28 @@ const expense = parseInt(d.total_expense) || 0
 const udhar = parseInt(d.total_udhar) || 0
 const profit = sales - expense
 
-const pdfPath = generatePDF(user, {
-sales,
-expense,
-udhar,
-profit
+// 🔥 STEP 1: generate pdf
+const filePath = `/tmp/report-${phone}.pdf`
+
+await generatePDF({
+  filePath,
+  user,
+  sales,
+  expense,
+  udhar,
+  profit
 })
 
+// 🔥 STEP 2: upload to cloudinary
+const url = await uploadPDF(filePath)
+
+// 🔥 STEP 3: send
 return [
-"📄 Generating your PDF report...",
-{ type: "pdf", path: pdfPath }
+"📄 Generating your premium PDF report...",
+{
+  type: "pdf",
+  path: url
+}
 ]
 }
 
